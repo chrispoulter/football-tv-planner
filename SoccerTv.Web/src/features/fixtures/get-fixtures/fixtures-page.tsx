@@ -70,10 +70,10 @@ export function FixturesPage() {
 
     return (
         <main className="mx-auto max-w-screen-sm space-y-6 p-6">
-            <Metadata title="Football on TV" />
+            <Metadata title="Soccer on TV" />
 
             <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight text-balance">
-                Football on TV
+                Soccer on TV
             </h1>
 
             <DayStrip

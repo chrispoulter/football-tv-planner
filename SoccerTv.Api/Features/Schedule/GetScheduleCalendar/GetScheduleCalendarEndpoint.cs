@@ -58,7 +58,7 @@ public class GetScheduleCalendarEndpoint : IEndpoint
             fixtures,
             user.ReminderMinutesBefore,
             now,
-            calendarName: "My Football on TV"
+            calendarName: "My Soccer on TV"
         );
 
         return Results.Text(calendar, CalendarBuilder.ContentType);

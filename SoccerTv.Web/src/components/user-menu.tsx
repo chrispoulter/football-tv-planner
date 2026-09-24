@@ -55,10 +55,6 @@ export function UserMenu() {
                 <DropdownMenuSeparator />
 
                 <DropdownMenuItem asChild>
-                    <Link to="/fixtures?mine=true">My Schedule</Link>
-                </DropdownMenuItem>
-
-                <DropdownMenuItem asChild>
                     <Link to="/profile">My Account</Link>
                 </DropdownMenuItem>
 
