@@ -1,4 +1,4 @@
-﻿using NpgsqlTypes;
+using NpgsqlTypes;
 using SoccerTv.Api.Common.Authentication;
 
 namespace SoccerTv.Api.Data.Users;
@@ -22,8 +22,6 @@ public class User : IJwtUser
     public DateOnly DateOfBirth { get; set; }
 
     public bool IsLockedOut { get; set; }
-
-    public IEnumerable<string>? Roles { get; set; }
 
     public string? CalendarFeedToken { get; set; }
 

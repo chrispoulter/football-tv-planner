@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace SoccerTv.Api.Data.Users;
@@ -26,7 +26,6 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.FirstName).HasColumnName("first_name").IsRequired();
         builder.Property(u => u.LastName).HasColumnName("last_name").IsRequired();
         builder.Property(u => u.DateOfBirth).HasColumnName("date_of_birth").IsRequired();
-        builder.Property(u => u.Roles).HasColumnName("roles").HasColumnType("text[]");
         builder.Property(u => u.IsLockedOut).HasColumnName("is_locked_out").HasDefaultValue(false);
         builder.Property(u => u.CalendarFeedToken).HasColumnName("calendar_feed_token");
         builder

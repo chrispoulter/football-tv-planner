@@ -1,6 +1,5 @@
 import { Link, useNavigate } from 'react-router';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
@@ -10,7 +9,6 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { roleOptions } from '@/lib/session';
 import { useAuth } from './auth-provider';
 
 export function UserMenu() {
@@ -45,25 +43,12 @@ export function UserMenu() {
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56">
-                <DropdownMenuLabel className="space-y-2">
-                    <div className="space-y-0.5">
-                        <div className="truncate text-sm font-medium">
-                            {user.given_name} {user.family_name}
-                        </div>
-                        <div className="truncate text-sm text-muted-foreground">
-                            {user.email}
-                        </div>
+                <DropdownMenuLabel className="space-y-0.5">
+                    <div className="truncate text-sm font-medium">
+                        {user.given_name} {user.family_name}
                     </div>
-                    <div className="flex flex-col gap-2">
-                        {user.roles?.map((role) => (
-                            <Badge
-                                key={role}
-                                variant="secondary"
-                                className="w-full"
-                            >
-                                {roleOptions[role].title}
-                            </Badge>
-                        ))}
+                    <div className="truncate text-sm text-muted-foreground">
+                        {user.email}
                     </div>
                 </DropdownMenuLabel>
 

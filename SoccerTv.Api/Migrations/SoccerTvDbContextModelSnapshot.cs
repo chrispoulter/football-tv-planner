@@ -288,10 +288,6 @@ namespace SoccerTv.Api.Migrations
                         .HasDefaultValue(30)
                         .HasColumnName("reminder_minutes_before");
 
-                    b.PrimitiveCollection<string[]>("Roles")
-                        .HasColumnType("text[]")
-                        .HasColumnName("roles");
-
                     b.Property<NpgsqlTsVector>("SearchVector")
                         .IsRequired()
                         .ValueGeneratedOnAddOrUpdate()

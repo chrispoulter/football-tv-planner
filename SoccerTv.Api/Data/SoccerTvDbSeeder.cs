@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using SoccerTv.Api.Common.Authentication;
 using SoccerTv.Api.Common.Database;
@@ -38,7 +38,6 @@ public class SoccerTvDbSeeder(
             user.FirstName = seedUser.FirstName;
             user.LastName = seedUser.LastName;
             user.DateOfBirth = seedUser.DateOfBirth;
-            user.Roles = seedUser.Roles;
             user.IsLockedOut = false;
         }
 

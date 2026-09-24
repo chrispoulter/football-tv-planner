@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 using System.Text;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
@@ -26,10 +26,6 @@ public class JwtService(TimeProvider timeProvider, IOptions<JwtSettings> jwtSett
                 new(JwtRegisteredClaimNames.GivenName, user.FirstName),
                 new(JwtRegisteredClaimNames.FamilyName, user.LastName),
                 new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                .. (user.Roles ?? []).Select(role => new Claim(
-                    JwtClaimNames.Roles,
-                    role.ToString()
-                )),
             ]),
             Expires = timeProvider.GetUtcNow().AddSeconds(_jwtSettings.ExpiresIn).UtcDateTime,
             SigningCredentials = credentials,

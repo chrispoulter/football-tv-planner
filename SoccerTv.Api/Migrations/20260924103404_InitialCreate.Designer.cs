@@ -13,7 +13,7 @@ using SoccerTv.Api.Data;
 namespace SoccerTv.Api.Migrations
 {
     [DbContext(typeof(SoccerTvDbContext))]
-    [Migration("20260924100254_InitialCreate")]
+    [Migration("20260924103404_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -290,10 +290,6 @@ namespace SoccerTv.Api.Migrations
                         .HasColumnType("integer")
                         .HasDefaultValue(30)
                         .HasColumnName("reminder_minutes_before");
-
-                    b.PrimitiveCollection<string[]>("Roles")
-                        .HasColumnType("text[]")
-                        .HasColumnName("roles");
 
                     b.Property<NpgsqlTsVector>("SearchVector")
                         .IsRequired()

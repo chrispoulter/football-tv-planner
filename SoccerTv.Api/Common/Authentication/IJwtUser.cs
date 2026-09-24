@@ -1,4 +1,4 @@
-﻿namespace SoccerTv.Api.Common.Authentication;
+namespace SoccerTv.Api.Common.Authentication;
 
 public interface IJwtUser
 {
@@ -9,6 +9,4 @@ public interface IJwtUser
     public string FirstName { get; }
 
     public string LastName { get; }
-
-    public IEnumerable<string>? Roles { get; }
 }

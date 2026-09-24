@@ -1,4 +1,4 @@
-﻿namespace SoccerTv.Api.Data;
+namespace SoccerTv.Api.Data;
 
 public class SeedSettings
 {
@@ -17,7 +17,5 @@ public class SeedSettings
         public required string LastName { get; set; }
 
         public DateOnly DateOfBirth { get; set; }
-
-        public required IEnumerable<string> Roles { get; set; }
     }
 }
