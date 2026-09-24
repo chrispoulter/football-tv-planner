@@ -13,7 +13,12 @@ import {
 } from '@/components/ui/empty';
 import { Metadata } from '@/components/metadata';
 import { QueryError } from '@/components/query-error';
-import { isUkDate, toLongDayLabel, todayUk } from '@/lib/uk-time';
+import {
+    isDateString,
+    toLongDayLabel,
+    todayLocal,
+    toUtcDayRange,
+} from '@/lib/local-time';
 import { useGetFixtures } from '../fixtures-queries';
 import { DayStrip } from './day-strip';
 import { FixtureFilters } from './fixture-filters';
@@ -23,8 +28,8 @@ import { FixturesLoading } from './fixtures-loading';
 const searchParamsSchema = z.object({
     date: z
         .string()
-        .refine(isUkDate)
-        .catch(() => todayUk()),
+        .refine(isDateString)
+        .catch(() => todayLocal()),
     competition: z.string().optional().catch(undefined),
     provider: z.string().optional().catch(undefined),
     mine: z
@@ -45,7 +50,7 @@ export function FixturesPage() {
 
     const { data, isPending, isPlaceholderData, isSuccess, error } =
         useGetFixtures({
-            date: request.date,
+            ...toUtcDayRange(request.date),
             competitionId: request.competition,
             provider: request.provider,
             bookmarked: mine,

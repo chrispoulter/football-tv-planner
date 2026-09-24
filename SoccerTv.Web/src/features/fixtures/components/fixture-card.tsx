@@ -1,6 +1,6 @@
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import { toUkTime } from '@/lib/uk-time';
+import { toLocalTime } from '@/lib/local-time';
 import type { FixtureSummary } from '../fixtures-queries';
 import { AddToCalendarMenu } from './add-to-calendar-menu';
 import { BookmarkButton } from './bookmark-button';
@@ -17,7 +17,7 @@ export function FixtureCard({ fixture }: FixtureCardProps) {
     return (
         <div className="flex items-start gap-4 rounded-lg border p-4">
             <div className="w-12 shrink-0 pt-0.5 text-lg font-semibold tabular-nums">
-                {toUkTime(fixture.kickoffUtc)}
+                {toLocalTime(fixture.kickoffUtc)}
             </div>
 
             <div className="min-w-0 flex-1 space-y-2">

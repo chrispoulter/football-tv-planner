@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using SoccerTv.Api.Common.Time;
 using SoccerTv.Api.Data;
 using SoccerTv.Api.Data.Channels;
 using SoccerTv.Api.Data.Competitions;
@@ -71,7 +70,8 @@ public class FixtureSyncService(
 
     private async Task SyncAsync(CancellationToken cancellationToken)
     {
-        var from = UkTime.Today(timeProvider).AddDays(-1);
+        // Pad by a day either side so every time zone's "today" is covered.
+        var from = DateOnly.FromDateTime(timeProvider.GetUtcNow().UtcDateTime).AddDays(-1);
         var to = from.AddDays(_settings.DaysAhead + 1);
 
         logger.LogInformation(

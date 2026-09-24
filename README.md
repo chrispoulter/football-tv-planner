@@ -6,7 +6,7 @@ The app is built on the [halcyon-dotnet](../halcyon-dotnet) template: a .NET 10 
 
 ## Features
 
-- **Fixtures by day.** Pick a day from the 14-day strip. Filter by competition or by broadcaster (Sky, TNT, Amazon, BBC, Premier Sports…). Kick-off times are shown in UK time.
+- **Fixtures by day.** Pick a day from the 14-day strip. Filter by competition or by broadcaster (Sky, TNT, Amazon, BBC, Premier Sports…). Kick-off times, and what counts as a "day", follow the viewer's local time zone.
 - **My Schedule.** Star a game to add it to your schedule. The **My Schedule** filter on the fixtures page narrows the selected day to your starred games and shows your calendar subscription link.
 - **Add to calendar.** Each game has one-click links for Google Calendar, Outlook.com and Outlook (Microsoft 365), plus a `.ics` download.
 - **Calendar subscription.** Each user gets a private `webcal://` feed of their starred games. The link can be reset, which stops the old one working.
@@ -45,6 +45,10 @@ Create `SoccerTv.Api/appsettings.Development.json` to override `appsettings.json
   }
 }
 ```
+
+## Dates and times
+
+All instants are stored and returned in UTC: Postgres `timestamptz`, ISO 8601 strings with `Z`, and UTC `DTSTART` values in `.ics` files. The UI converts them to the viewer's local time zone (`src/lib/local-time.ts`). When you pick a day, the UI sends that local day to `GET /fixtures` as a UTC `from`/`to` range, so the API never needs to know the viewer's time zone. The only place that knows about UK time is fixture ingestion, which converts UK kick-off slots to UTC (`Common/Time/UkTime.cs`).
 
 ## Fixture data
 

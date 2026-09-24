@@ -1,3 +1,3 @@
 namespace SoccerTv.Api.Features.Fixtures.GetFixtures;
 
-public record GetFixturesResponse(DateOnly Date, List<FixtureSummary> Items);
+public record GetFixturesResponse(List<FixtureSummary> Items);

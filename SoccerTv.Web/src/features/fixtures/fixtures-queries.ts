@@ -46,14 +46,14 @@ export interface FixtureSummary {
 }
 
 interface GetFixturesRequest {
-    date: string;
+    from: string;
+    to: string;
     competitionId?: string;
     provider?: string;
     bookmarked?: boolean;
 }
 
 export interface GetFixturesResponse {
-    date: string;
     items: FixtureSummary[];
 }
 

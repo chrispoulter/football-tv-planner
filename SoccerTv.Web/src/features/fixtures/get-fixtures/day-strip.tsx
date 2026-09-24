@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { addDays, toDayLabel, todayUk } from '@/lib/uk-time';
+import { addDays, toDayLabel, todayLocal } from '@/lib/local-time';
 
 const DAYS_SHOWN = 14;
 
@@ -15,7 +15,7 @@ interface DayStripProps {
 export function DayStrip({ date, onChange, disabled }: DayStripProps) {
     const selectedRef = useRef<HTMLButtonElement>(null);
 
-    const today = todayUk();
+    const today = todayLocal();
 
     const start =
         date < today || date > addDays(today, DAYS_SHOWN - 1) ? date : today;

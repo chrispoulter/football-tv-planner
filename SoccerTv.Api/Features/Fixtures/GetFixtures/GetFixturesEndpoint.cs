@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SoccerTv.Api.Common.Authentication;
 using SoccerTv.Api.Common.Infrastructure;
-using SoccerTv.Api.Common.Time;
 using SoccerTv.Api.Common.Validation;
 using SoccerTv.Api.Data;
 
@@ -18,7 +17,7 @@ public class GetFixturesEndpoint : IEndpoint
             .WithTags(Tags.Fixtures)
             .WithSummary("Get Fixtures")
             .WithDescription(
-                "List the televised fixtures for a UK day, optionally filtered by competition or broadcaster."
+                "List the televised fixtures kicking off in a UTC time range (typically the viewer's local day), optionally filtered by competition, broadcaster or the current user's schedule."
             );
     }
 
@@ -26,7 +25,6 @@ public class GetFixturesEndpoint : IEndpoint
         [AsParameters] GetFixturesRequest request,
         CurrentUser? currentUser,
         SoccerTvDbContext dbContext,
-        TimeProvider timeProvider,
         CancellationToken cancellationToken = default
     )
     {
@@ -38,8 +36,8 @@ public class GetFixturesEndpoint : IEndpoint
             );
         }
 
-        var date = request.Date ?? UkTime.Today(timeProvider);
-        var (start, end) = UkTime.DayBoundsUtc(date);
+        var start = request.From!.Value.ToUniversalTime();
+        var end = request.To!.Value.ToUniversalTime();
 
         var query = dbContext
             .Fixtures.AsNoTracking()
@@ -70,6 +68,6 @@ public class GetFixturesEndpoint : IEndpoint
             .Select(FixtureProjections.ToSummary(dbContext, currentUser?.Id))
             .ToListAsync(cancellationToken);
 
-        return Results.Ok(new GetFixturesResponse(date, fixtures));
+        return Results.Ok(new GetFixturesResponse(fixtures));
     }
 }
