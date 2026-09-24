@@ -1,4 +1,5 @@
-import { Copy } from 'lucide-react';
+import { useState } from 'react';
+import { CalendarSync, Copy } from 'lucide-react';
 import { toast } from 'sonner';
 import {
     AlertDialog,
@@ -12,6 +13,14 @@ import {
     AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { LoadingButton } from '@/components/loading-button';
@@ -20,26 +29,61 @@ import {
     outlook365SubscribeUrl,
     outlookComSubscribeUrl,
 } from '@/lib/calendar-links';
-import { useGetCalendarFeed, useResetCalendarFeed } from '../schedule-queries';
+import {
+    useGetCalendarFeed,
+    useResetCalendarFeed,
+    type CalendarFeedResponse,
+} from '../schedule-queries';
 
 const CALENDAR_NAME = 'My Football on TV';
 
-export function CalendarFeedCard() {
-    const { data: feed, isPending, isSuccess } = useGetCalendarFeed();
+interface CalendarFeedDialogProps {
+    disabled?: boolean;
+}
 
+export function CalendarFeedDialog({ disabled }: CalendarFeedDialogProps) {
+    const [open, setOpen] = useState(false);
+
+    // Only fetch once opened, so the private feed link is created on first use.
+    const { data: feed, isSuccess } = useGetCalendarFeed({ enabled: open });
+
+    return (
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <Button variant="outline" disabled={disabled}>
+                    <CalendarSync />
+                    Subscribe
+                </Button>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Subscribe in your calendar</DialogTitle>
+                    <DialogDescription>
+                        Games you star appear in your calendar automatically,
+                        with a reminder before kick-off. Keep this link private.
+                    </DialogDescription>
+                </DialogHeader>
+
+                {isSuccess ? (
+                    <CalendarFeedOptions feed={feed} />
+                ) : (
+                    <Skeleton className="h-56" />
+                )}
+            </DialogContent>
+        </Dialog>
+    );
+}
+
+interface CalendarFeedOptionsProps {
+    feed: CalendarFeedResponse;
+}
+
+function CalendarFeedOptions({ feed }: CalendarFeedOptionsProps) {
     const { mutate: resetFeed, isPending: isResetting } =
         useResetCalendarFeed();
 
-    if (isPending) {
-        return <Skeleton className="h-48" />;
-    }
-
-    if (!isSuccess) {
-        return null;
-    }
-
     async function onCopy() {
-        await navigator.clipboard.writeText(feed!.httpsUrl);
+        await navigator.clipboard.writeText(feed.httpsUrl);
         toast.success('Calendar link copied.');
     }
 
@@ -54,17 +98,7 @@ export function CalendarFeedCard() {
     }
 
     return (
-        <section className="space-y-4 rounded-lg border p-4">
-            <div className="space-y-1">
-                <h2 className="text-lg font-semibold">
-                    Subscribe in your calendar
-                </h2>
-                <p className="text-sm text-muted-foreground">
-                    Games you star appear in your calendar automatically, with a
-                    reminder before kick-off. Keep this link private.
-                </p>
-            </div>
-
+        <div className="space-y-4">
             <div className="flex gap-2">
                 <Input
                     readOnly
@@ -78,7 +112,7 @@ export function CalendarFeedCard() {
                 </Button>
             </div>
 
-            <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+            <div className="grid gap-2 sm:grid-cols-2">
                 <Button asChild variant="secondary">
                     <a
                         href={googleSubscribeUrl(feed.webcalUrl)}
@@ -152,6 +186,6 @@ export function CalendarFeedCard() {
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
-        </section>
+        </div>
     );
 }

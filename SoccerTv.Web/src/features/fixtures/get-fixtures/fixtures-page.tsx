@@ -1,8 +1,11 @@
 import { useSearchParams } from 'react-router';
 import { z } from 'zod';
-import { Tv } from 'lucide-react';
+import { Star, Tv } from 'lucide-react';
+import { useAuth } from '@/components/auth-provider';
+import { Button } from '@/components/ui/button';
 import {
     Empty,
+    EmptyContent,
     EmptyDescription,
     EmptyHeader,
     EmptyMedia,
@@ -24,18 +27,28 @@ const searchParamsSchema = z.object({
         .catch(() => todayUk()),
     competition: z.string().optional().catch(undefined),
     provider: z.string().optional().catch(undefined),
+    mine: z
+        .string()
+        .optional()
+        .transform((value) => value === 'true')
+        .catch(false),
 });
 
 export function FixturesPage() {
     const [searchParams, setSearchParams] = useSearchParams();
 
+    const { user } = useAuth();
+
     const request = searchParamsSchema.parse(Object.fromEntries(searchParams));
+
+    const mine = request.mine && !!user;
 
     const { data, isPending, isPlaceholderData, isSuccess, error } =
         useGetFixtures({
             date: request.date,
             competitionId: request.competition,
             provider: request.provider,
+            bookmarked: mine,
         });
 
     function setParam(name: string, value?: string) {
@@ -68,6 +81,10 @@ export function FixturesPage() {
                 provider={request.provider}
                 onCompetitionChange={(value) => setParam('competition', value)}
                 onProviderChange={(value) => setParam('provider', value)}
+                mine={mine}
+                onMineChange={(value) =>
+                    setParam('mine', value ? 'true' : undefined)
+                }
             />
 
             <h2 className="scroll-m-20 text-2xl font-semibold tracking-tight">
@@ -82,6 +99,23 @@ export function FixturesPage() {
                 <div className={isPlaceholderData ? 'opacity-60' : undefined}>
                     <FixtureList fixtures={data.items} />
                 </div>
+            ) : mine ? (
+                <Empty className="border border-dashed">
+                    <EmptyHeader>
+                        <EmptyMedia variant="icon">
+                            <Star />
+                        </EmptyMedia>
+                        <EmptyTitle>Nothing Scheduled</EmptyTitle>
+                        <EmptyDescription>
+                            No starred games on this day.
+                        </EmptyDescription>
+                    </EmptyHeader>
+                    <EmptyContent>
+                        <Button onClick={() => setParam('mine', undefined)}>
+                            Show All Games
+                        </Button>
+                    </EmptyContent>
+                </Empty>
             ) : (
                 <Empty className="border border-dashed">
                     <EmptyHeader>

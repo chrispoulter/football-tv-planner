@@ -70,7 +70,7 @@ export function UserMenu() {
                 <DropdownMenuSeparator />
 
                 <DropdownMenuItem asChild>
-                    <Link to="/schedule">My Schedule</Link>
+                    <Link to="/fixtures?mine=true">My Schedule</Link>
                 </DropdownMenuItem>
 
                 <DropdownMenuItem asChild>

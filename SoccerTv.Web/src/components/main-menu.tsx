@@ -17,12 +17,10 @@ interface NavItem {
     href: string;
     label: string;
     roles?: Role[];
-    authenticated?: boolean;
 }
 
 const navItems: NavItem[] = [
     { href: '/fixtures', label: 'Fixtures' },
-    { href: '/schedule', label: 'My Schedule', authenticated: true },
     {
         href: '/users',
         label: 'Users',
@@ -36,7 +34,6 @@ export function MainMenu() {
     const { user } = useAuth();
 
     const navLinks = navItems
-        .filter(({ authenticated }) => !authenticated || !!user)
         .filter(
             ({ roles }) =>
                 !roles || roles.some((value) => user?.roles?.includes(value))

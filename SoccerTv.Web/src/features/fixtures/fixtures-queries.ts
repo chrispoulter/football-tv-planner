@@ -49,6 +49,7 @@ interface GetFixturesRequest {
     date: string;
     competitionId?: string;
     provider?: string;
+    bookmarked?: boolean;
 }
 
 export interface GetFixturesResponse {

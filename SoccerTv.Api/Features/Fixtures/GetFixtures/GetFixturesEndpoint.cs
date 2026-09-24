@@ -30,6 +30,14 @@ public class GetFixturesEndpoint : IEndpoint
         CancellationToken cancellationToken = default
     )
     {
+        if (request.Bookmarked == true && currentUser is null)
+        {
+            return Results.Problem(
+                statusCode: StatusCodes.Status401Unauthorized,
+                title: "Log in to view your schedule."
+            );
+        }
+
         var date = request.Date ?? UkTime.Today(timeProvider);
         var (start, end) = UkTime.DayBoundsUtc(date);
 
@@ -45,6 +53,15 @@ public class GetFixturesEndpoint : IEndpoint
         if (!string.IsNullOrEmpty(request.Provider))
         {
             query = query.Where(f => f.Broadcasts.Any(b => b.Channel.Provider == request.Provider));
+        }
+
+        if (request.Bookmarked == true && currentUser is not null)
+        {
+            query = query.Where(f =>
+                dbContext.UserFixtures.Any(uf =>
+                    uf.UserId == currentUser.Id && uf.FixtureId == f.Id
+                )
+            );
         }
 
         var fixtures = await query

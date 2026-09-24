@@ -3,40 +3,17 @@ import {
     useQuery,
     useQueryClient,
     type QueryClient,
-    type QueryFilters,
 } from '@tanstack/react-query';
 import { useAuth } from '@/components/auth-provider';
 import { apiClient } from '@/lib/api-client';
 import {
     fixtureKeys,
-    type FixtureSummary,
     type GetFixturesResponse,
 } from '../fixtures/fixtures-queries';
 
 export const scheduleKeys = {
     all: ['schedule'] as const,
     calendarFeed: ['schedule', 'calendar-feed'] as const,
-};
-
-export interface GetScheduleResponse {
-    items: FixtureSummary[];
-}
-
-export const useGetSchedule = () => {
-    const { accessToken } = useAuth();
-
-    return useQuery({
-        queryKey: scheduleKeys.all,
-        queryFn: ({ signal }) =>
-            apiClient
-                .get('schedule', {
-                    context: {
-                        accessToken,
-                    },
-                    signal,
-                })
-                .json<GetScheduleResponse>(),
-    });
 };
 
 interface ScheduleItemResponse {
@@ -52,31 +29,24 @@ async function setBookmarked(
     fixtureId: string,
     isBookmarked: boolean
 ) {
-    const filters: QueryFilters[] = [
+    await queryClient.cancelQueries({ queryKey: fixtureKeys.all });
+
+    const previous = queryClient.getQueriesData<GetFixturesResponse>({
+        queryKey: fixtureKeys.all,
+    });
+
+    queryClient.setQueriesData<GetFixturesResponse>(
         { queryKey: fixtureKeys.all },
-        { queryKey: scheduleKeys.all, exact: true },
-    ];
-
-    await Promise.all(filters.map((f) => queryClient.cancelQueries(f)));
-
-    const previous = filters.flatMap((f) =>
-        queryClient.getQueriesData<GetFixturesResponse | GetScheduleResponse>(f)
+        (data) =>
+            data && {
+                ...data,
+                items: data.items.map((fixture) =>
+                    fixture.id === fixtureId
+                        ? { ...fixture, isBookmarked }
+                        : fixture
+                ),
+            }
     );
-
-    for (const f of filters) {
-        queryClient.setQueriesData<GetFixturesResponse | GetScheduleResponse>(
-            f,
-            (data) =>
-                data && {
-                    ...data,
-                    items: data.items.map((fixture) =>
-                        fixture.id === fixtureId
-                            ? { ...fixture, isBookmarked }
-                            : fixture
-                    ),
-                }
-        );
-    }
 
     return () => {
         for (const [queryKey, data] of previous) {
@@ -109,13 +79,8 @@ export const useToggleSchedule = () => {
         onMutate: ({ fixtureId, isBookmarked }) =>
             setBookmarked(queryClient, fixtureId, isBookmarked),
         onError: (_error, _variables, rollback) => rollback?.(),
-        onSettled: () => {
-            queryClient.invalidateQueries({ queryKey: fixtureKeys.all });
-            queryClient.invalidateQueries({
-                queryKey: scheduleKeys.all,
-                exact: true,
-            });
-        },
+        onSettled: () =>
+            queryClient.invalidateQueries({ queryKey: fixtureKeys.all }),
     });
 };
 
@@ -124,10 +89,11 @@ export interface CalendarFeedResponse {
     webcalUrl: string;
 }
 
-export const useGetCalendarFeed = () => {
+export const useGetCalendarFeed = ({ enabled }: { enabled?: boolean } = {}) => {
     const { accessToken } = useAuth();
 
     return useQuery({
+        enabled,
         queryKey: scheduleKeys.calendarFeed,
         queryFn: ({ signal }) =>
             apiClient

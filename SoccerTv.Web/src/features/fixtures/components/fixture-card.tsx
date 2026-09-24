@@ -8,10 +8,9 @@ import { ChannelBadge } from './channel-badge';
 
 interface FixtureCardProps {
     fixture: FixtureSummary;
-    showCompetition?: boolean;
 }
 
-export function FixtureCard({ fixture, showCompetition }: FixtureCardProps) {
+export function FixtureCard({ fixture }: FixtureCardProps) {
     const isOff =
         fixture.status === 'Cancelled' || fixture.status === 'Postponed';
 
@@ -23,11 +22,6 @@ export function FixtureCard({ fixture, showCompetition }: FixtureCardProps) {
 
             <div className="min-w-0 flex-1 space-y-2">
                 <div className="space-y-0.5">
-                    {showCompetition && (
-                        <div className="truncate text-xs text-muted-foreground">
-                            {fixture.competition.name}
-                        </div>
-                    )}
                     <div
                         className={cn(
                             'text-base font-medium',

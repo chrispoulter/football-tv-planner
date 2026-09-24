@@ -7,7 +7,7 @@ The app is built on the [halcyon-dotnet](../halcyon-dotnet) template: a .NET 10 
 ## Features
 
 - **Fixtures by day.** Pick a day from the 14-day strip. Filter by competition or by broadcaster (Sky, TNT, Amazon, BBC, Premier Sports…). Kick-off times are shown in UK time.
-- **My Schedule.** Star a game to add it to your schedule.
+- **My Schedule.** Star a game to add it to your schedule. The **My Schedule** filter on the fixtures page narrows the selected day to your starred games and shows your calendar subscription link.
 - **Add to calendar.** Each game has one-click links for Google Calendar, Outlook.com and Outlook (Microsoft 365), plus a `.ics` download.
 - **Calendar subscription.** Each user gets a private `webcal://` feed of their starred games. The link can be reset, which stops the old one working.
 - **Reminders.** Reminders are calendar alarms (`VALARM`), not server-sent notifications. You choose how long before kick-off under **My Account → Update Profile**.
