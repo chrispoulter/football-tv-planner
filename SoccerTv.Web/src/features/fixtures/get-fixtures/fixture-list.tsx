@@ -8,7 +8,7 @@ interface FixtureListProps {
 
 /**
  * Groups a day's fixtures by competition, ordered by each competition's first kick-off.
- * Each competition is a card, and the cards flow into as many columns as fit.
+ * Each competition is a card, stacked in a single column at every screen size.
  */
 export function FixtureList({ fixtures }: FixtureListProps) {
     const groups = new Map<string, FixtureSummary[]>();
@@ -20,12 +20,9 @@ export function FixtureList({ fixtures }: FixtureListProps) {
     }
 
     return (
-        <div className="gap-4 lg:columns-2 2xl:columns-3">
+        <div className="space-y-4">
             {Array.from(groups.values()).map((group) => (
-                <Card
-                    key={group[0].competition.id}
-                    className="mb-4 break-inside-avoid gap-2"
-                >
+                <Card key={group[0].competition.id} className="gap-2">
                     <CardHeader>
                         <CardTitle>{group[0].competition.name}</CardTitle>
                     </CardHeader>
