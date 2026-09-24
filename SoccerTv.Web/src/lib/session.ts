@@ -5,11 +5,6 @@ export const roles: [Role, ...Role[]] = [
     'USER_ADMINISTRATOR',
 ];
 
-export const isUserAdministrator: [Role, ...Role[]] = [
-    'SYSTEM_ADMINISTRATOR',
-    'USER_ADMINISTRATOR',
-];
-
 export const roleOptions: Record<Role, { title: string; description: string }> =
     {
         SYSTEM_ADMINISTRATOR: {

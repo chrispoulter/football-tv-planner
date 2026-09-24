@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/components/auth-provider';
 import { apiClient } from '@/lib/api-client';
-import { userKeys } from '../users/users-queries';
 
 export const profileKeys = {
     all: ['profile'] as const,
@@ -60,13 +59,8 @@ export const useUpdateProfile = () => {
                     },
                 })
                 .json<UpdateProfileResponse>(),
-        onSuccess: (data) => {
-            queryClient.invalidateQueries({ queryKey: profileKeys.all });
-            queryClient.invalidateQueries({ queryKey: userKeys.all });
-            queryClient.invalidateQueries({
-                queryKey: userKeys.detail(data.id),
-            });
-        },
+        onSuccess: () =>
+            queryClient.invalidateQueries({ queryKey: profileKeys.all }),
     });
 };
 
@@ -94,13 +88,8 @@ export const useChangePassword = () => {
                     },
                 })
                 .json<ChangePasswordResponse>(),
-        onSuccess: (data) => {
-            queryClient.invalidateQueries({ queryKey: profileKeys.all });
-            queryClient.invalidateQueries({ queryKey: userKeys.all });
-            queryClient.invalidateQueries({
-                queryKey: userKeys.detail(data.id),
-            });
-        },
+        onSuccess: () =>
+            queryClient.invalidateQueries({ queryKey: profileKeys.all }),
     });
 };
 
@@ -122,18 +111,10 @@ export const useDeleteAccount = () => {
                     },
                 })
                 .json<DeleteAccountResponse>(),
-        onSuccess: (data) => {
-            queryClient.invalidateQueries({ queryKey: userKeys.all });
-
+        onSuccess: () =>
             queryClient.invalidateQueries({
                 queryKey: profileKeys.all,
                 refetchType: 'none',
-            });
-
-            queryClient.invalidateQueries({
-                queryKey: userKeys.detail(data.id),
-                refetchType: 'none',
-            });
-        },
+            }),
     });
 };

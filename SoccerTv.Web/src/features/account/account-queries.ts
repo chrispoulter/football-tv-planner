@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api-client';
 import { profileKeys } from '../profile/profile-queries';
-import { userKeys } from '../users/users-queries';
 
 interface LoginRequest {
     emailAddress: string;
@@ -32,18 +31,13 @@ interface RegisterResponse {
     id: string;
 }
 
-export const useRegister = () => {
-    const queryClient = useQueryClient();
-
-    return useMutation({
+export const useRegister = () =>
+    useMutation({
         mutationFn: (request: RegisterRequest) =>
             apiClient
                 .post('account/register', { json: request })
                 .json<RegisterResponse>(),
-        onSuccess: () =>
-            queryClient.invalidateQueries({ queryKey: userKeys.all }),
     });
-};
 
 interface ForgotPasswordRequest {
     emailAddress: string;
@@ -75,12 +69,7 @@ export const useResetPassword = () => {
             apiClient
                 .put('account/reset-password', { json: request })
                 .json<ResetPasswordResponse>(),
-        onSuccess: (data) => {
-            queryClient.invalidateQueries({ queryKey: profileKeys.all });
-            queryClient.invalidateQueries({ queryKey: userKeys.all });
-            queryClient.invalidateQueries({
-                queryKey: userKeys.detail(data.id),
-            });
-        },
+        onSuccess: () =>
+            queryClient.invalidateQueries({ queryKey: profileKeys.all }),
     });
 };

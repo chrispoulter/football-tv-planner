@@ -5,7 +5,6 @@ import { NotFoundPage } from '@/pages/not-found-page';
 import { accountRoutes } from '@/features/account/account-routes';
 import { fixturesRoutes } from '@/features/fixtures/fixtures-routes';
 import { profileRoutes } from '@/features/profile/profile-routes';
-import { usersRoutes } from '@/features/users/users-routes';
 
 export default function App() {
     return (
@@ -15,7 +14,6 @@ export default function App() {
                 {fixturesRoutes}
                 {accountRoutes}
                 {profileRoutes}
-                {usersRoutes}
                 <Route path="*" element={<NotFoundPage />} />
             </Route>
         </Routes>
