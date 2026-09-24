@@ -70,9 +70,9 @@ export function FixturesPage() {
 
     return (
         <div className="space-y-6">
-            <Metadata title="Soccer on TV" />
+            <Metadata title="Fixtures" />
 
-            <h1 className="text-2xl font-bold tracking-tight">Soccer on TV</h1>
+            <h1 className="text-2xl font-bold tracking-tight">Fixtures</h1>
 
             <DayStrip
                 date={request.date}
