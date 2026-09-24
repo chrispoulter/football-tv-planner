@@ -1,0 +1,50 @@
+﻿using Microsoft.EntityFrameworkCore;
+using SoccerTv.Api.Common.Authentication;
+using SoccerTv.Api.Common.Infrastructure;
+using SoccerTv.Api.Data;
+
+namespace SoccerTv.Api.Features.Users.GetUser;
+
+public class GetUserEndpoint : IEndpoint
+{
+    public void MapEndpoints(IEndpointRouteBuilder app)
+    {
+        app.MapGet("/users/{id}", HandleAsync)
+            .RequireRole(Roles.SystemAdministrator, Roles.UserAdministrator)
+            .Produces<GetUserResponse>()
+            .WithTags(Tags.Users)
+            .WithSummary("Get User")
+            .WithDescription("Retrieve a user account by ID.");
+    }
+
+    private static async Task<IResult> HandleAsync(
+        Guid id,
+        SoccerTvDbContext dbContext,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var user = await dbContext
+            .Users.AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+
+        if (user is null)
+        {
+            return Results.Problem(
+                statusCode: StatusCodes.Status404NotFound,
+                title: "User not found."
+            );
+        }
+
+        var result = new GetUserResponse(
+            user.Id,
+            user.EmailAddress,
+            user.FirstName,
+            user.LastName,
+            user.DateOfBirth,
+            user.IsLockedOut,
+            user.Roles
+        );
+
+        return Results.Ok(result);
+    }
+}

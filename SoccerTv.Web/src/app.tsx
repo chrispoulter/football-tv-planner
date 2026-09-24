@@ -1,0 +1,25 @@
+import { Navigate, Routes, Route } from 'react-router';
+import { RootLayout } from '@/components/root-layout';
+import { NotFoundPage } from '@/pages/not-found-page';
+
+import { accountRoutes } from '@/features/account/account-routes';
+import { fixturesRoutes } from '@/features/fixtures/fixtures-routes';
+import { profileRoutes } from '@/features/profile/profile-routes';
+import { scheduleRoutes } from '@/features/schedule/schedule-routes';
+import { usersRoutes } from '@/features/users/users-routes';
+
+export default function App() {
+    return (
+        <Routes>
+            <Route element={<RootLayout />}>
+                <Route index element={<Navigate to="/fixtures" replace />} />
+                {fixturesRoutes}
+                {scheduleRoutes}
+                {accountRoutes}
+                {profileRoutes}
+                {usersRoutes}
+                <Route path="*" element={<NotFoundPage />} />
+            </Route>
+        </Routes>
+    );
+}

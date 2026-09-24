@@ -1,0 +1,68 @@
+﻿using Microsoft.EntityFrameworkCore;
+using SoccerTv.Api.Common.Authentication;
+using SoccerTv.Api.Common.Infrastructure;
+using SoccerTv.Api.Common.Validation;
+using SoccerTv.Api.Data;
+
+namespace SoccerTv.Api.Features.Profile.ChangePassword;
+
+public class ChangePasswordEndpoint : IEndpoint
+{
+    public void MapEndpoints(IEndpointRouteBuilder app)
+    {
+        app.MapPut("/profile/change-password", HandleAsync)
+            .RequireAuthorization()
+            .AddValidationFilter<ChangePasswordRequest>()
+            .Produces<ChangePasswordResponse>()
+            .WithTags(Tags.Profile)
+            .WithSummary("Change Password")
+            .WithDescription("Change the password for the current user.");
+    }
+
+    private static async Task<IResult> HandleAsync(
+        ChangePasswordRequest request,
+        CurrentUser currentUser,
+        SoccerTvDbContext dbContext,
+        IHashService hashService,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var user = await dbContext.Users.FirstOrDefaultAsync(
+            u => u.Id == currentUser.Id,
+            cancellationToken
+        );
+
+        if (user is null || user.IsLockedOut)
+        {
+            return Results.Problem(
+                statusCode: StatusCodes.Status404NotFound,
+                title: "User not found."
+            );
+        }
+
+        if (user.Password is null)
+        {
+            return Results.Problem(
+                statusCode: StatusCodes.Status400BadRequest,
+                title: "Incorrect password."
+            );
+        }
+
+        var verified = hashService.VerifyHash(request.CurrentPassword, user.Password);
+
+        if (!verified)
+        {
+            return Results.Problem(
+                statusCode: StatusCodes.Status400BadRequest,
+                title: "Incorrect password."
+            );
+        }
+
+        user.Password = hashService.GenerateHash(request.NewPassword);
+        user.PasswordResetToken = null;
+
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        return Results.Ok(new ChangePasswordResponse(user.Id));
+    }
+}

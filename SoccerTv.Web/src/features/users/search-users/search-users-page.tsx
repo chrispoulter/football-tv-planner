@@ -1,0 +1,156 @@
+import { useSearchParams, Link } from 'react-router';
+import { z } from 'zod';
+import { User } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+    Empty,
+    EmptyDescription,
+    EmptyHeader,
+    EmptyMedia,
+    EmptyTitle,
+} from '@/components/ui/empty';
+import { Metadata } from '@/components/metadata';
+import { Pager } from '@/components/pager';
+import { QueryError } from '@/components/query-error';
+import { useSearchUsers, type UserSort } from '../users-queries';
+import { SearchUsersLoading } from './search-users-loading';
+import {
+    SearchUsersForm,
+    type SearchUsersFormValues,
+} from './search-users-form';
+import { SortUsersDropdown } from './sort-users-dropdown';
+import { UserCard } from './user-card';
+
+const PAGE_SIZE = 5;
+
+const searchParamsSchema = z.object({
+    search: z.string({ message: 'Search must be a valid string' }).catch(''),
+    page: z.coerce
+        .number({ message: 'Page must be a valid number' })
+        .int('Page must be a valid integer')
+        .positive('Page must be a positive number')
+        .catch(1),
+    sort: z
+        .enum(
+            [
+                'EMAIL_ADDRESS_ASC',
+                'EMAIL_ADDRESS_DESC',
+                'NAME_ASC',
+                'NAME_DESC',
+            ],
+            {
+                message: 'Sort must be a valid user sort',
+            }
+        )
+        .catch('NAME_ASC'),
+});
+
+export function SearchUsersPage() {
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    const request = searchParamsSchema.parse(Object.fromEntries(searchParams));
+
+    const { data, isPending, isPlaceholderData, isSuccess, error } =
+        useSearchUsers({
+            ...request,
+            size: PAGE_SIZE,
+        });
+
+    if (isPending) {
+        return <SearchUsersLoading />;
+    }
+
+    if (!isSuccess) {
+        return <QueryError error={error} />;
+    }
+
+    function onSearch(data: SearchUsersFormValues) {
+        setSearchParams((prev) => {
+            prev.delete('page');
+            prev.delete('search');
+
+            if (data.search) {
+                prev.set('search', data.search);
+            }
+
+            return prev;
+        });
+    }
+
+    function onSort(sort: UserSort) {
+        setSearchParams((prev) => {
+            prev.set('sort', sort);
+            return prev;
+        });
+    }
+
+    function onPreviousPage() {
+        setSearchParams((prev) => {
+            prev.set('page', (request.page - 1).toString());
+            return prev;
+        });
+    }
+
+    function onNextPage() {
+        setSearchParams((prev) => {
+            prev.set('page', (request.page + 1).toString());
+            return prev;
+        });
+    }
+
+    return (
+        <main className="mx-auto max-w-screen-sm space-y-6 p-6">
+            <Metadata title="Users" />
+
+            <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight text-balance">
+                Users
+            </h1>
+
+            <div className="flex gap-2">
+                <SearchUsersForm
+                    search={request.search}
+                    onSubmit={onSearch}
+                    disabled={isPlaceholderData}
+                />
+
+                <SortUsersDropdown
+                    sort={request.sort}
+                    onChange={onSort}
+                    disabled={isPlaceholderData}
+                />
+            </div>
+
+            <Button asChild className="w-full sm:w-auto">
+                <Link to="/users/create">Create New</Link>
+            </Button>
+
+            {data.items.length ? (
+                <div className="space-y-2">
+                    {data.items.map((user) => (
+                        <UserCard key={user.id} user={user} />
+                    ))}
+                </div>
+            ) : (
+                <Empty className="border border-dashed">
+                    <EmptyHeader>
+                        <EmptyMedia variant="icon">
+                            <User />
+                        </EmptyMedia>
+                        <EmptyTitle>No Results</EmptyTitle>
+                        <EmptyDescription>
+                            No users could be found.
+                        </EmptyDescription>
+                    </EmptyHeader>
+                </Empty>
+            )}
+
+            <Pager
+                hasPreviousPage={data.hasPreviousPage}
+                hasNextPage={data.hasNextPage}
+                onPreviousPage={onPreviousPage}
+                onNextPage={onNextPage}
+                disabled={isPlaceholderData}
+            />
+        </main>
+    );
+}

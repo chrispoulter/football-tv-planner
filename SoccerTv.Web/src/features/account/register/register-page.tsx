@@ -1,0 +1,48 @@
+import { Link, useNavigate } from 'react-router';
+import { toast } from 'sonner';
+import { Metadata } from '@/components/metadata';
+import { useRegister } from '../account-queries';
+import { RegisterForm, type RegisterFormValues } from './register-form';
+
+export function RegisterPage() {
+    const navigate = useNavigate();
+
+    const { mutate: register, isPending: isSaving } = useRegister();
+
+    function onSubmit(values: RegisterFormValues) {
+        register(values, {
+            onSuccess: () => {
+                toast.success('User successfully registered.');
+                navigate('/account/login');
+            },
+            onError: (error) => toast.error(error.message),
+        });
+    }
+
+    return (
+        <main className="mx-auto max-w-screen-sm space-y-6 p-6">
+            <Metadata title="Register" />
+
+            <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight text-balance">
+                Register
+            </h1>
+
+            <p className="leading-7">
+                Register for a new account to access the full range of features
+                available on this site.
+            </p>
+
+            <RegisterForm loading={isSaving} onSubmit={onSubmit} />
+
+            <p className="text-sm text-muted-foreground">
+                Already have an account?{' '}
+                <Link
+                    to="/account/login"
+                    className="underline underline-offset-4"
+                >
+                    Log in now
+                </Link>
+            </p>
+        </main>
+    );
+}

@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://soccertv.example.com/sitemap.xml

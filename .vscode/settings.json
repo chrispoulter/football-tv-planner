@@ -1,0 +1,15 @@
+{
+  "files.exclude": {
+    "**/.vs": true,
+    "**/.idea": true,
+    "**/bin": true,
+    "**/obj": true,
+    "**/node_modules": true,
+    "**/*.lscache": true
+  },
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
+  "aspire.enableAspireDashboardAutoLaunch": "notification",
+  "csharpier.enableDiagnostics": false
+}

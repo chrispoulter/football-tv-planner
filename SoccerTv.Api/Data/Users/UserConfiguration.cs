@@ -1,0 +1,57 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace SoccerTv.Api.Data.Users;
+
+public class UserConfiguration : IEntityTypeConfiguration<User>
+{
+    public void Configure(EntityTypeBuilder<User> builder)
+    {
+        builder.ToTable("users");
+
+        builder
+            .Property(u => u.Id)
+            .HasColumnName("id")
+            .HasDefaultValueSql("gen_random_uuid()")
+            .ValueGeneratedOnAdd();
+
+        builder.Property(u => u.EmailAddress).HasColumnName("email_address").IsRequired();
+        builder
+            .Property(u => u.NormalizedEmailAddress)
+            .HasColumnName("normalized_email_address")
+            .HasComputedColumnSql("lower(email_address)", stored: true);
+
+        builder.Property(u => u.Password).HasColumnName("password");
+        builder.Property(u => u.PasswordResetToken).HasColumnName("password_reset_token");
+        builder.Property(u => u.FirstName).HasColumnName("first_name").IsRequired();
+        builder.Property(u => u.LastName).HasColumnName("last_name").IsRequired();
+        builder.Property(u => u.DateOfBirth).HasColumnName("date_of_birth").IsRequired();
+        builder.Property(u => u.Roles).HasColumnName("roles").HasColumnType("text[]");
+        builder.Property(u => u.IsLockedOut).HasColumnName("is_locked_out").HasDefaultValue(false);
+        builder.Property(u => u.CalendarFeedToken).HasColumnName("calendar_feed_token");
+        builder
+            .Property(u => u.ReminderMinutesBefore)
+            .HasColumnName("reminder_minutes_before")
+            .HasDefaultValue(30)
+            .HasSentinel(-1);
+        builder.Property(u => u.SearchVector).HasColumnName("search_vector");
+
+        builder.HasGeneratedTsVectorColumn(
+            u => u.SearchVector,
+            "english",
+            u => new
+            {
+                u.FirstName,
+                u.LastName,
+                u.EmailAddress,
+            }
+        );
+
+        builder.HasKey(u => u.Id).HasName("pk_users");
+        builder
+            .HasIndex(u => u.NormalizedEmailAddress, "ix_users_normalized_email_address")
+            .IsUnique();
+        builder.HasIndex(u => u.SearchVector, "ix_users_search_vector").HasMethod("gin");
+        builder.HasIndex(u => u.CalendarFeedToken, "ix_users_calendar_feed_token").IsUnique();
+    }
+}
