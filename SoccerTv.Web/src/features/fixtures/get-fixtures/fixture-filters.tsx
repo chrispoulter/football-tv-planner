@@ -51,7 +51,7 @@ export function FixtureFilters({
                 disabled={disabled}
             >
                 <SelectTrigger
-                    className="w-full sm:flex-1"
+                    className="w-full sm:w-56"
                     aria-label="Competition"
                 >
                     <SelectValue />
@@ -74,7 +74,7 @@ export function FixtureFilters({
                 disabled={disabled}
             >
                 <SelectTrigger
-                    className="w-full sm:flex-1"
+                    className="w-full sm:w-56"
                     aria-label="Broadcaster"
                 >
                     <SelectValue />

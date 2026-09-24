@@ -1,5 +1,13 @@
 import { Link } from 'react-router';
 import { Button } from '@/components/ui/button';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { Metadata } from '@/components/metadata';
 import { QueryError } from '@/components/query-error';
 import { toDisplay } from '@/lib/dates';
@@ -25,74 +33,85 @@ export function ProfilePage() {
         return <QueryError error={error} />;
     }
 
+    const details = [
+        { label: 'Email Address', value: profile.emailAddress },
+        { label: 'Name', value: `${profile.firstName} ${profile.lastName}` },
+        { label: 'Date Of Birth', value: toDisplay(profile.dateOfBirth) },
+        {
+            label: 'Reminder Before Kick-off',
+            value: toReminderLabel(profile.reminderMinutesBefore ?? 0),
+        },
+    ];
+
     return (
-        <main className="mx-auto max-w-screen-sm space-y-6 p-6">
+        <div className="mx-auto w-full max-w-2xl space-y-6">
             <Metadata title="My Account" />
 
-            <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight text-balance">
-                My Account
-            </h1>
+            <div>
+                <h1 className="text-2xl font-bold tracking-tight">
+                    My Account
+                </h1>
+                <p className="text-sm text-muted-foreground">
+                    Manage your account settings
+                </p>
+            </div>
 
-            <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight">
-                Personal Details
-            </h2>
+            <Card>
+                <CardHeader>
+                    <CardTitle>Personal Details</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <dl className="grid gap-4 sm:grid-cols-2">
+                        {details.map(({ label, value }) => (
+                            <div key={label} className="space-y-1">
+                                <dt className="text-sm font-medium">{label}</dt>
+                                <dd className="truncate text-sm text-muted-foreground">
+                                    {value}
+                                </dd>
+                            </div>
+                        ))}
+                    </dl>
+                </CardContent>
+                <CardFooter>
+                    <Button asChild className="w-full sm:w-auto">
+                        <Link to="/profile/update-profile">Update Profile</Link>
+                    </Button>
+                </CardFooter>
+            </Card>
 
-            <dl className="space-y-2">
-                <dt className="text-sm leading-none font-medium">
-                    Email Address
-                </dt>
-                <dd className="truncate text-sm text-muted-foreground">
-                    {profile.emailAddress}
-                </dd>
-                <dt className="text-sm leading-none font-medium">Name</dt>
-                <dd className="truncate text-sm text-muted-foreground">
-                    {profile.firstName} {profile.lastName}
-                </dd>
-                <dt className="text-sm leading-none font-medium">
-                    Date Of Birth
-                </dt>
-                <dd className="truncate text-sm text-muted-foreground">
-                    {toDisplay(profile.dateOfBirth)}
-                </dd>
-                <dt className="text-sm leading-none font-medium">
-                    Reminder Before Kick-off
-                </dt>
-                <dd className="truncate text-sm text-muted-foreground">
-                    {toReminderLabel(profile.reminderMinutesBefore ?? 0)}
-                </dd>
-            </dl>
+            <Card>
+                <CardHeader>
+                    <CardTitle>Login Details</CardTitle>
+                    <CardDescription>
+                        Choose a strong password and don&apos;t reuse it for
+                        other accounts. For security reasons, change your
+                        password on a regular basis.
+                    </CardDescription>
+                </CardHeader>
+                <CardFooter>
+                    <Button asChild className="w-full sm:w-auto">
+                        <Link to="/profile/change-password">
+                            Change Password
+                        </Link>
+                    </Button>
+                </CardFooter>
+            </Card>
 
-            <Button asChild className="w-full sm:w-auto">
-                <Link to="/profile/update-profile">Update Profile</Link>
-            </Button>
-
-            <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight">
-                Login Details
-            </h2>
-
-            <p className="leading-7">
-                Choose a strong password and don&apos;t reuse it for other
-                accounts. For security reasons, change your password on a
-                regular basis.
-            </p>
-
-            <Button asChild className="w-full sm:w-auto">
-                <Link to="/profile/change-password">Change Password</Link>
-            </Button>
-
-            <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight">
-                Settings
-            </h2>
-
-            <p className="leading-7">
-                Once you delete your account all of your data and settings will
-                be removed. Please be certain.
-            </p>
-
-            <DeleteAccountButton
-                disabled={isFetching}
-                className="w-full sm:w-auto"
-            />
-        </main>
+            <Card>
+                <CardHeader>
+                    <CardTitle>Danger Zone</CardTitle>
+                    <CardDescription>
+                        Once you delete your account all of your data and
+                        settings will be removed. Please be certain.
+                    </CardDescription>
+                </CardHeader>
+                <CardFooter>
+                    <DeleteAccountButton
+                        disabled={isFetching}
+                        className="w-full sm:w-auto"
+                    />
+                </CardFooter>
+            </Card>
+        </div>
     );
 }

@@ -1,23 +1,29 @@
 import { Link } from 'react-router';
 import { Button } from '@/components/ui/button';
 import { Metadata } from '@/components/metadata';
+import { Card, CardContent } from '@/components/ui/card';
 
 export function ForbiddenPage() {
     return (
-        <main className="mx-auto max-w-screen-sm space-y-6 p-6">
-            <Metadata title="Forbidden" />
+        <div className="flex flex-1 items-center justify-center">
+            <Card className="w-full max-w-md">
+                <CardContent className="space-y-6">
+                    <Metadata title="Forbidden" />
 
-            <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight text-balance">
-                Forbidden
-            </h1>
+                    <div className="space-y-1">
+                        <h1 className="text-2xl font-bold tracking-tight">
+                            Forbidden
+                        </h1>
+                        <p className="text-sm text-muted-foreground">
+                            Sorry, you do not have access to this resource.
+                        </p>
+                    </div>
 
-            <p className="leading-7">
-                Sorry, you do not have access to this resource.
-            </p>
-
-            <Button asChild className="w-full sm:w-auto">
-                <Link to="/">Home</Link>
-            </Button>
-        </main>
+                    <Button asChild className="w-full sm:w-auto">
+                        <Link to="/">Home</Link>
+                    </Button>
+                </CardContent>
+            </Card>
+        </div>
     );
 }

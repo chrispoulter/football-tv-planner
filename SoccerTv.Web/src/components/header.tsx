@@ -5,18 +5,13 @@ import { UserMenu } from './user-menu';
 
 export function Header() {
     return (
-        <header className="mb-6 border-b">
-            <div className="mx-auto flex max-w-screen-sm items-center gap-2 px-6 py-4 sm:px-0">
-                <div className="flex items-center gap-2">
-                    <Link
-                        to="/"
-                        className="scroll-m-20 text-xl font-semibold tracking-tight"
-                    >
-                        Soccer TV
-                    </Link>
-                </div>
+        <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
+            <div className="container mx-auto flex h-14 items-center justify-between px-4">
+                <Link to="/" className="font-semibold">
+                    Soccer TV
+                </Link>
 
-                <div className="ml-auto flex items-center gap-2">
+                <div className="flex items-center gap-2">
                     <MainMenu />
                     <ModeToggle />
                     <UserMenu />

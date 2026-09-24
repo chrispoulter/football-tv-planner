@@ -6,6 +6,7 @@ import {
     ResetPasswordForm,
     type ResetPasswordFormValues,
 } from './reset-password-form';
+import { Card, CardContent } from '@/components/ui/card';
 
 type ResetPasswordPageParams = { token: string };
 
@@ -33,20 +34,26 @@ export function ResetPasswordPage() {
     }
 
     return (
-        <main className="mx-auto max-w-screen-sm space-y-6 p-6">
-            <Metadata title="Reset Password" />
+        <div className="flex flex-1 items-center justify-center">
+            <Card className="w-full max-w-md">
+                <CardContent className="space-y-6">
+                    <Metadata title="Reset Password" />
 
-            <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight text-balance">
-                Reset Password
-            </h1>
+                    <div className="space-y-1">
+                        <h1 className="text-2xl font-bold tracking-tight">
+                            Reset Password
+                        </h1>
+                        <p className="text-sm text-muted-foreground">
+                            Reset your password below. Choose a strong password
+                            and don&apos;t reuse it for other accounts. For
+                            security reasons, change your password on a regular
+                            basis.
+                        </p>
+                    </div>
 
-            <p className="leading-7">
-                Reset your password below. Choose a strong password and
-                don&apos;t reuse it for other accounts. For security reasons,
-                change your password on a regular basis.
-            </p>
-
-            <ResetPasswordForm loading={isSaving} onSubmit={onSubmit} />
-        </main>
+                    <ResetPasswordForm loading={isSaving} onSubmit={onSubmit} />
+                </CardContent>
+            </Card>
+        </div>
     );
 }

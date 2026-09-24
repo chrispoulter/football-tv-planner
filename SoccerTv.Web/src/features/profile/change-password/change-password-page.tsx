@@ -7,6 +7,13 @@ import {
     ChangePasswordForm,
     type ChangePasswordFormValues,
 } from './change-password-form';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 
 export function ChangePasswordPage() {
     const navigate = useNavigate();
@@ -24,28 +31,30 @@ export function ChangePasswordPage() {
     }
 
     return (
-        <main className="mx-auto max-w-screen-sm space-y-6 p-6">
+        <div className="mx-auto w-full max-w-2xl space-y-6">
             <Metadata title="Change Password" />
 
-            <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight text-balance">
-                Change Password
-            </h1>
-
-            <p className="leading-7">
-                Change your password below. Choose a strong password and
-                don&apos;t reuse it for other accounts. For security reasons,
-                change your password on a regular basis.
-            </p>
-
-            <ChangePasswordForm
-                onSubmit={onSubmit}
-                loading={isSaving}
-                disabled={isSaving}
-            >
-                <Button asChild variant="outline">
-                    <Link to="/profile">Cancel</Link>
-                </Button>
-            </ChangePasswordForm>
+            <Card>
+                <CardHeader>
+                    <CardTitle className="text-2xl">Change Password</CardTitle>
+                    <CardDescription>
+                        Change your password below. Choose a strong password and
+                        don&apos;t reuse it for other accounts. For security
+                        reasons, change your password on a regular basis.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <ChangePasswordForm
+                        onSubmit={onSubmit}
+                        loading={isSaving}
+                        disabled={isSaving}
+                    >
+                        <Button asChild variant="outline">
+                            <Link to="/profile">Cancel</Link>
+                        </Button>
+                    </ChangePasswordForm>
+                </CardContent>
+            </Card>
 
             <p className="text-sm text-muted-foreground">
                 Forgotten your password?{' '}
@@ -56,6 +65,6 @@ export function ChangePasswordPage() {
                     Request reset
                 </Link>
             </p>
-        </main>
+        </div>
     );
 }

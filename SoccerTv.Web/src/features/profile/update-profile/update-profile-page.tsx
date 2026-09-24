@@ -9,6 +9,13 @@ import {
     type UpdateProfileFormValues,
 } from './update-profile-form';
 import { UpdateProfileLoading } from './update-profile-loading';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 
 export function UpdateProfilePage() {
     const navigate = useNavigate();
@@ -42,28 +49,30 @@ export function UpdateProfilePage() {
     }
 
     return (
-        <main className="mx-auto max-w-screen-sm space-y-6 p-6">
+        <div className="mx-auto w-full max-w-2xl space-y-6">
             <Metadata title="Update Profile" />
 
-            <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight text-balance">
-                Update Profile
-            </h1>
-
-            <p className="leading-7">
-                Update your personal details below. Your email address is used
-                to login to your account.
-            </p>
-
-            <UpdateProfileForm
-                profile={profile}
-                onSubmit={onSubmit}
-                disabled={isFetching || isSaving}
-                loading={isSaving}
-            >
-                <Button asChild variant="outline">
-                    <Link to="/profile">Cancel</Link>
-                </Button>
-            </UpdateProfileForm>
-        </main>
+            <Card>
+                <CardHeader>
+                    <CardTitle className="text-2xl">Update Profile</CardTitle>
+                    <CardDescription>
+                        Update your personal details below. Your email address
+                        is used to login to your account.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <UpdateProfileForm
+                        profile={profile}
+                        onSubmit={onSubmit}
+                        disabled={isFetching || isSaving}
+                        loading={isSaving}
+                    >
+                        <Button asChild variant="outline">
+                            <Link to="/profile">Cancel</Link>
+                        </Button>
+                    </UpdateProfileForm>
+                </CardContent>
+            </Card>
+        </div>
     );
 }

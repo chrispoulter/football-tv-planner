@@ -43,7 +43,7 @@ export function DayStrip({ date, onChange, disabled }: DayStripProps) {
                 <span className="sr-only">Previous day</span>
             </Button>
 
-            <div className="flex flex-1 gap-1 overflow-x-auto py-1">
+            <div className="flex min-w-0 flex-1 gap-1 overflow-x-auto py-1">
                 {days.map((day) => {
                     const selected = day === date;
 

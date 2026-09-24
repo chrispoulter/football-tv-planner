@@ -15,7 +15,7 @@ export function FixtureCard({ fixture }: FixtureCardProps) {
         fixture.status === 'Cancelled' || fixture.status === 'Postponed';
 
     return (
-        <div className="flex items-start gap-4 rounded-lg border p-4">
+        <div className="flex items-start gap-4 py-3">
             <div className="w-12 shrink-0 pt-0.5 text-lg font-semibold tabular-nums">
                 {toLocalTime(fixture.kickoffUtc)}
             </div>

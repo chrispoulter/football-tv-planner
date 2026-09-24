@@ -69,12 +69,10 @@ export function FixturesPage() {
     }
 
     return (
-        <main className="mx-auto max-w-screen-sm space-y-6 p-6">
+        <div className="space-y-6">
             <Metadata title="Soccer on TV" />
 
-            <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight text-balance">
-                Soccer on TV
-            </h1>
+            <h1 className="text-2xl font-bold tracking-tight">Soccer on TV</h1>
 
             <DayStrip
                 date={request.date}
@@ -92,7 +90,7 @@ export function FixturesPage() {
                 }
             />
 
-            <h2 className="scroll-m-20 text-2xl font-semibold tracking-tight">
+            <h2 className="text-lg font-semibold">
                 {toLongDayLabel(request.date)}
             </h2>
 
@@ -134,6 +132,6 @@ export function FixturesPage() {
                     </EmptyHeader>
                 </Empty>
             )}
-        </main>
+        </div>
     );
 }

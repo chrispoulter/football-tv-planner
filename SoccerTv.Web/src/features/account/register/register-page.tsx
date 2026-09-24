@@ -3,6 +3,7 @@ import { toast } from 'sonner';
 import { Metadata } from '@/components/metadata';
 import { useRegister } from '../account-queries';
 import { RegisterForm, type RegisterFormValues } from './register-form';
+import { Card, CardContent } from '@/components/ui/card';
 
 export function RegisterPage() {
     const navigate = useNavigate();
@@ -20,29 +21,34 @@ export function RegisterPage() {
     }
 
     return (
-        <main className="mx-auto max-w-screen-sm space-y-6 p-6">
-            <Metadata title="Register" />
+        <div className="flex flex-1 items-center justify-center">
+            <Card className="w-full max-w-md">
+                <CardContent className="space-y-6">
+                    <Metadata title="Register" />
 
-            <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight text-balance">
-                Register
-            </h1>
+                    <div className="space-y-1">
+                        <h1 className="text-2xl font-bold tracking-tight">
+                            Register
+                        </h1>
+                        <p className="text-sm text-muted-foreground">
+                            Register for a new account to access the full range
+                            of features available on this site.
+                        </p>
+                    </div>
 
-            <p className="leading-7">
-                Register for a new account to access the full range of features
-                available on this site.
-            </p>
+                    <RegisterForm loading={isSaving} onSubmit={onSubmit} />
 
-            <RegisterForm loading={isSaving} onSubmit={onSubmit} />
-
-            <p className="text-sm text-muted-foreground">
-                Already have an account?{' '}
-                <Link
-                    to="/account/login"
-                    className="underline underline-offset-4"
-                >
-                    Log in now
-                </Link>
-            </p>
-        </main>
+                    <p className="text-sm text-muted-foreground">
+                        Already have an account?{' '}
+                        <Link
+                            to="/account/login"
+                            className="underline underline-offset-4"
+                        >
+                            Log in now
+                        </Link>
+                    </p>
+                </CardContent>
+            </Card>
+        </div>
     );
 }
