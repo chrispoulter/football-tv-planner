@@ -32,9 +32,9 @@ export function UserMenu() {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="icon" className="rounded-full">
+                <Button variant="ghost" size="icon" className="rounded-full">
                     <Avatar>
-                        <AvatarFallback>
+                        <AvatarFallback className="bg-primary text-primary-foreground">
                             {user.given_name[0]}
                             {user.family_name[0]}
                         </AvatarFallback>
@@ -42,15 +42,15 @@ export function UserMenu() {
                     <span className="sr-only">Toggle profile menu</span>
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56">
-                <DropdownMenuLabel className="space-y-0.5">
-                    <div className="truncate text-sm font-medium">
+            <DropdownMenuContent align="end" className="w-48">
+                <div className="px-2 py-1.5">
+                    <p className="truncate text-sm font-medium">
                         {user.given_name} {user.family_name}
-                    </div>
-                    <div className="truncate text-sm text-muted-foreground">
+                    </p>
+                    <p className="truncate text-xs text-muted-foreground">
                         {user.email}
-                    </div>
-                </DropdownMenuLabel>
+                    </p>
+                </div>
 
                 <DropdownMenuSeparator />
 
