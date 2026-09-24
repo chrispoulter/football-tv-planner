@@ -3,5 +3,5 @@ interface MetadataProps {
 }
 
 export function Metadata({ title }: MetadataProps) {
-    return <title>{`${title} // Soccer TV`}</title>;
+    return <title>{`${title} | Soccer TV`}</title>;
 }
