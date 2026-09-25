@@ -22,8 +22,6 @@ var api = builder
     .WithReference(mailpit)
     .WaitFor(mailpit);
 
-// Runs a single sync once the API (which owns the migrations) is up; re-run it from the
-// dashboard to refresh fixtures.
 builder
     .AddProject<Projects.SoccerTv_FixtureSync>("fixture-sync")
     .WithReference(database)

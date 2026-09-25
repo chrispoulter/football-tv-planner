@@ -63,19 +63,9 @@ public static class Extensions
 
         builder
             .Services.AddOpenTelemetry()
-            .ConfigureResource(resource =>
-            {
-                resource.AddService(
-                    serviceName: builder.Configuration["OTEL_SERVICE_NAME"]
-                        ?? builder.Environment.ApplicationName,
-                    serviceVersion
-                );
-            })
             .WithMetrics(metrics =>
             {
                 metrics
-                    .AddMeter("SoccerTv.Api")
-                    .AddMeter("SoccerTv.Api.Common.Email")
                     .AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation()
                     .AddRuntimeInstrumentation();
@@ -83,8 +73,7 @@ public static class Extensions
             .WithTracing(tracing =>
             {
                 tracing
-                    .AddSource("SoccerTv.Api")
-                    .AddSource("SoccerTv.Api.Common.Email")
+                    .AddSource(builder.Environment.ApplicationName)
                     .AddAspNetCoreInstrumentation(tracing =>
                     {
                         // Exclude health check requests from tracing

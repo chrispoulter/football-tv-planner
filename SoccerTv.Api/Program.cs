@@ -4,7 +4,6 @@ using SoccerTv.Api.Common.Authentication;
 using SoccerTv.Api.Common.Database;
 using SoccerTv.Api.Common.Email;
 using SoccerTv.Api.Common.Infrastructure;
-using SoccerTv.Api.Common.Telemetry;
 using SoccerTv.Api.Data;
 
 var assembly = Assembly.GetExecutingAssembly();
@@ -27,7 +26,6 @@ builder.Services.AddProblemDetails();
 builder.ConfigureJsonOptions();
 builder.AddAuthentication();
 builder.AddSecurityServices();
-builder.AddTelemetryServices();
 builder.AddCors();
 builder.AddOpenApi(serviceVersion);
 

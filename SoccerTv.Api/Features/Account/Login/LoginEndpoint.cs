@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SoccerTv.Api.Common.Authentication;
 using SoccerTv.Api.Common.Infrastructure;
-using SoccerTv.Api.Common.Telemetry;
 using SoccerTv.Api.Common.Validation;
 using SoccerTv.Api.Data;
 
@@ -24,7 +23,6 @@ public class LoginEndpoint : IEndpoint
         SoccerTvDbContext dbContext,
         IHashService hashService,
         IJwtService jwtService,
-        AppMetrics appMetrics,
         CancellationToken cancellationToken = default
     )
     {
@@ -39,8 +37,6 @@ public class LoginEndpoint : IEndpoint
 
         if (user is null || user.Password is null)
         {
-            appMetrics.RecordLoginAttempt("invalid_credentials");
-
             return Results.Problem(
                 statusCode: StatusCodes.Status400BadRequest,
                 title: "The credentials provided were invalid."
@@ -51,8 +47,6 @@ public class LoginEndpoint : IEndpoint
 
         if (!verified)
         {
-            appMetrics.RecordLoginAttempt("invalid_credentials");
-
             return Results.Problem(
                 statusCode: StatusCodes.Status400BadRequest,
                 title: "The credentials provided were invalid."
@@ -61,8 +55,6 @@ public class LoginEndpoint : IEndpoint
 
         if (user.IsLockedOut)
         {
-            appMetrics.RecordLoginAttempt("locked_out");
-
             return Results.Problem(
                 statusCode: StatusCodes.Status400BadRequest,
                 title: "This account has been locked out, please try again later."
@@ -71,8 +63,6 @@ public class LoginEndpoint : IEndpoint
 
         var token = jwtService.GenerateJwtToken(user);
         var result = new LoginResponse(token);
-
-        appMetrics.RecordLoginAttempt("success");
 
         return Results.Ok(result);
     }
