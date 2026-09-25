@@ -1,3 +1,5 @@
+using SoccerTv.Api.Common.Fixtures.LiveFootballOnTv;
+
 namespace SoccerTv.Api.Common.Fixtures;
 
 public static class FixtureSyncExtensions
@@ -16,6 +18,18 @@ public static class FixtureSyncExtensions
         {
             case "Mock":
                 builder.Services.AddSingleton<IFixtureProvider, MockFixtureProvider>();
+                break;
+
+            case "LiveFootballOnTv":
+                builder.Services.Configure<LiveFootballOnTvSettings>(
+                    builder.Configuration.GetSection(LiveFootballOnTvSettings.SectionName)
+                );
+                builder.Services.AddHttpClient(
+                    LiveFootballOnTvFixtureProvider.HttpClientName,
+                    client =>
+                        client.DefaultRequestHeaders.UserAgent.ParseAdd("SoccerTvSchedule/1.0")
+                );
+                builder.Services.AddSingleton<IFixtureProvider, LiveFootballOnTvFixtureProvider>();
                 break;
 
             default:
