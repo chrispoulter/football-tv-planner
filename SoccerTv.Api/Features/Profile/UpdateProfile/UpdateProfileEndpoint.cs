@@ -61,7 +61,6 @@ public class UpdateProfileEndpoint : IEndpoint
         user.FirstName = request.FirstName;
         user.LastName = request.LastName;
         user.DateOfBirth = request.DateOfBirth;
-        user.ReminderMinutesBefore = request.ReminderMinutesBefore;
 
         await dbContext.SaveChangesAsync(cancellationToken);
 

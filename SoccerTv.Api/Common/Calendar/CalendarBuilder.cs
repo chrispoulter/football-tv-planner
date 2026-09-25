@@ -20,14 +20,11 @@ public static class CalendarBuilder
 {
     public const string ContentType = "text/calendar; charset=utf-8";
 
+    private const int ReminderMinutesBefore = 30;
+
     private static readonly TimeSpan MatchDuration = TimeSpan.FromHours(2);
 
-    public static string Build(
-        IEnumerable<CalendarFixture> fixtures,
-        int reminderMinutesBefore,
-        DateTimeOffset timestamp,
-        string? calendarName = null
-    )
+    public static string Build(IEnumerable<CalendarFixture> fixtures, DateTimeOffset timestamp)
     {
         var sb = new StringBuilder();
 
@@ -37,16 +34,9 @@ public static class CalendarBuilder
         AppendLine(sb, "CALSCALE:GREGORIAN");
         AppendLine(sb, "METHOD:PUBLISH");
 
-        if (calendarName is not null)
-        {
-            AppendLine(sb, $"X-WR-CALNAME:{Escape(calendarName)}");
-            AppendLine(sb, "REFRESH-INTERVAL;VALUE=DURATION:PT1H");
-            AppendLine(sb, "X-PUBLISHED-TTL:PT1H");
-        }
-
         foreach (var fixture in fixtures)
         {
-            AppendEvent(sb, fixture, reminderMinutesBefore, timestamp);
+            AppendEvent(sb, fixture, timestamp);
         }
 
         AppendLine(sb, "END:VCALENDAR");
@@ -57,7 +47,6 @@ public static class CalendarBuilder
     private static void AppendEvent(
         StringBuilder sb,
         CalendarFixture fixture,
-        int reminderMinutesBefore,
         DateTimeOffset timestamp
     )
     {
@@ -76,14 +65,11 @@ public static class CalendarBuilder
         AppendLine(sb, "STATUS:CONFIRMED");
         AppendLine(sb, "TRANSP:TRANSPARENT");
 
-        if (reminderMinutesBefore > 0)
-        {
-            AppendLine(sb, "BEGIN:VALARM");
-            AppendLine(sb, "ACTION:DISPLAY");
-            AppendLine(sb, $"DESCRIPTION:{Escape($"{summary} on {channels}")}");
-            AppendLine(sb, $"TRIGGER:-PT{reminderMinutesBefore}M");
-            AppendLine(sb, "END:VALARM");
-        }
+        AppendLine(sb, "BEGIN:VALARM");
+        AppendLine(sb, "ACTION:DISPLAY");
+        AppendLine(sb, $"DESCRIPTION:{Escape($"{summary} on {channels}")}");
+        AppendLine(sb, $"TRIGGER:-PT{ReminderMinutesBefore}M");
+        AppendLine(sb, "END:VALARM");
 
         AppendLine(sb, "END:VEVENT");
     }

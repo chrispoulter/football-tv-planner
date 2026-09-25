@@ -40,8 +40,7 @@ public class GetProfileEndpoint : IEndpoint
             user.EmailAddress,
             user.FirstName,
             user.LastName,
-            user.DateOfBirth,
-            user.ReminderMinutesBefore
+            user.DateOfBirth
         );
 
         return Results.Ok(result);

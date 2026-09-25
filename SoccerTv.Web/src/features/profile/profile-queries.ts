@@ -12,7 +12,6 @@ export interface GetProfileResponse {
     firstName: string;
     lastName: string;
     dateOfBirth: string;
-    reminderMinutesBefore?: number;
 }
 
 export const useGetProfile = () => {
@@ -37,7 +36,6 @@ interface UpdateProfileRequest {
     firstName: string;
     lastName: string;
     dateOfBirth: string;
-    reminderMinutesBefore: number;
 }
 
 interface UpdateProfileResponse {

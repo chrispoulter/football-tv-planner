@@ -1,24 +1,10 @@
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { DateField } from '@/components/form/date-field';
 import { TextField } from '@/components/form/text-field';
 import { LoadingButton } from '@/components/loading-button';
-import {
-    Field,
-    FieldDescription,
-    FieldError,
-    FieldLabel,
-} from '@/components/ui/field';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
 import { isInPast } from '@/lib/dates';
-import { reminderOptions } from '@/lib/reminders';
 import type { GetProfileResponse } from '../profile-queries';
 
 const schema = z.object({
@@ -34,11 +20,6 @@ const schema = z.object({
     dateOfBirth: z.iso
         .date('Date Of Birth must be a valid date')
         .refine(isInPast, { message: 'Date Of Birth must be in the past' }),
-    reminderMinutesBefore: z
-        .number({ message: 'Reminder must be a valid number' })
-        .int()
-        .min(0)
-        .max(1440),
 });
 
 export type UpdateProfileFormValues = z.infer<typeof schema>;
@@ -60,10 +41,7 @@ export function UpdateProfileForm({
 }: UpdateProfileFormProps) {
     const form = useForm<UpdateProfileFormValues>({
         resolver: zodResolver(schema),
-        values: {
-            ...profile,
-            reminderMinutesBefore: profile.reminderMinutesBefore ?? 0,
-        },
+        values: profile,
     });
 
     return (
@@ -111,50 +89,6 @@ export function UpdateProfileForm({
                 label="Date Of Birth"
                 required
                 disabled={disabled}
-            />
-
-            <Controller
-                name="reminderMinutesBefore"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                    <Field data-invalid={fieldState.invalid}>
-                        <FieldLabel htmlFor={field.name}>
-                            Reminder Before Kick-off
-                        </FieldLabel>
-                        <Select
-                            value={String(field.value)}
-                            onValueChange={(value) =>
-                                field.onChange(Number(value))
-                            }
-                            disabled={disabled}
-                        >
-                            <SelectTrigger
-                                id={field.name}
-                                className="w-full"
-                                aria-invalid={fieldState.invalid}
-                            >
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {reminderOptions.map(({ value, label }) => (
-                                    <SelectItem
-                                        key={value}
-                                        value={String(value)}
-                                    >
-                                        {label}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                        <FieldDescription>
-                            Used for the alarm on games you add to your
-                            calendar.
-                        </FieldDescription>
-                        {fieldState.invalid && (
-                            <FieldError errors={[fieldState.error]} />
-                        )}
-                    </Field>
-                )}
             />
 
             <div className="flex flex-col-reverse justify-end gap-2 sm:flex-row">

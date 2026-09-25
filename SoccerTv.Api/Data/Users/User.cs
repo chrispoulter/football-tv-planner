@@ -23,9 +23,5 @@ public class User : IJwtUser
 
     public bool IsLockedOut { get; set; }
 
-    public string? CalendarFeedToken { get; set; }
-
-    public int ReminderMinutesBefore { get; set; } = 30;
-
     public NpgsqlTsVector SearchVector { get; } = null!;
 }

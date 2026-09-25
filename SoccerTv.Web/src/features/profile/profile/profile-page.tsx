@@ -11,7 +11,6 @@ import {
 import { Metadata } from '@/components/metadata';
 import { QueryError } from '@/components/query-error';
 import { toDisplay } from '@/lib/dates';
-import { toReminderLabel } from '@/lib/reminders';
 import { useGetProfile } from '../profile-queries';
 import { DeleteAccountButton } from './delete-account-button';
 import { ProfileLoading } from './profile-loading';
@@ -37,10 +36,6 @@ export function ProfilePage() {
         { label: 'Email Address', value: profile.emailAddress },
         { label: 'Name', value: `${profile.firstName} ${profile.lastName}` },
         { label: 'Date Of Birth', value: toDisplay(profile.dateOfBirth) },
-        {
-            label: 'Reminder Before Kick-off',
-            value: toReminderLabel(profile.reminderMinutesBefore ?? 0),
-        },
     ];
 
     return (

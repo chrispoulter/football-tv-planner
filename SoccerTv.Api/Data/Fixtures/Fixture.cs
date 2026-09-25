@@ -16,8 +16,5 @@ public class Fixture
 
     public DateTimeOffset KickoffUtc { get; set; }
 
-    /// <summary>
-    /// Stored in display order.
-    /// </summary>
     public List<string> Channels { get; set; } = [];
 }

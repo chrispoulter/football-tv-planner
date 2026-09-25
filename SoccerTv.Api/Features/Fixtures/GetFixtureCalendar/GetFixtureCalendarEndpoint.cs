@@ -1,6 +1,5 @@
 using System.Text;
 using Microsoft.EntityFrameworkCore;
-using SoccerTv.Api.Common.Authentication;
 using SoccerTv.Api.Common.Calendar;
 using SoccerTv.Api.Common.Infrastructure;
 using SoccerTv.Api.Data;
@@ -9,8 +8,6 @@ namespace SoccerTv.Api.Features.Fixtures.GetFixtureCalendar;
 
 public class GetFixtureCalendarEndpoint : IEndpoint
 {
-    private const int DefaultReminderMinutesBefore = 30;
-
     public void MapEndpoints(IEndpointRouteBuilder app)
     {
         app.MapGet("/fixtures/{id:guid}/calendar.ics", HandleAsync)
@@ -19,13 +16,12 @@ public class GetFixtureCalendarEndpoint : IEndpoint
             .WithTags(Tags.Fixtures)
             .WithSummary("Get Fixture Calendar Event")
             .WithDescription(
-                "Download a fixture as an iCalendar (.ics) event, with a reminder based on the current user's settings."
+                "Download a fixture as an iCalendar (.ics) event, with a reminder 30 minutes before kick-off."
             );
     }
 
     private static async Task<IResult> HandleAsync(
         Guid id,
-        CurrentUser? currentUser,
         SoccerTvDbContext dbContext,
         TimeProvider timeProvider,
         CancellationToken cancellationToken = default
@@ -45,23 +41,7 @@ public class GetFixtureCalendarEndpoint : IEndpoint
             );
         }
 
-        var reminderMinutesBefore = DefaultReminderMinutesBefore;
-
-        if (currentUser is not null)
-        {
-            reminderMinutesBefore =
-                await dbContext
-                    .Users.Where(u => u.Id == currentUser.Id)
-                    .Select(u => (int?)u.ReminderMinutesBefore)
-                    .FirstOrDefaultAsync(cancellationToken)
-                ?? DefaultReminderMinutesBefore;
-        }
-
-        var calendar = CalendarBuilder.Build(
-            [fixture],
-            reminderMinutesBefore,
-            timeProvider.GetUtcNow()
-        );
+        var calendar = CalendarBuilder.Build([fixture], timeProvider.GetUtcNow());
 
         var fileName = $"{fixture.HomeTeam} v {fixture.AwayTeam}.ics";
 

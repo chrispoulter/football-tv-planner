@@ -7,8 +7,7 @@ public record UpdateProfileRequest(
     string EmailAddress,
     string FirstName,
     string LastName,
-    DateOnly DateOfBirth,
-    int ReminderMinutesBefore
+    DateOnly DateOfBirth
 );
 
 public class UpdateProfileRequestValidator : AbstractValidator<UpdateProfileRequest>
@@ -24,8 +23,5 @@ public class UpdateProfileRequestValidator : AbstractValidator<UpdateProfileRequ
         RuleFor(x => x.FirstName).NotEmpty().MaximumLength(50).WithName("First Name");
         RuleFor(x => x.LastName).NotEmpty().MaximumLength(50).WithName("Last Name");
         RuleFor(x => x.DateOfBirth).NotEmpty().InThePast(timeProvider).WithName("Date Of Birth");
-        RuleFor(x => x.ReminderMinutesBefore)
-            .InclusiveBetween(0, 1440)
-            .WithName("Reminder Minutes Before");
     }
 }
