@@ -9,33 +9,33 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { useGetCompetitions, useGetProviders } from '../fixtures-queries';
+import { useGetChannels, useGetCompetitions } from '../fixtures-queries';
 
 const ALL = 'all';
 
 interface FixtureFiltersProps {
     competition?: string;
-    provider?: string;
+    channel?: string;
     mine?: boolean;
     onCompetitionChange: (competition?: string) => void;
-    onProviderChange: (provider?: string) => void;
+    onChannelChange: (channel?: string) => void;
     onMineChange: (mine: boolean) => void;
     disabled?: boolean;
 }
 
 export function FixtureFilters({
     competition,
-    provider,
+    channel,
     mine,
     onCompetitionChange,
-    onProviderChange,
+    onChannelChange,
     onMineChange,
     disabled,
 }: FixtureFiltersProps) {
     const { user } = useAuth();
 
     const { data: competitions } = useGetCompetitions();
-    const { data: providers = [] } = useGetProviders();
+    const { data: channels = [] } = useGetChannels();
 
     return (
         <div className="flex flex-col gap-2 sm:flex-row">
@@ -63,21 +63,18 @@ export function FixtureFilters({
             </Select>
 
             <Select
-                value={provider ?? ALL}
+                value={channel ?? ALL}
                 onValueChange={(value) =>
-                    onProviderChange(value === ALL ? undefined : value)
+                    onChannelChange(value === ALL ? undefined : value)
                 }
                 disabled={disabled}
             >
-                <SelectTrigger
-                    className="w-full sm:w-56"
-                    aria-label="Broadcaster"
-                >
+                <SelectTrigger className="w-full sm:w-56" aria-label="Channel">
                     <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value={ALL}>All broadcasters</SelectItem>
-                    {providers.map((name) => (
+                    <SelectItem value={ALL}>All channels</SelectItem>
+                    {channels.map((name) => (
                         <SelectItem key={name} value={name}>
                             {name}
                         </SelectItem>

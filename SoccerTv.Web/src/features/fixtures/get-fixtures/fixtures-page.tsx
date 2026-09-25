@@ -31,7 +31,7 @@ const searchParamsSchema = z.object({
         .refine(isDateString)
         .catch(() => todayLocal()),
     competition: z.string().optional().catch(undefined),
-    provider: z.string().optional().catch(undefined),
+    channel: z.string().optional().catch(undefined),
     mine: z
         .string()
         .optional()
@@ -52,7 +52,7 @@ export function FixturesPage() {
         useGetFixtures({
             ...toUtcDayRange(request.date),
             competition: request.competition,
-            provider: request.provider,
+            channel: request.channel,
             bookmarked: mine,
         });
 
@@ -81,9 +81,9 @@ export function FixturesPage() {
 
             <FixtureFilters
                 competition={request.competition}
-                provider={request.provider}
+                channel={request.channel}
                 onCompetitionChange={(value) => setParam('competition', value)}
-                onProviderChange={(value) => setParam('provider', value)}
+                onChannelChange={(value) => setParam('channel', value)}
                 mine={mine}
                 onMineChange={(value) =>
                     setParam('mine', value ? 'true' : undefined)

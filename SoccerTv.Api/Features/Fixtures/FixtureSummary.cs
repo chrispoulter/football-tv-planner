@@ -12,11 +12,9 @@ public record FixtureSummary(
     string Competition,
     string HomeTeam,
     string AwayTeam,
-    List<ChannelSummary> Channels,
+    List<string> Channels,
     bool IsBookmarked
 );
-
-public record ChannelSummary(string Name, string Provider, ChannelType Type);
 
 public static class FixtureProjections
 {
@@ -31,7 +29,7 @@ public static class FixtureProjections
             f.Competition,
             f.HomeTeam,
             f.AwayTeam,
-            f.Channels.Select(c => new ChannelSummary(c.Name, c.Provider, c.Type)).ToList(),
+            f.Channels,
             userId != null
                 && dbContext.UserFixtures.Any(uf => uf.UserId == userId && uf.FixtureId == f.Id)
         );
@@ -43,7 +41,7 @@ public static class FixtureProjections
             f.HomeTeam,
             f.AwayTeam,
             f.Competition,
-            f.Channels.Select(c => c.Name).ToList(),
+            f.Channels,
             f.Status == FixtureStatus.Cancelled
         );
 }

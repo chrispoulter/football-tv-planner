@@ -17,7 +17,7 @@ public class GetFixturesEndpoint : IEndpoint
             .WithTags(Tags.Fixtures)
             .WithSummary("Get Fixtures")
             .WithDescription(
-                "List the televised fixtures kicking off in a UTC time range (typically the viewer's local day), optionally filtered by competition, broadcaster or the current user's schedule."
+                "List the televised fixtures kicking off in a UTC time range (typically the viewer's local day), optionally filtered by competition, channel or the current user's schedule."
             );
     }
 
@@ -48,9 +48,9 @@ public class GetFixturesEndpoint : IEndpoint
             query = query.Where(f => f.Competition == request.Competition);
         }
 
-        if (!string.IsNullOrEmpty(request.Provider))
+        if (!string.IsNullOrEmpty(request.Channel))
         {
-            query = query.Where(f => f.Channels.Any(c => c.Provider == request.Provider));
+            query = query.Where(f => f.Channels.Contains(request.Channel));
         }
 
         if (request.Bookmarked == true && currentUser is not null)

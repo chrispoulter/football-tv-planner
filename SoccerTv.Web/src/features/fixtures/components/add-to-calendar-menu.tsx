@@ -26,7 +26,7 @@ interface AddToCalendarMenuProps {
 export function AddToCalendarMenu({ fixture }: AddToCalendarMenuProps) {
     const { mutate: downloadCalendar } = useDownloadFixtureCalendar();
 
-    const channels = fixture.channels.map((c) => c.name).join(', ');
+    const channels = fixture.channels.join(', ');
 
     const event = {
         title: `${fixture.homeTeam} v ${fixture.awayTeam}`,

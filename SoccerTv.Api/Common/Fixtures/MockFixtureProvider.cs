@@ -117,57 +117,17 @@ public class MockFixtureProvider : IFixtureProvider
         params ProviderChannel[] channels
     ) => new(day, new TimeOnly(hour, minute), channels);
 
-    private static readonly ProviderChannel SkyMainEvent = new(
-        "Sky Sports Main Event",
-        "Sky",
-        ChannelType.Tv,
-        10
-    );
-    private static readonly ProviderChannel SkyPremierLeague = new(
-        "Sky Sports Premier League",
-        "Sky",
-        ChannelType.Tv,
-        11
-    );
-    private static readonly ProviderChannel SkyFootball = new(
-        "Sky Sports Football",
-        "Sky",
-        ChannelType.Tv,
-        12
-    );
-    private static readonly ProviderChannel SkyPlus = new(
-        "Sky Sports+",
-        "Sky",
-        ChannelType.Streaming,
-        13
-    );
-    private static readonly ProviderChannel Tnt1 = new("TNT Sports 1", "TNT", ChannelType.Tv, 20);
-    private static readonly ProviderChannel Tnt2 = new("TNT Sports 2", "TNT", ChannelType.Tv, 21);
-    private static readonly ProviderChannel PrimeVideo = new(
-        "Amazon Prime Video",
-        "Amazon",
-        ChannelType.Streaming,
-        30
-    );
-    private static readonly ProviderChannel BbcTwo = new("BBC Two", "BBC", ChannelType.Tv, 40);
-    private static readonly ProviderChannel BbcIplayer = new(
-        "BBC iPlayer",
-        "BBC",
-        ChannelType.Streaming,
-        41
-    );
-    private static readonly ProviderChannel Premier1 = new(
-        "Premier Sports 1",
-        "Premier Sports",
-        ChannelType.Tv,
-        60
-    );
-    private static readonly ProviderChannel Premier2 = new(
-        "Premier Sports 2",
-        "Premier Sports",
-        ChannelType.Tv,
-        61
-    );
+    private static readonly ProviderChannel SkyMainEvent = new("Sky Sports Main Event", 10);
+    private static readonly ProviderChannel SkyPremierLeague = new("Sky Sports Premier League", 11);
+    private static readonly ProviderChannel SkyFootball = new("Sky Sports Football", 12);
+    private static readonly ProviderChannel SkyPlus = new("Sky Sports+", 13);
+    private static readonly ProviderChannel Tnt1 = new("TNT Sports 1", 20);
+    private static readonly ProviderChannel Tnt2 = new("TNT Sports 2", 21);
+    private static readonly ProviderChannel PrimeVideo = new("Amazon Prime Video", 30);
+    private static readonly ProviderChannel BbcTwo = new("BBC Two", 40);
+    private static readonly ProviderChannel BbcIplayer = new("BBC iPlayer", 41);
+    private static readonly ProviderChannel Premier1 = new("Premier Sports 1", 60);
+    private static readonly ProviderChannel Premier2 = new("Premier Sports 2", 61);
 
     private static readonly MockCompetition[] Competitions =
     [

@@ -112,15 +112,7 @@ public class FixtureSyncService(
             fixture.Status = item.Status;
             fixture.Channels =
             [
-                .. item
-                    .Channels.OrderBy(c => c.SortOrder)
-                    .ThenBy(c => c.Name)
-                    .Select(c => new FixtureChannel
-                    {
-                        Name = c.Name,
-                        Provider = c.Provider,
-                        Type = c.Type,
-                    }),
+                .. item.Channels.OrderBy(c => c.SortOrder).ThenBy(c => c.Name).Select(c => c.Name),
             ];
         }
 

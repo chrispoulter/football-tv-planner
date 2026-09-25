@@ -39,7 +39,7 @@ export function FixtureCard({ fixture }: FixtureCardProps) {
                         <Badge variant="destructive">{fixture.status}</Badge>
                     )}
                     {fixture.channels.map((channel) => (
-                        <ChannelBadge key={channel.name} channel={channel} />
+                        <ChannelBadge key={channel} channel={channel} />
                     ))}
                 </div>
             </div>

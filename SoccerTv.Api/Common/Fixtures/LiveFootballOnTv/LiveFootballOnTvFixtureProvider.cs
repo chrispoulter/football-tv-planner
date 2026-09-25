@@ -160,8 +160,8 @@ public partial class LiveFootballOnTvFixtureProvider(
 
         // Keep a broadcaster's channels together, with TV ahead of its streaming services.
         return isStreaming
-            ? new ProviderChannel(name, rule.Provider, ChannelType.Streaming, rule.SortOrder + 1)
-            : new ProviderChannel(name, rule.Provider, ChannelType.Tv, rule.SortOrder);
+            ? new ProviderChannel(name, rule.SortOrder + 1)
+            : new ProviderChannel(name, rule.SortOrder);
     }
 
     private ProviderCompetition GetCompetition(string text)

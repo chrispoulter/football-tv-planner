@@ -6,18 +6,10 @@ export const fixtureKeys = {
     all: ['fixtures'] as const,
     list: (request: GetFixturesRequest) => ['fixtures', request] as const,
     competitions: ['competitions'] as const,
-    providers: ['providers'] as const,
+    channels: ['channels'] as const,
 };
 
-export type ChannelType = 'Tv' | 'Streaming';
-
 export type FixtureStatus = 'Scheduled' | 'Postponed' | 'Cancelled';
-
-export interface ChannelSummary {
-    name: string;
-    provider: string;
-    type?: ChannelType;
-}
 
 export interface FixtureSummary {
     id: string;
@@ -26,7 +18,7 @@ export interface FixtureSummary {
     competition: string;
     homeTeam: string;
     awayTeam: string;
-    channels: ChannelSummary[];
+    channels: string[];
     isBookmarked?: boolean;
 }
 
@@ -34,7 +26,7 @@ interface GetFixturesRequest {
     from: string;
     to: string;
     competition?: string;
-    provider?: string;
+    channel?: string;
     bookmarked?: boolean;
 }
 
@@ -77,11 +69,11 @@ export const useGetCompetitions = () =>
         staleTime: 1000 * 60 * 60,
     });
 
-export const useGetProviders = () =>
+export const useGetChannels = () =>
     useQuery({
-        queryKey: fixtureKeys.providers,
+        queryKey: fixtureKeys.channels,
         queryFn: ({ signal }) =>
-            apiClient.get('providers', { signal }).json<string[]>(),
+            apiClient.get('channels', { signal }).json<string[]>(),
         staleTime: 1000 * 60 * 60,
     });
 

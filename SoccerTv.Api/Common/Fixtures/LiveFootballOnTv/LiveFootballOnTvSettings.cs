@@ -14,8 +14,8 @@ public class LiveFootballOnTvSettings
     public List<ChannelRule> Channels { get; set; } = [];
 
     /// <summary>
-    /// A kept channel is treated as streaming when its name contains any of these, and as
-    /// TV otherwise.
+    /// A kept channel is treated as streaming when its name contains any of these, and is
+    /// listed after the same broadcaster's TV channels.
     /// </summary>
     public List<string> StreamingKeywords { get; set; } = [];
 
@@ -29,8 +29,6 @@ public class LiveFootballOnTvSettings
 public class ChannelRule
 {
     public string Match { get; set; } = "";
-
-    public string Provider { get; set; } = "";
 
     public int SortOrder { get; set; }
 }

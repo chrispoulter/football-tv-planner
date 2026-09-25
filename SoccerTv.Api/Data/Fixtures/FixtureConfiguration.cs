@@ -28,16 +28,7 @@ public class FixtureConfiguration : IEntityTypeConfiguration<Fixture>
             .HasConversion<string>()
             .IsRequired();
 
-        builder.OwnsMany(
-            f => f.Channels,
-            channels =>
-            {
-                channels.ToJson("channels");
-                channels.Property(c => c.Name).HasJsonPropertyName("name");
-                channels.Property(c => c.Provider).HasJsonPropertyName("provider");
-                channels.Property(c => c.Type).HasJsonPropertyName("type").HasConversion<string>();
-            }
-        );
+        builder.Property(f => f.Channels).HasColumnName("channels").IsRequired();
 
         builder.HasKey(f => f.Id).HasName("pk_fixtures");
         builder

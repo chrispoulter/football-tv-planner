@@ -14,4 +14,4 @@ public record ProviderFixture(
 
 public record ProviderCompetition(string Name, int SortOrder);
 
-public record ProviderChannel(string Name, string Provider, ChannelType Type, int SortOrder);
+public record ProviderChannel(string Name, int SortOrder);

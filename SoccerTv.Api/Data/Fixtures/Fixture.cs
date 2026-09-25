@@ -23,5 +23,5 @@ public class Fixture
     /// <summary>
     /// Stored in display order.
     /// </summary>
-    public List<FixtureChannel> Channels { get; set; } = [];
+    public List<string> Channels { get; set; } = [];
 }
