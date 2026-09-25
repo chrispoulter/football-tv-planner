@@ -1,10 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using SoccerTv.Api.Data;
-using SoccerTv.Api.Data.Channels;
-using SoccerTv.Api.Data.Competitions;
 using SoccerTv.Api.Data.Fixtures;
-using SoccerTv.Api.Data.Teams;
 
 namespace SoccerTv.Api.Common.Fixtures;
 
@@ -86,20 +83,13 @@ public class FixtureSyncService(
         using var scope = serviceProvider.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<SoccerTvDbContext>();
 
-        var competitions = await UpsertCompetitionsAsync(dbContext, items, cancellationToken);
-        var teams = await UpsertTeamsAsync(dbContext, items, cancellationToken);
-        var channels = await UpsertChannelsAsync(dbContext, items, cancellationToken);
-
-        await dbContext.SaveChangesAsync(cancellationToken);
-
         var externalIds = items.Select(i => i.ExternalId).ToList();
 
         var fixtures = await dbContext
-            .Fixtures.Include(f => f.Broadcasts)
-            .Where(f => f.Source == fixtureProvider.Source && externalIds.Contains(f.ExternalId))
+            .Fixtures.Where(f =>
+                f.Source == fixtureProvider.Source && externalIds.Contains(f.ExternalId)
+            )
             .ToDictionaryAsync(f => f.ExternalId, cancellationToken);
-
-        var now = timeProvider.GetUtcNow();
 
         foreach (var item in items)
         {
@@ -114,109 +104,28 @@ public class FixtureSyncService(
                 fixtures.Add(item.ExternalId, fixture);
             }
 
-            fixture.CompetitionId = competitions[item.Competition.Name].Id;
-            fixture.HomeTeamId = teams[item.HomeTeam.Name].Id;
-            fixture.AwayTeamId = teams[item.AwayTeam.Name].Id;
+            fixture.Competition = item.Competition.Name;
+            fixture.CompetitionSortOrder = item.Competition.SortOrder;
+            fixture.HomeTeam = item.HomeTeam;
+            fixture.AwayTeam = item.AwayTeam;
             fixture.KickoffUtc = item.KickoffUtc;
-            fixture.Venue = item.Venue;
             fixture.Status = item.Status;
-            fixture.UpdatedAt = now;
-
-            var channelIds = item.Channels.Select(c => channels[c.Name].Id).ToHashSet();
-
-            fixture.Broadcasts.RemoveAll(b => !channelIds.Contains(b.ChannelId));
-
-            foreach (var channelId in channelIds)
-            {
-                if (!fixture.Broadcasts.Any(b => b.ChannelId == channelId))
-                {
-                    fixture.Broadcasts.Add(new FixtureBroadcast { ChannelId = channelId });
-                }
-            }
+            fixture.Channels =
+            [
+                .. item
+                    .Channels.OrderBy(c => c.SortOrder)
+                    .ThenBy(c => c.Name)
+                    .Select(c => new FixtureChannel
+                    {
+                        Name = c.Name,
+                        Provider = c.Provider,
+                        Type = c.Type,
+                    }),
+            ];
         }
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
         logger.LogInformation("Synced {Count} fixtures", items.Count);
-    }
-
-    private static async Task<Dictionary<string, Competition>> UpsertCompetitionsAsync(
-        SoccerTvDbContext dbContext,
-        IEnumerable<ProviderFixture> items,
-        CancellationToken cancellationToken
-    )
-    {
-        var existing = await dbContext.Competitions.ToDictionaryAsync(
-            c => c.Name,
-            cancellationToken
-        );
-
-        foreach (var source in items.Select(i => i.Competition).DistinctBy(c => c.Name))
-        {
-            if (!existing.TryGetValue(source.Name, out var competition))
-            {
-                competition = new Competition { Name = source.Name };
-                dbContext.Competitions.Add(competition);
-                existing.Add(source.Name, competition);
-            }
-
-            competition.ShortName = source.ShortName;
-            competition.Country = source.Country;
-            competition.SortOrder = source.SortOrder;
-        }
-
-        return existing;
-    }
-
-    private static async Task<Dictionary<string, Team>> UpsertTeamsAsync(
-        SoccerTvDbContext dbContext,
-        IEnumerable<ProviderFixture> items,
-        CancellationToken cancellationToken
-    )
-    {
-        var existing = await dbContext.Teams.ToDictionaryAsync(t => t.Name, cancellationToken);
-
-        foreach (
-            var source in items
-                .SelectMany(i => new[] { i.HomeTeam, i.AwayTeam })
-                .DistinctBy(t => t.Name)
-        )
-        {
-            if (!existing.TryGetValue(source.Name, out var team))
-            {
-                team = new Team { Name = source.Name };
-                dbContext.Teams.Add(team);
-                existing.Add(source.Name, team);
-            }
-
-            team.ShortName = source.ShortName;
-        }
-
-        return existing;
-    }
-
-    private static async Task<Dictionary<string, Channel>> UpsertChannelsAsync(
-        SoccerTvDbContext dbContext,
-        IEnumerable<ProviderFixture> items,
-        CancellationToken cancellationToken
-    )
-    {
-        var existing = await dbContext.Channels.ToDictionaryAsync(c => c.Name, cancellationToken);
-
-        foreach (var source in items.SelectMany(i => i.Channels).DistinctBy(c => c.Name))
-        {
-            if (!existing.TryGetValue(source.Name, out var channel))
-            {
-                channel = new Channel { Name = source.Name };
-                dbContext.Channels.Add(channel);
-                existing.Add(source.Name, channel);
-            }
-
-            channel.Provider = source.Provider;
-            channel.Type = source.Type;
-            channel.SortOrder = source.SortOrder;
-        }
-
-        return existing;
     }
 }

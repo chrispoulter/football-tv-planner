@@ -37,9 +37,5 @@ public class ChannelRule
 
 public class CompetitionOverride
 {
-    public string? ShortName { get; set; }
-
-    public string? Country { get; set; }
-
     public int? SortOrder { get; set; }
 }

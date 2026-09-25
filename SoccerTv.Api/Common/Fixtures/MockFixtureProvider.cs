@@ -1,6 +1,5 @@
 using System.Globalization;
 using SoccerTv.Api.Common.Time;
-using SoccerTv.Api.Data.Channels;
 using SoccerTv.Api.Data.Fixtures;
 
 namespace SoccerTv.Api.Common.Fixtures;
@@ -66,7 +65,6 @@ public class MockFixtureProvider : IFixtureProvider
                             HomeTeam: teams[2 * j],
                             AwayTeam: teams[2 * j + 1],
                             KickoffUtc: UkTime.ToUtc(date, slot.Time),
-                            Venue: null,
                             Status: FixtureStatus.Scheduled,
                             Channels: slot.Channels
                         )
@@ -106,7 +104,7 @@ public class MockFixtureProvider : IFixtureProvider
     private record MockCompetition(
         string Code,
         ProviderCompetition Competition,
-        ProviderTeam[] Teams,
+        string[] Teams,
         Slot[] WeekendSlots,
         Slot[] MidweekSlots,
         MidweekWeeks Midweek
@@ -118,15 +116,6 @@ public class MockFixtureProvider : IFixtureProvider
         int minute,
         params ProviderChannel[] channels
     ) => new(day, new TimeOnly(hour, minute), channels);
-
-    private static ProviderTeam[] Teams(params string[] names) =>
-        [
-            .. names.Select(n =>
-                n.Split('|') is [var name, var shortName]
-                    ? new ProviderTeam(name, shortName)
-                    : new ProviderTeam(n, n)
-            ),
-        ];
 
     private static readonly ProviderChannel SkyMainEvent = new(
         "Sky Sports Main Event",
@@ -184,29 +173,30 @@ public class MockFixtureProvider : IFixtureProvider
     [
         new(
             Code: "epl",
-            Competition: new("Premier League", "PL", "England", 10),
-            Teams: Teams(
+            Competition: new("Premier League", 10),
+            Teams:
+            [
                 "Arsenal",
                 "Aston Villa",
                 "Bournemouth",
                 "Brentford",
-                "Brighton & Hove Albion|Brighton",
+                "Brighton & Hove Albion",
                 "Burnley",
                 "Chelsea",
                 "Crystal Palace",
                 "Everton",
                 "Fulham",
-                "Leeds United|Leeds",
+                "Leeds United",
                 "Liverpool",
-                "Manchester City|Man City",
-                "Manchester United|Man Utd",
-                "Newcastle United|Newcastle",
-                "Nottingham Forest|Nott'm Forest",
+                "Manchester City",
+                "Manchester United",
+                "Newcastle United",
+                "Nottingham Forest",
                 "Sunderland",
-                "Tottenham Hotspur|Spurs",
-                "West Ham United|West Ham",
-                "Wolverhampton Wanderers|Wolves"
-            ),
+                "Tottenham Hotspur",
+                "West Ham United",
+                "Wolverhampton Wanderers",
+            ],
             WeekendSlots:
             [
                 At(DayOfWeek.Friday, 20, 0, SkyMainEvent, SkyPremierLeague),
@@ -221,33 +211,34 @@ public class MockFixtureProvider : IFixtureProvider
         ),
         new(
             Code: "efl-champ",
-            Competition: new("Championship", "Champ", "England", 20),
-            Teams: Teams(
-                "Birmingham City|Birmingham",
-                "Blackburn Rovers|Blackburn",
+            Competition: new("Championship", 20),
+            Teams:
+            [
+                "Birmingham City",
+                "Blackburn Rovers",
                 "Bristol City",
-                "Charlton Athletic|Charlton",
-                "Coventry City|Coventry",
-                "Derby County|Derby",
-                "Hull City|Hull",
-                "Ipswich Town|Ipswich",
-                "Leicester City|Leicester",
+                "Charlton Athletic",
+                "Coventry City",
+                "Derby County",
+                "Hull City",
+                "Ipswich Town",
+                "Leicester City",
                 "Middlesbrough",
                 "Millwall",
-                "Norwich City|Norwich",
-                "Oxford United|Oxford",
+                "Norwich City",
+                "Oxford United",
                 "Portsmouth",
-                "Preston North End|Preston",
-                "Queens Park Rangers|QPR",
-                "Sheffield United|Sheff Utd",
-                "Sheffield Wednesday|Sheff Wed",
+                "Preston North End",
+                "Queens Park Rangers",
+                "Sheffield United",
+                "Sheffield Wednesday",
                 "Southampton",
-                "Stoke City|Stoke",
-                "Swansea City|Swansea",
+                "Stoke City",
+                "Swansea City",
                 "Watford",
-                "West Bromwich Albion|West Brom",
-                "Wrexham"
-            ),
+                "West Bromwich Albion",
+                "Wrexham",
+            ],
             WeekendSlots:
             [
                 At(DayOfWeek.Friday, 20, 0, SkyFootball),
@@ -266,27 +257,28 @@ public class MockFixtureProvider : IFixtureProvider
         ),
         new(
             Code: "ucl",
-            Competition: new("UEFA Champions League", "UCL", "Europe", 30),
-            Teams: Teams(
+            Competition: new("UEFA Champions League", 30),
+            Teams:
+            [
                 "Arsenal",
                 "Liverpool",
-                "Manchester City|Man City",
+                "Manchester City",
                 "Chelsea",
-                "Tottenham Hotspur|Spurs",
-                "Newcastle United|Newcastle",
+                "Tottenham Hotspur",
+                "Newcastle United",
                 "Real Madrid",
                 "Barcelona",
                 "Bayern Munich",
-                "Paris Saint-Germain|PSG",
-                "Inter Milan|Inter",
-                "Borussia Dortmund|Dortmund",
+                "Paris Saint-Germain",
+                "Inter Milan",
+                "Borussia Dortmund",
                 "Juventus",
                 "Benfica",
-                "PSV Eindhoven|PSV",
-                "Atlético Madrid|Atlético",
+                "PSV Eindhoven",
+                "Atlético Madrid",
                 "Napoli",
-                "Celtic"
-            ),
+                "Celtic",
+            ],
             WeekendSlots: [],
             MidweekSlots:
             [
@@ -301,21 +293,22 @@ public class MockFixtureProvider : IFixtureProvider
         ),
         new(
             Code: "uel",
-            Competition: new("UEFA Europa League", "UEL", "Europe", 40),
-            Teams: Teams(
+            Competition: new("UEFA Europa League", 40),
+            Teams:
+            [
                 "Aston Villa",
-                "Nottingham Forest|Nott'm Forest",
+                "Nottingham Forest",
                 "Rangers",
                 "Roma",
                 "Lyon",
                 "Porto",
                 "Fenerbahçe",
-                "AZ Alkmaar|AZ",
-                "Real Betis|Betis",
-                "Eintracht Frankfurt|Frankfurt",
+                "AZ Alkmaar",
+                "Real Betis",
+                "Eintracht Frankfurt",
                 "Lille",
-                "Braga"
-            ),
+                "Braga",
+            ],
             WeekendSlots: [],
             MidweekSlots:
             [
@@ -327,21 +320,22 @@ public class MockFixtureProvider : IFixtureProvider
         ),
         new(
             Code: "spfl",
-            Competition: new("Scottish Premiership", "SPFL", "Scotland", 50),
-            Teams: Teams(
+            Competition: new("Scottish Premiership", 50),
+            Teams:
+            [
                 "Aberdeen",
                 "Celtic",
                 "Dundee",
-                "Dundee United|Dundee Utd",
+                "Dundee United",
                 "Falkirk",
-                "Heart of Midlothian|Hearts",
-                "Hibernian|Hibs",
+                "Heart of Midlothian",
+                "Hibernian",
                 "Kilmarnock",
                 "Livingston",
                 "Motherwell",
                 "Rangers",
-                "St Mirren"
-            ),
+                "St Mirren",
+            ],
             WeekendSlots:
             [
                 At(DayOfWeek.Saturday, 12, 30, SkyFootball),
@@ -352,21 +346,22 @@ public class MockFixtureProvider : IFixtureProvider
         ),
         new(
             Code: "wsl",
-            Competition: new("Women's Super League", "WSL", "England", 60),
-            Teams: Teams(
+            Competition: new("Women's Super League", 60),
+            Teams:
+            [
                 "Arsenal Women",
                 "Aston Villa Women",
-                "Brighton & Hove Albion Women|Brighton Women",
+                "Brighton & Hove Albion Women",
                 "Chelsea Women",
                 "Everton Women",
                 "Leicester City Women",
                 "Liverpool Women",
                 "London City Lionesses",
-                "Manchester City Women|Man City Women",
-                "Manchester United Women|Man Utd Women",
-                "Tottenham Hotspur Women|Spurs Women",
-                "West Ham United Women|West Ham Women"
-            ),
+                "Manchester City Women",
+                "Manchester United Women",
+                "Tottenham Hotspur Women",
+                "West Ham United Women",
+            ],
             WeekendSlots:
             [
                 At(DayOfWeek.Saturday, 12, 30, BbcTwo, BbcIplayer),
@@ -377,21 +372,22 @@ public class MockFixtureProvider : IFixtureProvider
         ),
         new(
             Code: "laliga",
-            Competition: new("La Liga", "LaLiga", "Spain", 70),
-            Teams: Teams(
+            Competition: new("La Liga", 70),
+            Teams:
+            [
                 "Real Madrid",
                 "Barcelona",
-                "Atlético Madrid|Atlético",
+                "Atlético Madrid",
                 "Athletic Club",
                 "Real Sociedad",
                 "Villarreal",
-                "Real Betis|Betis",
+                "Real Betis",
                 "Sevilla",
                 "Valencia",
                 "Girona",
-                "Celta Vigo|Celta",
-                "Osasuna"
-            ),
+                "Celta Vigo",
+                "Osasuna",
+            ],
             WeekendSlots:
             [
                 At(DayOfWeek.Saturday, 17, 30, Premier2),

@@ -2,18 +2,18 @@ using Microsoft.EntityFrameworkCore;
 using SoccerTv.Api.Common.Infrastructure;
 using SoccerTv.Api.Data;
 
-namespace SoccerTv.Api.Features.Channels.GetChannels;
+namespace SoccerTv.Api.Features.Providers.GetProviders;
 
-public class GetChannelsEndpoint : IEndpoint
+public class GetProvidersEndpoint : IEndpoint
 {
     public void MapEndpoints(IEndpointRouteBuilder app)
     {
-        app.MapGet("/channels", HandleAsync)
+        app.MapGet("/providers", HandleAsync)
             .AllowAnonymous()
-            .Produces<List<GetChannelsResponse>>()
+            .Produces<List<string>>()
             .WithTags(Tags.Fixtures)
-            .WithSummary("Get Channels")
-            .WithDescription("List the TV channels and streaming services showing fixtures.");
+            .WithSummary("Get Providers")
+            .WithDescription("List the broadcasters showing fixtures.");
     }
 
     private static async Task<IResult> HandleAsync(
@@ -21,13 +21,19 @@ public class GetChannelsEndpoint : IEndpoint
         CancellationToken cancellationToken = default
     )
     {
+        // Channels are stored as JSON, so flatten them here rather than in SQL.
         var channels = await dbContext
-            .Channels.AsNoTracking()
-            .OrderBy(c => c.SortOrder)
-            .ThenBy(c => c.Name)
-            .Select(c => new GetChannelsResponse(c.Id, c.Name, c.Provider, c.Type))
+            .Fixtures.AsNoTracking()
+            .Select(f => f.Channels)
             .ToListAsync(cancellationToken);
 
-        return Results.Ok(channels);
+        var providers = channels
+            .SelectMany(c => c)
+            .Select(c => c.Provider)
+            .Distinct()
+            .Order(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        return Results.Ok(providers);
     }
 }

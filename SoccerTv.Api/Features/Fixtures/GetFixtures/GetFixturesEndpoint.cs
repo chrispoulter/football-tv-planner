@@ -43,14 +43,14 @@ public class GetFixturesEndpoint : IEndpoint
             .Fixtures.AsNoTracking()
             .Where(f => f.KickoffUtc >= start && f.KickoffUtc < end);
 
-        if (request.CompetitionId is not null)
+        if (!string.IsNullOrEmpty(request.Competition))
         {
-            query = query.Where(f => f.CompetitionId == request.CompetitionId);
+            query = query.Where(f => f.Competition == request.Competition);
         }
 
         if (!string.IsNullOrEmpty(request.Provider))
         {
-            query = query.Where(f => f.Broadcasts.Any(b => b.Channel.Provider == request.Provider));
+            query = query.Where(f => f.Channels.Any(c => c.Provider == request.Provider));
         }
 
         if (request.Bookmarked == true && currentUser is not null)
@@ -64,7 +64,7 @@ public class GetFixturesEndpoint : IEndpoint
 
         var fixtures = await query
             .OrderBy(f => f.KickoffUtc)
-            .ThenBy(f => f.Competition.SortOrder)
+            .ThenBy(f => f.CompetitionSortOrder)
             .Select(FixtureProjections.ToSummary(dbContext, currentUser?.Id))
             .ToListAsync(cancellationToken);
 

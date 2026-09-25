@@ -28,9 +28,9 @@ export function FixtureCard({ fixture }: FixtureCardProps) {
                             isOff && 'text-muted-foreground line-through'
                         )}
                     >
-                        {fixture.homeTeam.name}{' '}
+                        {fixture.homeTeam}{' '}
                         <span className="text-muted-foreground">v</span>{' '}
-                        {fixture.awayTeam.name}
+                        {fixture.awayTeam}
                     </div>
                 </div>
 
@@ -39,7 +39,7 @@ export function FixtureCard({ fixture }: FixtureCardProps) {
                         <Badge variant="destructive">{fixture.status}</Badge>
                     )}
                     {fixture.channels.map((channel) => (
-                        <ChannelBadge key={channel.id} channel={channel} />
+                        <ChannelBadge key={channel.name} channel={channel} />
                     ))}
                 </div>
             </div>

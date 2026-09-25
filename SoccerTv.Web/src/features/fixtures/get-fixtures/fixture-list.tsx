@@ -14,17 +14,17 @@ export function FixtureList({ fixtures }: FixtureListProps) {
     const groups = new Map<string, FixtureSummary[]>();
 
     for (const fixture of fixtures) {
-        const group = groups.get(fixture.competition.id) ?? [];
+        const group = groups.get(fixture.competition) ?? [];
         group.push(fixture);
-        groups.set(fixture.competition.id, group);
+        groups.set(fixture.competition, group);
     }
 
     return (
         <div className="space-y-4">
             {Array.from(groups.values()).map((group) => (
-                <Card key={group[0].competition.id} className="gap-2">
+                <Card key={group[0].competition} className="gap-2">
                     <CardHeader>
-                        <CardTitle>{group[0].competition.name}</CardTitle>
+                        <CardTitle>{group[0].competition}</CardTitle>
                     </CardHeader>
                     <CardContent className="divide-y">
                         {group.map((fixture) => (

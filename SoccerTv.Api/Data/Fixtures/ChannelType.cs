@@ -1,4 +1,4 @@
-namespace SoccerTv.Api.Data.Channels;
+namespace SoccerTv.Api.Data.Fixtures;
 
 public enum ChannelType
 {

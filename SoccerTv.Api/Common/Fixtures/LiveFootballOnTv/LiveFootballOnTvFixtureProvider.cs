@@ -4,7 +4,6 @@ using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
 using Microsoft.Extensions.Options;
 using SoccerTv.Api.Common.Time;
-using SoccerTv.Api.Data.Channels;
 using SoccerTv.Api.Data.Fixtures;
 
 namespace SoccerTv.Api.Common.Fixtures.LiveFootballOnTv;
@@ -138,10 +137,9 @@ public partial class LiveFootballOnTvFixtureProvider(
         return new ProviderFixture(
             ExternalId: $"lfotv-{date:yyyyMMdd}-{Slug(home)}-{Slug(away)}",
             Competition: GetCompetition(competitionText),
-            HomeTeam: new ProviderTeam(home, home),
-            AwayTeam: new ProviderTeam(away, away),
+            HomeTeam: home,
+            AwayTeam: away,
             KickoffUtc: UkTime.ToUtc(date, time),
-            Venue: null,
             Status: FixtureStatus.Scheduled,
             Channels: channels
         );
@@ -174,12 +172,7 @@ public partial class LiveFootballOnTvFixtureProvider(
 
         _settings.Competitions.TryGetValue(name, out var competition);
 
-        return new ProviderCompetition(
-            name,
-            competition?.ShortName ?? name,
-            competition?.Country ?? "",
-            competition?.SortOrder ?? DefaultCompetitionSortOrder
-        );
+        return new ProviderCompetition(name, competition?.SortOrder ?? DefaultCompetitionSortOrder);
     }
 
     private static DateOnly? ParseDate(string text)

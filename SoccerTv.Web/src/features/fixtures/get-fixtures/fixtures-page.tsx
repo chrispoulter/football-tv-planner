@@ -51,7 +51,7 @@ export function FixturesPage() {
     const { data, isPending, isPlaceholderData, isSuccess, error } =
         useGetFixtures({
             ...toUtcDayRange(request.date),
-            competitionId: request.competition,
+            competition: request.competition,
             provider: request.provider,
             bookmarked: mine,
         });
@@ -80,7 +80,7 @@ export function FixturesPage() {
             />
 
             <FixtureFilters
-                competitionId={request.competition}
+                competition={request.competition}
                 provider={request.provider}
                 onCompetitionChange={(value) => setParam('competition', value)}
                 onProviderChange={(value) => setParam('provider', value)}

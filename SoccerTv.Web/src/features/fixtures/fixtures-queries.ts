@@ -6,7 +6,7 @@ export const fixtureKeys = {
     all: ['fixtures'] as const,
     list: (request: GetFixturesRequest) => ['fixtures', request] as const,
     competitions: ['competitions'] as const,
-    channels: ['channels'] as const,
+    providers: ['providers'] as const,
 };
 
 export type ChannelType = 'Tv' | 'Streaming';
@@ -14,7 +14,6 @@ export type ChannelType = 'Tv' | 'Streaming';
 export type FixtureStatus = 'Scheduled' | 'Postponed' | 'Cancelled';
 
 export interface ChannelSummary {
-    id: string;
     name: string;
     provider: string;
     type?: ChannelType;
@@ -24,23 +23,9 @@ export interface FixtureSummary {
     id: string;
     kickoffUtc: string;
     status?: FixtureStatus;
-    competition: {
-        id: string;
-        name: string;
-        shortName: string;
-    };
-    homeTeam: {
-        id: string;
-        name: string;
-        shortName: string;
-        badgeUrl?: string;
-    };
-    awayTeam: {
-        id: string;
-        name: string;
-        shortName: string;
-        badgeUrl?: string;
-    };
+    competition: string;
+    homeTeam: string;
+    awayTeam: string;
     channels: ChannelSummary[];
     isBookmarked?: boolean;
 }
@@ -48,7 +33,7 @@ export interface FixtureSummary {
 interface GetFixturesRequest {
     from: string;
     to: string;
-    competitionId?: string;
+    competition?: string;
     provider?: string;
     bookmarked?: boolean;
 }
@@ -81,10 +66,7 @@ export const useGetFixtures = (request: GetFixturesRequest) => {
 };
 
 export interface Competition {
-    id: string;
     name: string;
-    shortName: string;
-    country: string;
 }
 
 export const useGetCompetitions = () =>
@@ -95,11 +77,11 @@ export const useGetCompetitions = () =>
         staleTime: 1000 * 60 * 60,
     });
 
-export const useGetChannels = () =>
+export const useGetProviders = () =>
     useQuery({
-        queryKey: fixtureKeys.channels,
+        queryKey: fixtureKeys.providers,
         queryFn: ({ signal }) =>
-            apiClient.get('channels', { signal }).json<ChannelSummary[]>(),
+            apiClient.get('providers', { signal }).json<string[]>(),
         staleTime: 1000 * 60 * 60,
     });
 
@@ -119,7 +101,7 @@ export const useDownloadFixtureCalendar = () => {
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = `${fixture.homeTeam.name} v ${fixture.awayTeam.name}.ics`;
+            link.download = `${fixture.homeTeam} v ${fixture.awayTeam}.ics`;
             link.click();
             URL.revokeObjectURL(url);
         },

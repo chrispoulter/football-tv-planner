@@ -1,6 +1,3 @@
-using SoccerTv.Api.Data.Competitions;
-using SoccerTv.Api.Data.Teams;
-
 namespace SoccerTv.Api.Data.Fixtures;
 
 public class Fixture
@@ -11,25 +8,20 @@ public class Fixture
 
     public string ExternalId { get; set; } = null!;
 
-    public Guid CompetitionId { get; set; }
+    public string Competition { get; set; } = null!;
 
-    public Competition Competition { get; set; } = null!;
+    public int CompetitionSortOrder { get; set; }
 
-    public Guid HomeTeamId { get; set; }
+    public string HomeTeam { get; set; } = null!;
 
-    public Team HomeTeam { get; set; } = null!;
-
-    public Guid AwayTeamId { get; set; }
-
-    public Team AwayTeam { get; set; } = null!;
+    public string AwayTeam { get; set; } = null!;
 
     public DateTimeOffset KickoffUtc { get; set; }
 
-    public string? Venue { get; set; }
-
     public FixtureStatus Status { get; set; }
 
-    public DateTimeOffset UpdatedAt { get; set; }
-
-    public List<FixtureBroadcast> Broadcasts { get; set; } = [];
+    /// <summary>
+    /// Stored in display order.
+    /// </summary>
+    public List<FixtureChannel> Channels { get; set; } = [];
 }

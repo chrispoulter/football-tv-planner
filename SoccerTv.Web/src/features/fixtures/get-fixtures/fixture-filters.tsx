@@ -9,22 +9,22 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { useGetChannels, useGetCompetitions } from '../fixtures-queries';
+import { useGetCompetitions, useGetProviders } from '../fixtures-queries';
 
 const ALL = 'all';
 
 interface FixtureFiltersProps {
-    competitionId?: string;
+    competition?: string;
     provider?: string;
     mine?: boolean;
-    onCompetitionChange: (competitionId?: string) => void;
+    onCompetitionChange: (competition?: string) => void;
     onProviderChange: (provider?: string) => void;
     onMineChange: (mine: boolean) => void;
     disabled?: boolean;
 }
 
 export function FixtureFilters({
-    competitionId,
+    competition,
     provider,
     mine,
     onCompetitionChange,
@@ -35,16 +35,12 @@ export function FixtureFilters({
     const { user } = useAuth();
 
     const { data: competitions } = useGetCompetitions();
-    const { data: channels } = useGetChannels();
-
-    const providers = Array.from(
-        new Set(channels?.map((channel) => channel.provider))
-    );
+    const { data: providers = [] } = useGetProviders();
 
     return (
         <div className="flex flex-col gap-2 sm:flex-row">
             <Select
-                value={competitionId ?? ALL}
+                value={competition ?? ALL}
                 onValueChange={(value) =>
                     onCompetitionChange(value === ALL ? undefined : value)
                 }
@@ -58,9 +54,9 @@ export function FixtureFilters({
                 </SelectTrigger>
                 <SelectContent>
                     <SelectItem value={ALL}>All competitions</SelectItem>
-                    {competitions?.map((competition) => (
-                        <SelectItem key={competition.id} value={competition.id}>
-                            {competition.name}
+                    {competitions?.map(({ name }) => (
+                        <SelectItem key={name} value={name}>
+                            {name}
                         </SelectItem>
                     ))}
                 </SelectContent>
