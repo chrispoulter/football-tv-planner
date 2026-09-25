@@ -3,10 +3,8 @@ using System.Text.RegularExpressions;
 using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
 using Microsoft.Extensions.Options;
-using SoccerTv.Api.Common.Time;
-using SoccerTv.Api.Data.Fixtures;
 
-namespace SoccerTv.Api.Common.Fixtures.LiveFootballOnTv;
+namespace SoccerTv.FixtureSync.Providers.LiveFootballOnTv;
 
 /// <summary>
 /// Scrapes the UK televised football listings from live-footballontv.com. The home page

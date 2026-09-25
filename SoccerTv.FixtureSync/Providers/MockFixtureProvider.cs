@@ -1,8 +1,6 @@
 using System.Globalization;
-using SoccerTv.Api.Common.Time;
-using SoccerTv.Api.Data.Fixtures;
 
-namespace SoccerTv.Api.Common.Fixtures;
+namespace SoccerTv.FixtureSync.Providers;
 
 /// <summary>
 /// Generates realistic, deterministic UK televised fixtures so the app can be developed

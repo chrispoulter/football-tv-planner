@@ -46,6 +46,23 @@ services:
       # grafana-otel-lgtm:
       #   condition: service_started
 
+  # Runs one sync and exits; `docker compose run soccer-tv-schedule-fixture-sync` to refresh.
+  soccer-tv-schedule-fixture-sync:
+    image: soccer-tv-schedule-fixture-sync:latest
+    build:
+      context: .
+      dockerfile: ./SoccerTv.FixtureSync/Dockerfile
+    environment:
+      DOTNET_ENVIRONMENT: Development
+      ConnectionStrings__Database: Host=host.docker.internal;Port=5432;Database=soccer_tv_schedule;Username=postgres;Password=password
+      OTEL_SERVICE_NAME: soccer-tv-schedule-fixture-sync
+      OTEL_RESOURCE_ATTRIBUTES: deployment.environment=docker
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://aspire-dashboard:18889
+    restart: "no"
+    depends_on:
+      soccer-tv-schedule-api:
+        condition: service_started
+
   postgres:
     image: postgres:18.3
     user: postgres

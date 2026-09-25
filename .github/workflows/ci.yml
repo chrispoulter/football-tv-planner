@@ -72,6 +72,18 @@ jobs:
           push: true
           provenance: false
 
+      - name: Build and push container image to registry (fixture-sync)
+        uses: docker/build-push-action@v7
+        with:
+          file: ./SoccerTv.FixtureSync/Dockerfile
+          tags: |
+            ghcr.io/${{ env.REPO }}-fixture-sync:${{ env.GitVersion_SemVer }}
+            ghcr.io/${{ env.REPO }}-fixture-sync:${{ env.GitVersion_SemVer }}-${{ env.GitVersion_ShortSha }}
+            ghcr.io/${{ env.REPO }}-fixture-sync:${{ env.GitVersion_PreReleaseLabel || 'latest' }}
+          context: .
+          push: true
+          provenance: false
+
       - name: Build and push container image to registry (web)
         uses: docker/build-push-action@v7
         with:

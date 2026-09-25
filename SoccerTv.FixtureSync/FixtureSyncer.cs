@@ -1,72 +1,27 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using SoccerTv.Api.Data;
-using SoccerTv.Api.Data.Fixtures;
+using SoccerTv.FixtureSync.Data;
+using SoccerTv.FixtureSync.Providers;
 
-namespace SoccerTv.Api.Common.Fixtures;
+namespace SoccerTv.FixtureSync;
 
-public class FixtureSyncService(
-    IServiceProvider serviceProvider,
+public class FixtureSyncer(
+    FixtureSyncDbContext dbContext,
     IFixtureProvider fixtureProvider,
-    IOptions<FixtureProviderSettings> settings,
+    IOptions<FixtureSyncSettings> settings,
     TimeProvider timeProvider,
-    ILogger<FixtureSyncService> logger
-) : BackgroundService
+    ILogger<FixtureSyncer> logger
+)
 {
-    private readonly FixtureProviderSettings _settings = settings.Value;
+    private static readonly TimeSpan SchemaWaitTimeout = TimeSpan.FromMinutes(2);
+    private static readonly TimeSpan SchemaPollInterval = TimeSpan.FromSeconds(2);
 
-    protected override async Task ExecuteAsync(CancellationToken cancellationToken)
+    private readonly FixtureSyncSettings _settings = settings.Value;
+
+    public async Task SyncAsync(CancellationToken cancellationToken)
     {
-        await WaitForDatabaseAsync(cancellationToken);
+        await WaitForSchemaAsync(cancellationToken);
 
-        using var timer = new PeriodicTimer(
-            TimeSpan.FromHours(_settings.SyncIntervalHours),
-            timeProvider
-        );
-
-        do
-        {
-            try
-            {
-                await SyncAsync(cancellationToken);
-            }
-            catch (Exception ex) when (ex is not OperationCanceledException)
-            {
-                logger.LogError(ex, "An error occurred while syncing fixtures");
-            }
-        } while (await timer.WaitForNextTickAsync(cancellationToken));
-    }
-
-    /// <summary>
-    /// Migrations run in a separate hosted service, so wait until the schema is up to date
-    /// before the first sync.
-    /// </summary>
-    private async Task WaitForDatabaseAsync(CancellationToken cancellationToken)
-    {
-        while (!cancellationToken.IsCancellationRequested)
-        {
-            try
-            {
-                using var scope = serviceProvider.CreateScope();
-                var dbContext = scope.ServiceProvider.GetRequiredService<SoccerTvDbContext>();
-                var pending = await dbContext.Database.GetPendingMigrationsAsync(cancellationToken);
-
-                if (!pending.Any())
-                {
-                    return;
-                }
-            }
-            catch (Exception ex) when (ex is not OperationCanceledException)
-            {
-                logger.LogDebug(ex, "Database not ready for fixture sync");
-            }
-
-            await Task.Delay(TimeSpan.FromSeconds(2), timeProvider, cancellationToken);
-        }
-    }
-
-    private async Task SyncAsync(CancellationToken cancellationToken)
-    {
         // Pad by a day either side so every time zone's "today" is covered.
         var from = DateOnly.FromDateTime(timeProvider.GetUtcNow().UtcDateTime).AddDays(-1);
         var to = from.AddDays(_settings.DaysAhead + 1);
@@ -79,9 +34,6 @@ public class FixtureSyncService(
         );
 
         var items = await fixtureProvider.GetFixturesAsync(from, to, cancellationToken);
-
-        using var scope = serviceProvider.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<SoccerTvDbContext>();
 
         var externalIds = items.Select(i => i.ExternalId).ToList();
 
@@ -117,5 +69,50 @@ public class FixtureSyncService(
         await dbContext.SaveChangesAsync(cancellationToken);
 
         logger.LogInformation("Synced {Count} fixtures", items.Count);
+    }
+
+    /// <summary>
+    /// The API creates the schema through its migrations, which may still be running when
+    /// the sync starts (e.g. both launched together by the AppHost), so wait for the table.
+    /// </summary>
+    private async Task WaitForSchemaAsync(CancellationToken cancellationToken)
+    {
+        var deadline = timeProvider.GetUtcNow() + SchemaWaitTimeout;
+
+        while (true)
+        {
+            try
+            {
+                // to_regclass returns null rather than erroring while the table is missing.
+                var exists = await dbContext
+                    .Database.SqlQuery<bool>(
+                        $"SELECT to_regclass('fixtures') IS NOT NULL AS \"Value\""
+                    )
+                    .SingleAsync(cancellationToken);
+
+                if (exists)
+                {
+                    return;
+                }
+
+                if (timeProvider.GetUtcNow() >= deadline)
+                {
+                    throw new TimeoutException(
+                        "The fixtures table was not created in time. Has the API run its migrations?"
+                    );
+                }
+
+                logger.LogInformation("Waiting for the API to create the fixtures table");
+            }
+            catch (Exception ex)
+                when (ex is not OperationCanceledException and not TimeoutException
+                    && timeProvider.GetUtcNow() < deadline
+                )
+            {
+                logger.LogInformation(ex, "Waiting for the database to become available");
+            }
+
+            await Task.Delay(SchemaPollInterval, timeProvider, cancellationToken);
+        }
     }
 }

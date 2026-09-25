@@ -1,4 +1,4 @@
-namespace SoccerTv.Api.Common.Fixtures;
+namespace SoccerTv.FixtureSync.Providers;
 
 public interface IFixtureProvider
 {

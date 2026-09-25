@@ -1,0 +1,32 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace SoccerTv.FixtureSync.Data;
+
+public class FixtureConfiguration : IEntityTypeConfiguration<Fixture>
+{
+    public void Configure(EntityTypeBuilder<Fixture> builder)
+    {
+        // The API's migrations create and own this table.
+        builder.ToTable("fixtures", t => t.ExcludeFromMigrations());
+
+        builder
+            .Property(f => f.Id)
+            .HasColumnName("id")
+            .HasDefaultValueSql("gen_random_uuid()")
+            .ValueGeneratedOnAdd();
+
+        builder.Property(f => f.Source).HasColumnName("source").IsRequired();
+        builder.Property(f => f.ExternalId).HasColumnName("external_id").IsRequired();
+        builder.Property(f => f.Competition).HasColumnName("competition").IsRequired();
+        builder.Property(f => f.HomeTeam).HasColumnName("home_team").IsRequired();
+        builder.Property(f => f.AwayTeam).HasColumnName("away_team").IsRequired();
+        builder.Property(f => f.KickoffUtc).HasColumnName("kickoff_utc");
+        builder.Property(f => f.Channels).HasColumnName("channels").IsRequired();
+
+        builder.HasKey(f => f.Id).HasName("pk_fixtures");
+        builder
+            .HasIndex(f => new { f.Source, f.ExternalId }, "ix_fixtures_source_external_id")
+            .IsUnique();
+    }
+}

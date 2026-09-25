@@ -9,6 +9,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\SoccerTv.Api\SoccerTv.Api.csproj" />
+    <ProjectReference Include="..\SoccerTv.FixtureSync\SoccerTv.FixtureSync.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Aspire.Hosting.JavaScript" Version="13.5.0" />

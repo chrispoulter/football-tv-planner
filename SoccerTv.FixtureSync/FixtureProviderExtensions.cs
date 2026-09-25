@@ -1,20 +1,19 @@
-using SoccerTv.Api.Common.Fixtures.LiveFootballOnTv;
+using SoccerTv.FixtureSync.Providers;
+using SoccerTv.FixtureSync.Providers.LiveFootballOnTv;
 
-namespace SoccerTv.Api.Common.Fixtures;
+namespace SoccerTv.FixtureSync;
 
-public static class FixtureSyncExtensions
+public static class FixtureProviderExtensions
 {
-    public static IHostApplicationBuilder AddFixtureSync(this IHostApplicationBuilder builder)
+    public static IHostApplicationBuilder AddFixtureProvider(this IHostApplicationBuilder builder)
     {
-        var fixtureProviderConfig = builder.Configuration.GetSection(
-            FixtureProviderSettings.SectionName
-        );
-        builder.Services.Configure<FixtureProviderSettings>(fixtureProviderConfig);
+        var fixtureSyncConfig = builder.Configuration.GetSection(FixtureSyncSettings.SectionName);
+        builder.Services.Configure<FixtureSyncSettings>(fixtureSyncConfig);
 
-        var fixtureProviderSettings =
-            fixtureProviderConfig.Get<FixtureProviderSettings>() ?? new FixtureProviderSettings();
+        var fixtureSyncSettings =
+            fixtureSyncConfig.Get<FixtureSyncSettings>() ?? new FixtureSyncSettings();
 
-        switch (fixtureProviderSettings.Provider)
+        switch (fixtureSyncSettings.Provider)
         {
             case "Mock":
                 builder.Services.AddSingleton<IFixtureProvider, MockFixtureProvider>();
@@ -34,11 +33,9 @@ public static class FixtureSyncExtensions
 
             default:
                 throw new InvalidOperationException(
-                    $"Unknown fixture provider '{fixtureProviderSettings.Provider}'."
+                    $"Unknown fixture provider '{fixtureSyncSettings.Provider}'."
                 );
         }
-
-        builder.Services.AddHostedService<FixtureSyncService>();
 
         return builder;
     }

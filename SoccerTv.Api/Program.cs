@@ -3,7 +3,6 @@ using FluentValidation;
 using SoccerTv.Api.Common.Authentication;
 using SoccerTv.Api.Common.Database;
 using SoccerTv.Api.Common.Email;
-using SoccerTv.Api.Common.Fixtures;
 using SoccerTv.Api.Common.Infrastructure;
 using SoccerTv.Api.Common.Telemetry;
 using SoccerTv.Api.Data;
@@ -21,7 +20,6 @@ builder.AddEmailServices(connectionName: "Mail");
 var seedConfig = builder.Configuration.GetSection(SeedSettings.SectionName);
 builder.Services.Configure<SeedSettings>(seedConfig);
 builder.Services.AddMigration<SoccerTvDbContext, SoccerTvDbSeeder>();
-builder.AddFixtureSync();
 
 builder.Services.AddValidatorsFromAssembly(assembly);
 builder.Services.AddProblemDetails();

@@ -21,6 +21,7 @@
   </Folder>
   <Project Path="SoccerTv.Api/SoccerTv.Api.csproj" />
   <Project Path="SoccerTv.AppHost/SoccerTv.AppHost.csproj" />
+  <Project Path="SoccerTv.FixtureSync/SoccerTv.FixtureSync.csproj" />
   <Project Path="SoccerTv.ServiceDefaults/SoccerTv.ServiceDefaults.csproj" />
   <Project Path="SoccerTv.Web/SoccerTv.Web.esproj">
     <Platform Project="AnyCPU" />

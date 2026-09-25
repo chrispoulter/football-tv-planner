@@ -1,4 +1,4 @@
-namespace SoccerTv.Api.Common.Time;
+namespace SoccerTv.FixtureSync.Providers;
 
 /// <summary>
 /// UK broadcasters publish kick-off times in UK local time. Providers use this to convert

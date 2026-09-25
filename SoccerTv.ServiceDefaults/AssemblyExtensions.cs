@@ -1,7 +1,6 @@
-using System.Reflection;
 using System.Text.RegularExpressions;
 
-namespace SoccerTv.Api.Common.Infrastructure;
+namespace System.Reflection;
 
 public static partial class AssemblyExtensions
 {
