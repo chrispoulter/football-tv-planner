@@ -51,7 +51,7 @@ export function FixtureFilters({
                 >
                     <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent position="popper" align="start">
                     <SelectItem value={ALL}>All competitions</SelectItem>
                     {competitions?.map(({ name }) => (
                         <SelectItem key={name} value={name}>
@@ -71,7 +71,7 @@ export function FixtureFilters({
                 <SelectTrigger className="w-full sm:w-56" aria-label="Channel">
                     <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent position="popper" align="start">
                     <SelectItem value={ALL}>All channels</SelectItem>
                     {channels.map((name) => (
                         <SelectItem key={name} value={name}>
