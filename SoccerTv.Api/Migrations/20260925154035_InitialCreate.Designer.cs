@@ -14,8 +14,8 @@ using SoccerTv.Api.Data;
 namespace SoccerTv.Api.Migrations
 {
     [DbContext(typeof(SoccerTvDbContext))]
-    [Migration("20260925152832_ChannelNamesOnly")]
-    partial class ChannelNamesOnly
+    [Migration("20260925154035_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,10 +50,6 @@ namespace SoccerTv.Api.Migrations
                         .HasColumnType("text")
                         .HasColumnName("competition");
 
-                    b.Property<int>("CompetitionSortOrder")
-                        .HasColumnType("integer")
-                        .HasColumnName("competition_sort_order");
-
                     b.Property<string>("ExternalId")
                         .IsRequired()
                         .HasColumnType("text")
@@ -72,11 +68,6 @@ namespace SoccerTv.Api.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("source");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("status");
 
                     b.HasKey("Id")
                         .HasName("pk_fixtures");
@@ -121,10 +112,6 @@ namespace SoccerTv.Api.Migrations
                         .HasColumnName("id")
                         .HasDefaultValueSql("gen_random_uuid()");
 
-                    b.Property<string>("CalendarFeedToken")
-                        .HasColumnType("text")
-                        .HasColumnName("calendar_feed_token");
-
                     b.Property<DateOnly>("DateOfBirth")
                         .HasColumnType("date")
                         .HasColumnName("date_of_birth");
@@ -165,12 +152,6 @@ namespace SoccerTv.Api.Migrations
                         .HasColumnType("text")
                         .HasColumnName("password_reset_token");
 
-                    b.Property<int>("ReminderMinutesBefore")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(30)
-                        .HasColumnName("reminder_minutes_before");
-
                     b.Property<NpgsqlTsVector>("SearchVector")
                         .IsRequired()
                         .ValueGeneratedOnAddOrUpdate()
@@ -181,9 +162,6 @@ namespace SoccerTv.Api.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_users");
-
-                    b.HasIndex(new[] { "CalendarFeedToken" }, "ix_users_calendar_feed_token")
-                        .IsUnique();
 
                     b.HasIndex(new[] { "NormalizedEmailAddress" }, "ix_users_normalized_email_address")
                         .IsUnique();
