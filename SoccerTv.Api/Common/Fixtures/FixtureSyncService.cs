@@ -104,12 +104,10 @@ public class FixtureSyncService(
                 fixtures.Add(item.ExternalId, fixture);
             }
 
-            fixture.Competition = item.Competition.Name;
-            fixture.CompetitionSortOrder = item.Competition.SortOrder;
+            fixture.Competition = item.Competition;
             fixture.HomeTeam = item.HomeTeam;
             fixture.AwayTeam = item.AwayTeam;
             fixture.KickoffUtc = item.KickoffUtc;
-            fixture.Status = item.Status;
             fixture.Channels =
             [
                 .. item.Channels.OrderBy(c => c.SortOrder).ThenBy(c => c.Name).Select(c => c.Name),

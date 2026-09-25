@@ -65,7 +65,6 @@ public class MockFixtureProvider : IFixtureProvider
                             HomeTeam: teams[2 * j],
                             AwayTeam: teams[2 * j + 1],
                             KickoffUtc: UkTime.ToUtc(date, slot.Time),
-                            Status: FixtureStatus.Scheduled,
                             Channels: slot.Channels
                         )
                     );
@@ -103,7 +102,7 @@ public class MockFixtureProvider : IFixtureProvider
 
     private record MockCompetition(
         string Code,
-        ProviderCompetition Competition,
+        string Competition,
         string[] Teams,
         Slot[] WeekendSlots,
         Slot[] MidweekSlots,
@@ -133,7 +132,7 @@ public class MockFixtureProvider : IFixtureProvider
     [
         new(
             Code: "epl",
-            Competition: new("Premier League", 10),
+            Competition: "Premier League",
             Teams:
             [
                 "Arsenal",
@@ -171,7 +170,7 @@ public class MockFixtureProvider : IFixtureProvider
         ),
         new(
             Code: "efl-champ",
-            Competition: new("Championship", 20),
+            Competition: "Championship",
             Teams:
             [
                 "Birmingham City",
@@ -217,7 +216,7 @@ public class MockFixtureProvider : IFixtureProvider
         ),
         new(
             Code: "ucl",
-            Competition: new("UEFA Champions League", 30),
+            Competition: "UEFA Champions League",
             Teams:
             [
                 "Arsenal",
@@ -253,7 +252,7 @@ public class MockFixtureProvider : IFixtureProvider
         ),
         new(
             Code: "uel",
-            Competition: new("UEFA Europa League", 40),
+            Competition: "UEFA Europa League",
             Teams:
             [
                 "Aston Villa",
@@ -280,7 +279,7 @@ public class MockFixtureProvider : IFixtureProvider
         ),
         new(
             Code: "spfl",
-            Competition: new("Scottish Premiership", 50),
+            Competition: "Scottish Premiership",
             Teams:
             [
                 "Aberdeen",
@@ -306,7 +305,7 @@ public class MockFixtureProvider : IFixtureProvider
         ),
         new(
             Code: "wsl",
-            Competition: new("Women's Super League", 60),
+            Competition: "Women's Super League",
             Teams:
             [
                 "Arsenal Women",
@@ -332,7 +331,7 @@ public class MockFixtureProvider : IFixtureProvider
         ),
         new(
             Code: "laliga",
-            Competition: new("La Liga", 70),
+            Competition: "La Liga",
             Teams:
             [
                 "Real Madrid",

@@ -8,7 +8,6 @@ namespace SoccerTv.Api.Features.Fixtures;
 public record FixtureSummary(
     Guid Id,
     DateTimeOffset KickoffUtc,
-    FixtureStatus Status,
     string Competition,
     string HomeTeam,
     string AwayTeam,
@@ -25,7 +24,6 @@ public static class FixtureProjections
         f => new FixtureSummary(
             f.Id,
             f.KickoffUtc,
-            f.Status,
             f.Competition,
             f.HomeTeam,
             f.AwayTeam,
@@ -41,7 +39,6 @@ public static class FixtureProjections
             f.HomeTeam,
             f.AwayTeam,
             f.Competition,
-            f.Channels,
-            f.Status == FixtureStatus.Cancelled
+            f.Channels
         );
 }

@@ -21,8 +21,6 @@ public partial class LiveFootballOnTvFixtureProvider(
 {
     public const string HttpClientName = "LiveFootballOnTv";
 
-    private const int DefaultCompetitionSortOrder = 999;
-
     private readonly LiveFootballOnTvSettings _settings = settings.Value;
 
     public string Source => "LiveFootballOnTv";
@@ -140,7 +138,6 @@ public partial class LiveFootballOnTvFixtureProvider(
             HomeTeam: home,
             AwayTeam: away,
             KickoffUtc: UkTime.ToUtc(date, time),
-            Status: FixtureStatus.Scheduled,
             Channels: channels
         );
     }
@@ -164,15 +161,11 @@ public partial class LiveFootballOnTvFixtureProvider(
             : new ProviderChannel(name, rule.SortOrder);
     }
 
-    private ProviderCompetition GetCompetition(string text)
+    private static string GetCompetition(string text)
     {
         // The competition is followed by the stage (e.g. "Group Stage") after a
         // non-breaking space.
-        var name = text.Split(' ', 2)[0].Trim();
-
-        _settings.Competitions.TryGetValue(name, out var competition);
-
-        return new ProviderCompetition(name, competition?.SortOrder ?? DefaultCompetitionSortOrder);
+        return text.Split(' ', 2)[0].Trim();
     }
 
     private static DateOnly? ParseDate(string text)

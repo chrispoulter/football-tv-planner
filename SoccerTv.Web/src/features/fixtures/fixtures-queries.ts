@@ -9,12 +9,9 @@ export const fixtureKeys = {
     channels: ['channels'] as const,
 };
 
-export type FixtureStatus = 'Scheduled' | 'Postponed' | 'Cancelled';
-
 export interface FixtureSummary {
     id: string;
     kickoffUtc: string;
-    status?: FixtureStatus;
     competition: string;
     homeTeam: string;
     awayTeam: string;

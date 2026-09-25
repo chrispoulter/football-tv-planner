@@ -18,12 +18,6 @@ public class LiveFootballOnTvSettings
     /// listed after the same broadcaster's TV channels.
     /// </summary>
     public List<string> StreamingKeywords { get; set; } = [];
-
-    /// <summary>
-    /// Optional overrides keyed by the competition name as it appears on the site.
-    /// Competitions not listed here are still ingested with default values.
-    /// </summary>
-    public Dictionary<string, CompetitionOverride> Competitions { get; set; } = [];
 }
 
 public class ChannelRule
@@ -31,9 +25,4 @@ public class ChannelRule
     public string Match { get; set; } = "";
 
     public int SortOrder { get; set; }
-}
-
-public class CompetitionOverride
-{
-    public int? SortOrder { get; set; }
 }

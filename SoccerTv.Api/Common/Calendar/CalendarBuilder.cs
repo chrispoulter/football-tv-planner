@@ -9,8 +9,7 @@ public record CalendarFixture(
     string HomeTeam,
     string AwayTeam,
     string Competition,
-    IReadOnlyList<string> Channels,
-    bool IsCancelled
+    IReadOnlyList<string> Channels
 );
 
 /// <summary>
@@ -74,10 +73,10 @@ public static class CalendarBuilder
         AppendLine(sb, $"DESCRIPTION:{Escape($"{fixture.Competition}\nWatch on: {channels}")}");
         AppendLine(sb, $"LOCATION:{Escape(channels)}");
         AppendLine(sb, $"CATEGORIES:{Escape(fixture.Competition)}");
-        AppendLine(sb, $"STATUS:{(fixture.IsCancelled ? "CANCELLED" : "CONFIRMED")}");
+        AppendLine(sb, "STATUS:CONFIRMED");
         AppendLine(sb, "TRANSP:TRANSPARENT");
 
-        if (reminderMinutesBefore > 0 && !fixture.IsCancelled)
+        if (reminderMinutesBefore > 0)
         {
             AppendLine(sb, "BEGIN:VALARM");
             AppendLine(sb, "ACTION:DISPLAY");

@@ -23,11 +23,10 @@ public class GetCompetitionsEndpoint : IEndpoint
     {
         var competitions = await dbContext
             .Fixtures.AsNoTracking()
-            .GroupBy(f => f.Competition)
-            .Select(g => new { Name = g.Key, SortOrder = g.Min(f => f.CompetitionSortOrder) })
-            .OrderBy(c => c.SortOrder)
-            .ThenBy(c => c.Name)
-            .Select(c => new GetCompetitionsResponse(c.Name))
+            .Select(f => f.Competition)
+            .Distinct()
+            .OrderBy(c => c)
+            .Select(c => new GetCompetitionsResponse(c))
             .ToListAsync(cancellationToken);
 
         return Results.Ok(competitions);
