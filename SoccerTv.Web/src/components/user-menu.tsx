@@ -63,7 +63,7 @@ export function UserMenu() {
                 <DropdownMenuSeparator />
 
                 <DropdownMenuItem asChild>
-                    <Link to="/profile">My Account</Link>
+                    <Link to="/profile">Profile</Link>
                 </DropdownMenuItem>
 
                 <DropdownMenuSeparator />

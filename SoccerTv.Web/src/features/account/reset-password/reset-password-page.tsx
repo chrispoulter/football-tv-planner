@@ -41,8 +41,8 @@ export function ResetPasswordPage() {
 
     return (
         <AccountLayout
-            title="Reset Your Password"
-            description="Choose a strong password and don't reuse it for other accounts"
+            title="Reset your password"
+            description="Enter your new password below"
             footer={
                 <AccountLink to="/account/login">Back to sign in</AccountLink>
             }

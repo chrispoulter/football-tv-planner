@@ -50,7 +50,7 @@ export function ConfirmEmailPage() {
             footer={
                 !isPending && (
                     <AccountLink to={user ? '/profile' : '/account/login'}>
-                        {user ? 'Back to my account' : 'Sign in'}
+                        {user ? 'Back to profile' : 'Sign in'}
                     </AccountLink>
                 )
             }

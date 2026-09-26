@@ -17,8 +17,8 @@ export function DangerTab() {
                 <CardHeader>
                     <CardTitle>Delete Account</CardTitle>
                     <CardDescription>
-                        Permanently delete your account, your schedule and your
-                        calendar feed. This cannot be undone.
+                        Permanently delete your account and all associated data.
+                        This cannot be undone.
                     </CardDescription>
                 </CardHeader>
                 <CardContent>

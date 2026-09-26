@@ -33,7 +33,7 @@ export function SecurityTab() {
                     </CardTitle>
                     <CardDescription>
                         {hasPassword
-                            ? "Choose a strong password and don't reuse it for other accounts"
+                            ? 'Update your password'
                             : 'Add a password to your account'}
                     </CardDescription>
                 </CardHeader>
@@ -51,8 +51,8 @@ export function SecurityTab() {
                 <CardHeader>
                     <CardTitle>Two-Factor Authentication</CardTitle>
                     <CardDescription>
-                        Add an extra layer of security by requiring a code from
-                        an authenticator app when you sign in with your password
+                        Add an extra layer of security to your account using an
+                        authenticator app
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -64,8 +64,8 @@ export function SecurityTab() {
                 <CardHeader>
                     <CardTitle>Linked Accounts</CardTitle>
                     <CardDescription>
-                        Connect a third-party account to sign in without a
-                        password
+                        Connect your account to a third-party provider for
+                        passwordless sign-in
                     </CardDescription>
                 </CardHeader>
                 <CardContent>

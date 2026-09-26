@@ -55,8 +55,8 @@ export function ProfileTab() {
                 <CardHeader>
                     <CardTitle>Email Address</CardTitle>
                     <CardDescription>
-                        Used to sign in to your account. A confirmation link is
-                        sent to a new address before it changes.
+                        Update your email address — a verification link will be
+                        sent to confirm the change
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
