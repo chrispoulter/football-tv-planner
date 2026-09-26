@@ -27,6 +27,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.LastName).HasColumnName("last_name").IsRequired();
         builder.Property(u => u.DateOfBirth).HasColumnName("date_of_birth").IsRequired();
         builder.Property(u => u.IsLockedOut).HasColumnName("is_locked_out").HasDefaultValue(false);
+        builder.Property(u => u.CalendarFeedToken).HasColumnName("calendar_feed_token");
         builder.Property(u => u.SearchVector).HasColumnName("search_vector");
 
         builder.HasGeneratedTsVectorColumn(
@@ -45,5 +46,6 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasIndex(u => u.NormalizedEmailAddress, "ix_users_normalized_email_address")
             .IsUnique();
         builder.HasIndex(u => u.SearchVector, "ix_users_search_vector").HasMethod("gin");
+        builder.HasIndex(u => u.CalendarFeedToken, "ix_users_calendar_feed_token").IsUnique();
     }
 }

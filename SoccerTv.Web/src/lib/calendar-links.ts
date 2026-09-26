@@ -48,3 +48,17 @@ export function outlookComUrl(event: CalendarEvent) {
 export function outlook365Url(event: CalendarEvent) {
     return `https://outlook.office.com/calendar/0/deeplink/compose?${outlookParams(event)}`;
 }
+
+export function googleSubscribeUrl(webcalUrl: string) {
+    return `https://calendar.google.com/calendar/r?cid=${encodeURIComponent(webcalUrl)}`;
+}
+
+export function outlookComSubscribeUrl(httpsUrl: string, name: string) {
+    const params = new URLSearchParams({ url: httpsUrl, name });
+    return `https://outlook.live.com/calendar/0/addfromweb?${params}`;
+}
+
+export function outlook365SubscribeUrl(httpsUrl: string, name: string) {
+    const params = new URLSearchParams({ url: httpsUrl, name });
+    return `https://outlook.office.com/calendar/0/addfromweb?${params}`;
+}

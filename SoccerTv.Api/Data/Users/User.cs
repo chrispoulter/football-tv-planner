@@ -23,5 +23,7 @@ public class User : IJwtUser
 
     public bool IsLockedOut { get; set; }
 
+    public string? CalendarFeedToken { get; set; }
+
     public NpgsqlTsVector SearchVector { get; } = null!;
 }

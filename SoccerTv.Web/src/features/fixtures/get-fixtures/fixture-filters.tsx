@@ -1,6 +1,7 @@
 import { Star } from 'lucide-react';
 import { useAuth } from '@/components/auth-provider';
 import { Button } from '@/components/ui/button';
+import { CalendarFeedDialog } from '@/features/schedule/components/calendar-feed-dialog';
 import {
     Select,
     SelectContent,
@@ -93,6 +94,8 @@ export function FixtureFilters({
                         <Star className={mine ? 'fill-current' : undefined} />
                         My Schedule
                     </Button>
+
+                    {mine && <CalendarFeedDialog disabled={disabled} />}
                 </div>
             )}
         </div>
