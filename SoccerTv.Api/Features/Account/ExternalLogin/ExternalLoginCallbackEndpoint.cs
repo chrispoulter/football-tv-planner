@@ -64,6 +64,7 @@ public class ExternalLoginCallbackEndpoint : IEndpoint
                 UserName = email,
                 Email = email,
                 EmailConfirmed = true,
+                Name = info.GetName(),
             };
 
             if (!(await userManager.CreateAsync(user)).Succeeded)
@@ -88,8 +89,14 @@ public class ExternalLoginCallbackEndpoint : IEndpoint
                 }
 
                 user.EmailConfirmed = true;
-                await userManager.UpdateAsync(user);
             }
+
+            if (string.IsNullOrEmpty(user.Name))
+            {
+                user.Name = info.GetName();
+            }
+
+            await userManager.UpdateAsync(user);
         }
 
         if (!(await userManager.AddLoginAsync(user, info)).Succeeded)

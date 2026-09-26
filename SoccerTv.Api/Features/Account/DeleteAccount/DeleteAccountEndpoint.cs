@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using SoccerTv.Api.Common.Authentication;
 using SoccerTv.Api.Common.Infrastructure;
+using SoccerTv.Api.Common.Validation;
 using SoccerTv.Api.Data.Users;
 
 namespace SoccerTv.Api.Features.Account.DeleteAccount;
@@ -23,23 +24,18 @@ public class DeleteAccountEndpoint : IEndpoint
         SignInManager<User> signInManager
     )
     {
-        var user = await userManager.FindByIdAsync(currentUser.Id.ToString());
+        var user = await userManager.FindByIdAsync(currentUser);
 
         if (user is null)
         {
-            return Results.Problem(
-                statusCode: StatusCodes.Status404NotFound,
-                title: "User not found."
-            );
+            return AccountProblems.UserNotFound();
         }
 
         var result = await userManager.DeleteAsync(user);
 
         if (!result.Succeeded)
         {
-            return Results.ValidationProblem(
-                result.Errors.ToDictionary(e => e.Code, e => new[] { e.Description })
-            );
+            return result.ToValidationProblem();
         }
 
         await signInManager.SignOutAsync();

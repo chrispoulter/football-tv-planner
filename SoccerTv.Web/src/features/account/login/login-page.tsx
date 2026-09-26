@@ -3,22 +3,15 @@ import { Link, useNavigate, useSearchParams } from 'react-router';
 import { toast } from 'sonner';
 import { Metadata } from '@/components/metadata';
 import { Card, CardContent } from '@/components/ui/card';
-import { getProblemDetail } from '@/lib/api-client';
-import { type LoginRequest, useLogin } from '../account-queries';
+import { useLogin, useLoginTwoFactor } from '../account-queries';
 import { GoogleButton } from '../components/google-button';
 import { LoginForm, type LoginFormValues } from './login-form';
 import { type TwoFactorCode, TwoFactorForm } from './two-factor-form';
 
-// Identity reports why a login failed in the problem detail
-const loginErrors: Record<string, string> = {
-    Failed: 'The credentials provided were invalid.',
-    LockedOut: 'This account has been locked out, please try again later.',
-};
-
 // Set by the API when a Google login fails
 const externalLoginErrors: Record<string, string> = {
     external: 'Unable to log in with Google, please try again.',
-    locked: loginErrors.LockedOut,
+    locked: 'This account has been locked out, please try again later.',
 };
 
 export function LoginPage() {
@@ -26,39 +19,44 @@ export function LoginPage() {
 
     const [searchParams] = useSearchParams();
 
-    const [credentials, setCredentials] = useState<LoginRequest>();
+    // Set once the password is accepted but a two-factor code is still needed
+    const [twoFactor, setTwoFactor] = useState<{ rememberMe: boolean }>();
 
-    const { mutate: login, isPending: isSaving } = useLogin();
+    const { mutate: login, isPending: isLoggingIn } = useLogin();
+
+    const { mutate: loginTwoFactor, isPending: isVerifying } =
+        useLoginTwoFactor();
+
+    const isSaving = isLoggingIn || isVerifying;
 
     const externalError = externalLoginErrors[searchParams.get('error') ?? ''];
 
-    function submit(request: LoginRequest) {
-        login(request, {
-            onSuccess: () => navigate('/'),
-            onError: (error) => {
-                const detail = getProblemDetail(error) ?? '';
-
-                if (detail === 'RequiresTwoFactor') {
-                    setCredentials(request);
-                    return;
-                }
-
-                toast.error(
-                    credentials && detail === 'Failed'
-                        ? 'The code provided was invalid.'
-                        : (loginErrors[detail] ?? error.message)
-                );
-            },
-        });
-    }
-
     function onSubmit({ emailAddress, ...values }: LoginFormValues) {
-        submit({ email: emailAddress, ...values });
+        login(
+            { email: emailAddress, ...values },
+            {
+                onSuccess: ({ requiresTwoFactor }) => {
+                    if (requiresTwoFactor) {
+                        setTwoFactor({ rememberMe: values.rememberMe });
+                        return;
+                    }
+
+                    navigate('/');
+                },
+                onError: (error) => toast.error(error.message),
+            }
+        );
     }
 
     function onTwoFactorSubmit(code: TwoFactorCode) {
-        if (credentials) {
-            submit({ ...credentials, ...code });
+        if (twoFactor) {
+            loginTwoFactor(
+                { ...twoFactor, ...code },
+                {
+                    onSuccess: () => navigate('/'),
+                    onError: (error) => toast.error(error.message),
+                }
+            );
         }
     }
 
@@ -68,7 +66,7 @@ export function LoginPage() {
                 <CardContent className="space-y-6">
                     <Metadata title="Login" />
 
-                    {credentials ? (
+                    {twoFactor ? (
                         <>
                             <div className="space-y-1">
                                 <h1 className="text-2xl font-bold tracking-tight">

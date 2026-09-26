@@ -5,8 +5,6 @@ using SoccerTv.Api.Common.Database;
 using SoccerTv.Api.Common.Email;
 using SoccerTv.Api.Common.Infrastructure;
 using SoccerTv.Api.Data;
-using SoccerTv.Api.Data.Users;
-using SoccerTv.Api.Features;
 
 var assembly = Assembly.GetExecutingAssembly();
 var serviceVersion = assembly.GetSemVerShortSha();
@@ -38,7 +36,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapOpenApiWithUI();
-app.MapGroup("/account").MapIdentityApi<User>().WithTags(Tags.Account);
 app.MapEndpoints(assembly);
 app.MapDefaultEndpoints();
 

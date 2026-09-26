@@ -7,9 +7,14 @@ export const sessionKeys = {
     all: ['session'] as const,
 };
 
+// The API leaves out false and null values
 export interface Session {
+    id: string;
     email: string;
+    name?: string;
     isEmailConfirmed?: boolean;
+    hasPassword?: boolean;
+    isTwoFactorEnabled?: boolean;
 }
 
 export function useAuth() {
@@ -20,7 +25,7 @@ export function useAuth() {
         queryFn: async ({ signal }) => {
             try {
                 return await apiClient
-                    .get('account/manage/info', { signal })
+                    .get('account/me', { signal })
                     .json<Session>();
             } catch (error) {
                 // 404 means the cookie is valid but its user no longer exists

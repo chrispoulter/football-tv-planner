@@ -1,0 +1,41 @@
+using Microsoft.AspNetCore.Identity;
+using SoccerTv.Api.Common.Authentication;
+using SoccerTv.Api.Common.Infrastructure;
+using SoccerTv.Api.Data.Users;
+
+namespace SoccerTv.Api.Features.Account.GetTwoFactor;
+
+public class GetTwoFactorEndpoint : IEndpoint
+{
+    public void MapEndpoints(IEndpointRouteBuilder app)
+    {
+        app.MapGet("/account/two-factor", HandleAsync)
+            .RequireAuthorization()
+            .Produces<TwoFactorResponse>()
+            .WithTags(Tags.Account)
+            .WithSummary("Get Two-Factor")
+            .WithDescription("Get the current user's two-factor authentication status.");
+    }
+
+    private static async Task<IResult> HandleAsync(
+        CurrentUser currentUser,
+        UserManager<User> userManager,
+        SignInManager<User> signInManager
+    )
+    {
+        var user = await userManager.FindByIdAsync(currentUser);
+
+        if (user is null)
+        {
+            return AccountProblems.UserNotFound();
+        }
+
+        return Results.Ok(
+            new TwoFactorResponse(
+                user.TwoFactorEnabled,
+                await userManager.CountRecoveryCodesAsync(user),
+                await signInManager.IsTwoFactorClientRememberedAsync(user)
+            )
+        );
+    }
+}

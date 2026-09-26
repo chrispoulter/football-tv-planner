@@ -36,7 +36,7 @@ export function UserMenu() {
                 <Button variant="ghost" size="icon" className="rounded-full">
                     <Avatar>
                         <AvatarFallback className="bg-primary text-primary-foreground">
-                            {user.email[0].toUpperCase()}
+                            {(user.name || user.email)[0].toUpperCase()}
                         </AvatarFallback>
                     </Avatar>
                     <span className="sr-only">Toggle profile menu</span>
@@ -44,7 +44,20 @@ export function UserMenu() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
                 <div className="px-2 py-1.5">
-                    <p className="truncate text-sm font-medium">{user.email}</p>
+                    {user.name && (
+                        <p className="truncate text-sm font-medium">
+                            {user.name}
+                        </p>
+                    )}
+                    <p
+                        className={
+                            user.name
+                                ? 'truncate text-xs text-muted-foreground'
+                                : 'truncate text-sm font-medium'
+                        }
+                    >
+                        {user.email}
+                    </p>
                 </div>
 
                 <DropdownMenuSeparator />

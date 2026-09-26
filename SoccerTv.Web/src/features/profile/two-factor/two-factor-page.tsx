@@ -5,7 +5,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from 'sonner';
 import { QRCodeSVG } from 'qrcode.react';
-import { useAuth } from '@/components/auth-provider';
 import { TextField } from '@/components/form/text-field';
 import { LoadingButton } from '@/components/loading-button';
 import { Metadata } from '@/components/metadata';
@@ -21,9 +20,12 @@ import {
 } from '@/components/ui/card';
 import { ProfileLoading } from '../profile/profile-loading';
 import {
-    type TwoFactorResponse,
+    useDisableTwoFactor,
+    useEnableTwoFactor,
+    useForgetTwoFactorMachine,
+    useGenerateRecoveryCodes,
     useGetTwoFactor,
-    useUpdateTwoFactor,
+    useSetupTwoFactor,
 } from '../profile-queries';
 import { RecoveryCodes } from './recovery-codes';
 
@@ -36,13 +38,6 @@ const schema = z.object({
 
 type VerifyFormValues = z.infer<typeof schema>;
 
-function authenticatorUri(email: string, sharedKey: string) {
-    const issuer = 'SoccerTv';
-    const label = encodeURIComponent(`${issuer}:${email}`);
-
-    return `otpauth://totp/${label}?secret=${sharedKey}&issuer=${issuer}&digits=6`;
-}
-
 // Group the key into blocks of four so it's easier to type
 function formatKey(sharedKey: string) {
     return (
@@ -54,14 +49,25 @@ function formatKey(sharedKey: string) {
 }
 
 export function TwoFactorPage() {
-    const { user } = useAuth();
-
     const [recoveryCodes, setRecoveryCodes] = useState<string[]>();
 
     const { data: status, isPending, isSuccess, error } = useGetTwoFactor();
 
-    const { mutate: updateTwoFactor, isPending: isSaving } =
-        useUpdateTwoFactor();
+    const isEnabled = !!status?.isEnabled;
+
+    const setup = useSetupTwoFactor(isSuccess && !isEnabled);
+
+    const { mutate: enable, isPending: isEnabling } = useEnableTwoFactor();
+
+    const { mutate: disable, isPending: isDisabling } = useDisableTwoFactor();
+
+    const { mutate: generateRecoveryCodes, isPending: isGenerating } =
+        useGenerateRecoveryCodes();
+
+    const { mutate: forgetMachine, isPending: isForgetting } =
+        useForgetTwoFactorMachine();
+
+    const isSaving = isEnabling || isDisabling || isGenerating || isForgetting;
 
     const form = useForm<VerifyFormValues>({
         resolver: zodResolver(schema),
@@ -70,36 +76,58 @@ export function TwoFactorPage() {
         },
     });
 
-    if (isPending) {
+    if (isPending || (!isEnabled && setup.isPending)) {
         return <ProfileLoading />;
     }
 
-    if (!isSuccess || !user) {
-        return <QueryError error={error} />;
+    if (!isSuccess || (!isEnabled && !setup.isSuccess)) {
+        return <QueryError error={error ?? setup.error} />;
     }
 
-    function update(
-        request: Parameters<typeof updateTwoFactor>[0],
-        message: string,
-        onSuccess?: (response: TwoFactorResponse) => void
-    ) {
-        updateTwoFactor(request, {
+    function onEnable({ code }: VerifyFormValues) {
+        enable(
+            { code },
+            {
+                onSuccess: (response) => {
+                    toast.success(
+                        'Two-factor authentication has been enabled.'
+                    );
+                    setRecoveryCodes(response.recoveryCodes);
+                    form.reset();
+                },
+                onError: (error) => toast.error(error.message),
+            }
+        );
+    }
+
+    function onGenerateRecoveryCodes() {
+        generateRecoveryCodes(undefined, {
             onSuccess: (response) => {
-                toast.success(message);
+                toast.success('New recovery codes have been generated.');
                 setRecoveryCodes(response.recoveryCodes);
-                onSuccess?.(response);
             },
             onError: (error) => toast.error(error.message),
         });
     }
 
-    function onEnable({ code }: VerifyFormValues) {
-        // Always issue fresh recovery codes, as old ones survive disabling 2FA
-        update(
-            { enable: true, twoFactorCode: code, resetRecoveryCodes: true },
-            'Two-factor authentication has been enabled.',
-            () => form.reset()
-        );
+    function onForgetMachine() {
+        forgetMachine(undefined, {
+            onSuccess: () =>
+                toast.success('This browser will ask for a code next time.'),
+            onError: (error) => toast.error(error.message),
+        });
+    }
+
+    function onDisable() {
+        disable(undefined, {
+            onSuccess: () => {
+                toast.success('Two-factor authentication has been disabled.');
+                setRecoveryCodes(undefined);
+                // Re-enabling starts again with a new key
+                setup.refetch();
+            },
+            onError: (error) => toast.error(error.message),
+        });
     }
 
     return (
@@ -112,7 +140,7 @@ export function TwoFactorPage() {
                         Two-Factor Authentication
                     </CardTitle>
                     <CardDescription>
-                        {status.isTwoFactorEnabled
+                        {isEnabled
                             ? `Two-factor authentication is enabled. You have ${status.recoveryCodesLeft ?? 0} recovery codes left.`
                             : 'Protect your account by requiring a code from an authenticator app when you log in with your password.'}
                     </CardDescription>
@@ -121,7 +149,7 @@ export function TwoFactorPage() {
                 <CardContent className="space-y-6">
                     {recoveryCodes && <RecoveryCodes codes={recoveryCodes} />}
 
-                    {!status.isTwoFactorEnabled && (
+                    {!isEnabled && setup.data && (
                         <>
                             <ol className="list-decimal space-y-2 pl-5 text-sm text-muted-foreground">
                                 <li>
@@ -132,7 +160,7 @@ export function TwoFactorPage() {
                                 <li>
                                     Scan the QR code, or enter the key{' '}
                                     <code className="rounded bg-muted px-1 font-mono">
-                                        {formatKey(status.sharedKey)}
+                                        {formatKey(setup.data.sharedKey)}
                                     </code>
                                 </li>
                                 <li>Enter the 6-digit code from the app.</li>
@@ -140,10 +168,7 @@ export function TwoFactorPage() {
 
                             <div className="w-fit rounded-md bg-white p-4">
                                 <QRCodeSVG
-                                    value={authenticatorUri(
-                                        user.email,
-                                        status.sharedKey
-                                    )}
+                                    value={setup.data.authenticatorUri}
                                     size={176}
                                 />
                             </div>
@@ -181,17 +206,12 @@ export function TwoFactorPage() {
                     )}
                 </CardContent>
 
-                {status.isTwoFactorEnabled && (
+                {isEnabled && (
                     <CardFooter className="flex flex-col gap-2 sm:flex-row">
                         <Button
                             variant="outline"
                             disabled={isSaving}
-                            onClick={() =>
-                                update(
-                                    { resetRecoveryCodes: true },
-                                    'New recovery codes have been generated.'
-                                )
-                            }
+                            onClick={onGenerateRecoveryCodes}
                         >
                             New Recovery Codes
                         </Button>
@@ -200,12 +220,7 @@ export function TwoFactorPage() {
                             <Button
                                 variant="outline"
                                 disabled={isSaving}
-                                onClick={() =>
-                                    update(
-                                        { forgetMachine: true },
-                                        'This browser will ask for a code next time.'
-                                    )
-                                }
+                                onClick={onForgetMachine}
                             >
                                 Forget This Browser
                             </Button>
@@ -214,12 +229,7 @@ export function TwoFactorPage() {
                         <Button
                             variant="destructive"
                             disabled={isSaving}
-                            onClick={() =>
-                                update(
-                                    { enable: false },
-                                    'Two-factor authentication has been disabled.'
-                                )
-                            }
+                            onClick={onDisable}
                         >
                             Disable
                         </Button>

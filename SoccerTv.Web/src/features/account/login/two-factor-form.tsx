@@ -16,8 +16,8 @@ const schema = z.object({
 type TwoFactorFormValues = z.infer<typeof schema>;
 
 export interface TwoFactorCode {
-    twoFactorCode?: string;
-    twoFactorRecoveryCode?: string;
+    code?: string;
+    recoveryCode?: string;
 }
 
 interface TwoFactorFormProps {
@@ -36,11 +36,7 @@ export function TwoFactorForm({ loading, onSubmit }: TwoFactorFormProps) {
     });
 
     function onValid({ code }: TwoFactorFormValues) {
-        onSubmit(
-            useRecoveryCode
-                ? { twoFactorRecoveryCode: code }
-                : { twoFactorCode: code }
-        );
+        onSubmit(useRecoveryCode ? { recoveryCode: code } : { code });
     }
 
     function onToggle() {

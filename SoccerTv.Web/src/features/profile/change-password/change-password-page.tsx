@@ -23,7 +23,7 @@ export function ChangePasswordPage() {
     function onSubmit(values: ChangePasswordFormValues) {
         changePassword(
             {
-                oldPassword: values.currentPassword,
+                currentPassword: values.currentPassword,
                 newPassword: values.newPassword,
             },
             {

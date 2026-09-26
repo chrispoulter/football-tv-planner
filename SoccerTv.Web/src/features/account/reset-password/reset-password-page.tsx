@@ -19,7 +19,7 @@ export function ResetPasswordPage() {
         resetPassword(
             {
                 email: searchParams.get('email') ?? '',
-                resetCode: searchParams.get('code') ?? '',
+                code: searchParams.get('code') ?? '',
                 newPassword: values.newPassword,
             },
             {

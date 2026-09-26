@@ -10,6 +10,8 @@ public class SeedSettings
     {
         public required string EmailAddress { get; set; }
 
+        public string? Name { get; set; }
+
         public required string Password { get; set; }
     }
 }

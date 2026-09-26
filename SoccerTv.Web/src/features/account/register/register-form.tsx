@@ -6,6 +6,11 @@ import { LoadingButton } from '@/components/loading-button';
 
 const schema = z
     .object({
+        name: z
+            .string({ message: 'Name must be a valid string' })
+            .trim()
+            .min(1, 'Name is a required field')
+            .max(100, 'Name must be no more than 100 characters'),
         emailAddress: z.email('Email Address must be a valid email'),
         password: z
             .string({ message: 'Password must be a valid string' })
@@ -31,6 +36,7 @@ export function RegisterForm({ loading, onSubmit }: RegisterFormProps) {
     const form = useForm<RegisterFormValues>({
         resolver: zodResolver(schema),
         defaultValues: {
+            name: '',
             emailAddress: '',
             password: '',
             confirmPassword: '',
@@ -43,6 +49,16 @@ export function RegisterForm({ loading, onSubmit }: RegisterFormProps) {
             onSubmit={form.handleSubmit(onSubmit)}
             className="space-y-6"
         >
+            <TextField
+                control={form.control}
+                name="name"
+                label="Name"
+                maxLength={100}
+                autoComplete="name"
+                required
+                disabled={loading}
+            />
+
             <TextField
                 control={form.control}
                 name="emailAddress"

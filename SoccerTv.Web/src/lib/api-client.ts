@@ -25,9 +25,3 @@ export const apiClient = ky.create({
         ],
     },
 });
-
-export function getProblemDetail(error: unknown) {
-    if (error instanceof HTTPError) {
-        return (error.data as ProblemDetails | undefined)?.detail;
-    }
-}

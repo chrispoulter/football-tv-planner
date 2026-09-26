@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router';
 import { toast } from 'sonner';
 import { Metadata } from '@/components/metadata';
-import { useLogin, useRegister } from '../account-queries';
+import { useRegister } from '../account-queries';
 import { GoogleButton } from '../components/google-button';
 import { RegisterForm, type RegisterFormValues } from './register-form';
 import { Card, CardContent } from '@/components/ui/card';
@@ -9,30 +9,22 @@ import { Card, CardContent } from '@/components/ui/card';
 export function RegisterPage() {
     const navigate = useNavigate();
 
-    const { mutate: register, isPending: isRegistering } = useRegister();
+    const { mutate: register, isPending: isSaving } = useRegister();
 
-    const { mutate: login, isPending: isLoggingIn } = useLogin();
-
-    // Log straight in, as the email doesn't need confirming first
-    function onSubmit({ emailAddress, password }: RegisterFormValues) {
-        const credentials = { email: emailAddress, password };
-
-        register(credentials, {
-            onSuccess: () =>
-                login(
-                    { ...credentials, rememberMe: false },
-                    {
-                        onSuccess: () => {
-                            toast.success(
-                                'Welcome! We have sent you an email to confirm your address.'
-                            );
-                            navigate('/');
-                        },
-                        onError: (error) => toast.error(error.message),
-                    }
-                ),
-            onError: (error) => toast.error(error.message),
-        });
+    // Logs straight in, as the email doesn't need confirming first
+    function onSubmit({ name, emailAddress, password }: RegisterFormValues) {
+        register(
+            { name, email: emailAddress, password },
+            {
+                onSuccess: () => {
+                    toast.success(
+                        'Welcome! We have sent you an email to confirm your address.'
+                    );
+                    navigate('/');
+                },
+                onError: (error) => toast.error(error.message),
+            }
+        );
     }
 
     return (
@@ -51,10 +43,7 @@ export function RegisterPage() {
                         </p>
                     </div>
 
-                    <RegisterForm
-                        loading={isRegistering || isLoggingIn}
-                        onSubmit={onSubmit}
-                    />
+                    <RegisterForm loading={isSaving} onSubmit={onSubmit} />
 
                     <GoogleButton />
 

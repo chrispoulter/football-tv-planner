@@ -10,7 +10,11 @@ public static class AuthenticationExtensions
     public static IHostApplicationBuilder AddAuthentication(this IHostApplicationBuilder builder)
     {
         builder
-            .Services.AddIdentityApiEndpoints<User>(options =>
+            .Services.AddAuthentication(IdentityConstants.ApplicationScheme)
+            .AddIdentityCookies();
+
+        builder
+            .Services.AddIdentityCore<User>(options =>
             {
                 options.User.RequireUniqueEmail = true;
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
@@ -22,7 +26,24 @@ public static class AuthenticationExtensions
                 options.Password.RequireUppercase = false;
                 options.Password.RequireNonAlphanumeric = false;
             })
-            .AddEntityFrameworkStores<SoccerTvDbContext>();
+            .AddEntityFrameworkStores<SoccerTvDbContext>()
+            .AddSignInManager()
+            .AddDefaultTokenProviders();
+
+        // Report 401 and 403 to the web app rather than redirecting to a login page
+        builder.Services.ConfigureApplicationCookie(options =>
+        {
+            options.Events.OnRedirectToLogin = context =>
+            {
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                return Task.CompletedTask;
+            };
+            options.Events.OnRedirectToAccessDenied = context =>
+            {
+                context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                return Task.CompletedTask;
+            };
+        });
 
         var googleSettings = builder
             .Configuration.GetSection(GoogleSettings.SectionName)
@@ -42,7 +63,9 @@ public static class AuthenticationExtensions
                     // e.g. the user cancelled on the consent screen
                     options.Events.OnRemoteFailure = context =>
                     {
-                        context.Response.Redirect(ExternalLoginRedirects.LoginError("external"));
+                        context.Response.Redirect(
+                            ExternalLoginRedirects.RemoteFailure(context.Properties)
+                        );
                         context.HandleResponse();
 
                         return Task.CompletedTask;
@@ -50,7 +73,7 @@ public static class AuthenticationExtensions
                 });
         }
 
-        builder.Services.AddSingleton<IEmailSender<User>, IdentityEmailSender>();
+        builder.Services.AddScoped<AccountEmailSender>();
         builder.Services.AddAuthorization();
 
         return builder;

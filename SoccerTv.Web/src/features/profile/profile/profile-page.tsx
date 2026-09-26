@@ -64,7 +64,7 @@ export function ProfilePage() {
                 <CardHeader>
                     <CardTitle>Two-Factor Authentication</CardTitle>
                     <CardDescription>
-                        {twoFactor?.isTwoFactorEnabled
+                        {twoFactor?.isEnabled
                             ? 'Enabled. A code from your authenticator app is required when you log in with your password.'
                             : 'Not enabled. Add an extra layer of security to your account.'}
                     </CardDescription>
@@ -72,9 +72,7 @@ export function ProfilePage() {
                 <CardFooter>
                     <Button asChild className="w-full sm:w-auto">
                         <Link to="/profile/two-factor">
-                            {twoFactor?.isTwoFactorEnabled
-                                ? 'Manage'
-                                : 'Set Up'}
+                            {twoFactor?.isEnabled ? 'Manage' : 'Set Up'}
                         </Link>
                     </Button>
                 </CardFooter>
