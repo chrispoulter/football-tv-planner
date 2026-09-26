@@ -1,23 +1,25 @@
-import { Link, useNavigate } from 'react-router';
+import { useState } from 'react';
+import { Link } from 'react-router';
 import { toast } from 'sonner';
 import { Metadata } from '@/components/metadata';
 import { useRegister } from '../account-queries';
+import { GoogleButton } from '../components/google-button';
 import { RegisterForm, type RegisterFormValues } from './register-form';
 import { Card, CardContent } from '@/components/ui/card';
 
 export function RegisterPage() {
-    const navigate = useNavigate();
+    const [registeredEmail, setRegisteredEmail] = useState<string>();
 
     const { mutate: register, isPending: isSaving } = useRegister();
 
-    function onSubmit(values: RegisterFormValues) {
-        register(values, {
-            onSuccess: () => {
-                toast.success('User successfully registered.');
-                navigate('/account/login');
-            },
-            onError: (error) => toast.error(error.message),
-        });
+    function onSubmit({ emailAddress, password }: RegisterFormValues) {
+        register(
+            { email: emailAddress, password },
+            {
+                onSuccess: () => setRegisteredEmail(emailAddress),
+                onError: (error) => toast.error(error.message),
+            }
+        );
     }
 
     return (
@@ -26,17 +28,38 @@ export function RegisterPage() {
                 <CardContent className="space-y-6">
                     <Metadata title="Register" />
 
-                    <div className="space-y-1">
-                        <h1 className="text-2xl font-bold tracking-tight">
-                            Register
-                        </h1>
-                        <p className="text-sm text-muted-foreground">
-                            Register for a new account to access the full range
-                            of features available on this site.
-                        </p>
-                    </div>
+                    {registeredEmail ? (
+                        <div className="space-y-1">
+                            <h1 className="text-2xl font-bold tracking-tight">
+                                Check your email
+                            </h1>
+                            <p className="text-sm text-muted-foreground">
+                                We have sent a confirmation link to{' '}
+                                <strong>{registeredEmail}</strong>. Follow the
+                                link to activate your account.
+                            </p>
+                        </div>
+                    ) : (
+                        <>
+                            <div className="space-y-1">
+                                <h1 className="text-2xl font-bold tracking-tight">
+                                    Register
+                                </h1>
+                                <p className="text-sm text-muted-foreground">
+                                    Register for a new account to access the
+                                    full range of features available on this
+                                    site.
+                                </p>
+                            </div>
 
-                    <RegisterForm loading={isSaving} onSubmit={onSubmit} />
+                            <RegisterForm
+                                loading={isSaving}
+                                onSubmit={onSubmit}
+                            />
+
+                            <GoogleButton />
+                        </>
+                    )}
 
                     <p className="text-sm text-muted-foreground">
                         Already have an account?{' '}

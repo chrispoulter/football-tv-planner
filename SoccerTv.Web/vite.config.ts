@@ -19,5 +19,26 @@ export default defineConfig(({ mode }) => {
                 '@': path.resolve(__dirname, './src'),
             },
         },
+        server: {
+            // Mirrors the nginx proxy in default.conf.template
+            proxy: {
+                '/api': {
+                    target: env.API_PROXY_TARGET,
+                    changeOrigin: true,
+                    secure: false,
+                    rewrite: (path) => path.replace(/^\/api/, ''),
+                    configure: (proxy) => {
+                        proxy.on('proxyReq', (proxyReq, req) => {
+                            proxyReq.setHeader(
+                                'X-SoccerTv-Host',
+                                req.headers.host ?? ''
+                            );
+                            proxyReq.setHeader('X-SoccerTv-Proto', 'http');
+                            proxyReq.setHeader('X-SoccerTv-Prefix', '/api');
+                        });
+                    },
+                },
+            },
+        },
     };
 });

@@ -31,7 +31,7 @@ builder
 var web = builder
     .AddViteApp("web", "../SoccerTv.Web")
     .WithEndpoint("http", e => e.Port = 5173)
-    .WithEnvironment("VITE_API_URL", api.GetEndpoint("http"))
+    .WithEnvironment("API_PROXY_TARGET", api.GetEndpoint("http"))
     .WithReference(api)
     .WaitFor(api);
 

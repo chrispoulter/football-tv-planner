@@ -1,46 +1,53 @@
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
-using SoccerTv.Api.Common.Authentication;
 using SoccerTv.Api.Common.Database;
+using SoccerTv.Api.Data.Users;
 
 namespace SoccerTv.Api.Data;
 
-public class SoccerTvDbSeeder(
-    SoccerTvDbContext dbContext,
-    IHashService hashService,
-    IOptions<SeedSettings> seedSettings
-) : IDbSeeder<SoccerTvDbContext>
+public class SoccerTvDbSeeder(UserManager<User> userManager, IOptions<SeedSettings> seedSettings)
+    : IDbSeeder<SoccerTvDbContext>
 {
     private readonly SeedSettings _seedSettings = seedSettings.Value;
 
     public async Task SeedAsync(CancellationToken cancellationToken = default)
     {
-        var normalizedEmailAddresses = _seedSettings
-            .Users.Select(u => u.EmailAddress.ToLowerInvariant())
-            .ToList();
-
-        var users = await dbContext
-            .Users.Where(u => normalizedEmailAddresses.Contains(u.NormalizedEmailAddress))
-            .ToDictionaryAsync(u => u.NormalizedEmailAddress, cancellationToken);
-
         foreach (var seedUser in _seedSettings.Users)
         {
-            var normalizedEmailAddress = seedUser.EmailAddress.ToLowerInvariant();
+            var user = await userManager.FindByEmailAsync(seedUser.EmailAddress);
 
-            if (!users.TryGetValue(normalizedEmailAddress, out var user))
+            if (user is null)
             {
-                user = new();
-                dbContext.Users.Add(user);
+                user = new User
+                {
+                    UserName = seedUser.EmailAddress,
+                    Email = seedUser.EmailAddress,
+                    EmailConfirmed = true,
+                };
+
+                EnsureSucceeded(await userManager.CreateAsync(user, seedUser.Password));
+
+                continue;
             }
 
-            user.EmailAddress = seedUser.EmailAddress;
-            user.Password = hashService.GenerateHash(seedUser.Password);
-            user.FirstName = seedUser.FirstName;
-            user.LastName = seedUser.LastName;
-            user.DateOfBirth = seedUser.DateOfBirth;
-            user.IsLockedOut = false;
-        }
+            // Keep the seeded password in sync with configuration
+            if (await userManager.HasPasswordAsync(user))
+            {
+                EnsureSucceeded(await userManager.RemovePasswordAsync(user));
+            }
 
-        await dbContext.SaveChangesAsync(cancellationToken);
+            EnsureSucceeded(await userManager.AddPasswordAsync(user, seedUser.Password));
+            EnsureSucceeded(await userManager.SetLockoutEndDateAsync(user, null));
+        }
+    }
+
+    private static void EnsureSucceeded(IdentityResult result)
+    {
+        if (!result.Succeeded)
+        {
+            var errors = string.Join("; ", result.Errors.Select(e => e.Description));
+
+            throw new InvalidOperationException($"Failed to seed user: {errors}");
+        }
     }
 }

@@ -26,7 +26,7 @@ export function DeleteAccountButton({
 }: DeleteAccountButtonProps) {
     const navigate = useNavigate();
 
-    const { clearAuth } = useAuth();
+    const { refreshAuth } = useAuth();
 
     const { mutate: deleteAccount, isPending: isDeleting } = useDeleteAccount();
 
@@ -34,7 +34,7 @@ export function DeleteAccountButton({
         deleteAccount(undefined, {
             onSuccess: () => {
                 toast.success('Your account has been deleted.');
-                clearAuth();
+                refreshAuth();
                 navigate('/');
             },
             onError: (error) => toast.error(error.message),

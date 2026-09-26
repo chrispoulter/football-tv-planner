@@ -6,7 +6,6 @@ import { LoadingButton } from '@/components/loading-button';
 
 const schema = z
     .object({
-        emailAddress: z.email('Email Address must be a valid email'),
         newPassword: z
             .string({ message: 'New Password must be a valid string' })
             .min(8, 'New Password must be at least 8 characters')
@@ -34,7 +33,6 @@ export function ResetPasswordForm({
     const form = useForm<ResetPasswordFormValues>({
         resolver: zodResolver(schema),
         defaultValues: {
-            emailAddress: '',
             newPassword: '',
             confirmNewPassword: '',
         },
@@ -46,17 +44,6 @@ export function ResetPasswordForm({
             onSubmit={form.handleSubmit(onSubmit)}
             className="space-y-6"
         >
-            <TextField
-                control={form.control}
-                name="emailAddress"
-                label="Email Address"
-                type="email"
-                maxLength={254}
-                autoComplete="username"
-                required
-                disabled={loading}
-            />
-
             <div className="flex flex-col gap-6 sm:flex-row">
                 <TextField
                     control={form.control}

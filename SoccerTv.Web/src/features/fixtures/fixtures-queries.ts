@@ -1,5 +1,4 @@
 import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
-import { useAuth } from '@/components/auth-provider';
 import { apiClient } from '@/lib/api-client';
 
 export const fixtureKeys = {
@@ -32,8 +31,6 @@ export interface GetFixturesResponse {
 }
 
 export const useGetFixtures = (request: GetFixturesRequest) => {
-    const { accessToken } = useAuth();
-
     const searchParams = Object.fromEntries(
         Object.entries(request).filter(([, value]) => !!value)
     );
@@ -44,9 +41,6 @@ export const useGetFixtures = (request: GetFixturesRequest) => {
             apiClient
                 .get('fixtures', {
                     searchParams,
-                    context: {
-                        accessToken,
-                    },
                     signal,
                 })
                 .json<GetFixturesResponse>(),
@@ -71,16 +65,10 @@ export const useGetChannels = () =>
     });
 
 export const useDownloadFixtureCalendar = () => {
-    const { accessToken } = useAuth();
-
     return useMutation({
         mutationFn: async (fixture: FixtureSummary) => {
             const blob = await apiClient
-                .get(`fixtures/${fixture.id}/calendar.ics`, {
-                    context: {
-                        accessToken,
-                    },
-                })
+                .get(`fixtures/${fixture.id}/calendar.ics`, {})
                 .blob();
 
             const url = URL.createObjectURL(blob);

@@ -8,7 +8,6 @@ declare global {
 
 const configSchema = z.object({
     VITE_APP_VERSION: z.string(),
-    VITE_API_URL: z.url(),
     VITE_RUNTIME_VALUE_1: z.string().optional(),
     VITE_RUNTIME_VALUE_2: z.string().optional(),
 });

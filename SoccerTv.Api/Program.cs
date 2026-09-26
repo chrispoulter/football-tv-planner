@@ -5,6 +5,8 @@ using SoccerTv.Api.Common.Database;
 using SoccerTv.Api.Common.Email;
 using SoccerTv.Api.Common.Infrastructure;
 using SoccerTv.Api.Data;
+using SoccerTv.Api.Data.Users;
+using SoccerTv.Api.Features;
 
 var assembly = Assembly.GetExecutingAssembly();
 var serviceVersion = assembly.GetSemVerShortSha();
@@ -24,19 +26,19 @@ builder.Services.AddValidatorsFromAssembly(assembly);
 builder.Services.AddProblemDetails();
 
 builder.ConfigureJsonOptions();
+builder.AddForwardedHeaders();
 builder.AddAuthentication();
-builder.AddSecurityServices();
-builder.AddCors();
 builder.AddOpenApi(serviceVersion);
 
 var app = builder.Build();
 
+app.UseForwardedHeaders();
 app.UseExceptionHandler();
-app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapOpenApiWithUI();
+app.MapGroup("/account").MapIdentityApi<User>().WithTags(Tags.Account);
 app.MapEndpoints(assembly);
 app.MapDefaultEndpoints();
 

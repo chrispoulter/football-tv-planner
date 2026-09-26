@@ -1,14 +1,17 @@
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { TextField } from '@/components/form/text-field';
 import { LoadingButton } from '@/components/loading-button';
+import { Field, FieldLabel } from '@/components/ui/field';
+import { Switch } from '@/components/ui/switch';
 
 const schema = z.object({
     emailAddress: z.email('Email Address must be a valid email'),
     password: z
         .string({ message: 'Password must be a valid string' })
         .min(1, 'Password is a required field'),
+    rememberMe: z.boolean(),
 });
 
 export type LoginFormValues = z.infer<typeof schema>;
@@ -24,6 +27,7 @@ export function LoginForm({ loading, onSubmit }: LoginFormProps) {
         defaultValues: {
             emailAddress: '',
             password: '',
+            rememberMe: false,
         },
     });
 
@@ -53,6 +57,24 @@ export function LoginForm({ loading, onSubmit }: LoginFormProps) {
                 autoComplete="current-password"
                 required
                 disabled={loading}
+            />
+
+            <Controller
+                name="rememberMe"
+                control={form.control}
+                render={({ field }) => (
+                    <Field orientation="horizontal">
+                        <Switch
+                            id={field.name}
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                            disabled={loading}
+                        />
+                        <FieldLabel htmlFor={field.name}>
+                            Remember me
+                        </FieldLabel>
+                    </Field>
+                )}
             />
 
             <div className="flex flex-col-reverse justify-end gap-2 sm:flex-row">

@@ -46,6 +46,19 @@ Create `SoccerTv.Api/appsettings.Development.json` to override `appsettings.json
 }
 ```
 
+### Authentication
+
+Accounts use ASP.NET Core Identity (`MapIdentityApi`) with a cookie. The web app proxies `/api` to the API (Vite in development, nginx in the container), so the cookie is first-party even when the two are hosted on different domains.
+
+Google sign-in is optional and only enabled when a client ID is configured. Create an OAuth client in the Google Cloud console, add the redirect URIs `http://localhost:5173/api/signin-google` and `https://<web app host>/api/signin-google`, then store the credentials in the API's user secrets:
+
+```
+dotnet user-secrets --project SoccerTv.Api set "Authentication:Google:ClientId" "<client id>"
+dotnet user-secrets --project SoccerTv.Api set "Authentication:Google:ClientSecret" "<client secret>"
+```
+
+In production, set `Authentication__Google__ClientId` and `Authentication__Google__ClientSecret` on the API, and `API_UPSTREAM` (the API's URL) on the web app.
+
 ## Dates and times
 
 All instants are stored and returned in UTC: Postgres `timestamptz`, ISO 8601 strings with `Z`, and UTC `DTSTART` values in `.ics` files. The UI converts them to the viewer's local time zone (`src/lib/local-time.ts`). When you pick a day, the UI sends that local day to `GET /fixtures` as a UTC `from`/`to` range, so the API never needs to know the viewer's time zone. The only place that knows about UK time is fixture ingestion, which converts UK kick-off slots to UTC (`Common/Time/UkTime.cs`).

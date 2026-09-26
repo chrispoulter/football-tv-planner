@@ -1,34 +1,48 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { useAuth } from '@/components/auth-provider';
 import { apiClient } from '@/lib/api-client';
-import { profileKeys } from '../profile/profile-queries';
 
-interface LoginRequest {
-    emailAddress: string;
+export interface LoginRequest {
+    email: string;
     password: string;
+    rememberMe: boolean;
+    twoFactorCode?: string;
+    twoFactorRecoveryCode?: string;
 }
 
-interface LoginResponse {
-    accessToken: string;
-}
+export const useLogin = () => {
+    const { refreshAuth } = useAuth();
 
-export const useLogin = () =>
-    useMutation({
-        mutationFn: (request: LoginRequest) =>
+    return useMutation({
+        mutationFn: ({ rememberMe, ...request }: LoginRequest) =>
             apiClient
-                .post('account/login', { json: request })
-                .json<LoginResponse>(),
+                .post('account/login', {
+                    json: request,
+                    searchParams: {
+                        useCookies: true,
+                        useSessionCookies: !rememberMe,
+                    },
+                })
+                .then(() => undefined),
+        onSuccess: refreshAuth,
     });
+};
+
+export const useLogout = () => {
+    const { refreshAuth } = useAuth();
+
+    return useMutation({
+        mutationFn: () =>
+            apiClient
+                .post('account/logout', { json: {} })
+                .then(() => undefined),
+        onSettled: refreshAuth,
+    });
+};
 
 interface RegisterRequest {
-    emailAddress: string;
+    email: string;
     password: string;
-    firstName: string;
-    lastName: string;
-    dateOfBirth: string;
-}
-
-interface RegisterResponse {
-    id: string;
 }
 
 export const useRegister = () =>
@@ -36,40 +50,65 @@ export const useRegister = () =>
         mutationFn: (request: RegisterRequest) =>
             apiClient
                 .post('account/register', { json: request })
-                .json<RegisterResponse>(),
+                .then(() => undefined),
     });
 
-interface ForgotPasswordRequest {
-    emailAddress: string;
+interface ConfirmEmailRequest {
+    userId: string;
+    code: string;
+    changedEmail?: string;
 }
+
+// A query rather than a mutation so the request is only sent once
+export const useConfirmEmail = (request: ConfirmEmailRequest) =>
+    useQuery({
+        queryKey: ['confirm-email', request],
+        queryFn: ({ signal }) =>
+            apiClient
+                .get('account/confirmEmail', {
+                    searchParams: { ...request },
+                    signal,
+                })
+                .then(() => true),
+        staleTime: Infinity,
+    });
+
+interface EmailRequest {
+    email: string;
+}
+
+export const useResendConfirmationEmail = () =>
+    useMutation({
+        mutationFn: (request: EmailRequest) =>
+            apiClient
+                .post('account/resendConfirmationEmail', { json: request })
+                .then(() => undefined),
+    });
 
 export const useForgotPassword = () =>
     useMutation({
-        mutationFn: (request: ForgotPasswordRequest) =>
+        mutationFn: (request: EmailRequest) =>
             apiClient
-                .put('account/forgot-password', { json: request })
+                .post('account/forgotPassword', { json: request })
                 .then(() => undefined),
     });
 
 interface ResetPasswordRequest {
-    token: string;
-    emailAddress: string;
+    email: string;
+    resetCode: string;
     newPassword: string;
 }
 
-interface ResetPasswordResponse {
-    id: string;
-}
-
-export const useResetPassword = () => {
-    const queryClient = useQueryClient();
-
-    return useMutation({
+export const useResetPassword = () =>
+    useMutation({
         mutationFn: (request: ResetPasswordRequest) =>
             apiClient
-                .put('account/reset-password', { json: request })
-                .json<ResetPasswordResponse>(),
-        onSuccess: () =>
-            queryClient.invalidateQueries({ queryKey: profileKeys.all }),
+                .post('account/resetPassword', { json: request })
+                .then(() => undefined),
     });
-};
+
+export function googleLoginUrl(returnUrl = '/') {
+    const searchParams = new URLSearchParams({ provider: 'Google', returnUrl });
+
+    return `/api/account/external-login?${searchParams}`;
+}

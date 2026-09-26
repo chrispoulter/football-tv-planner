@@ -1,93 +1,74 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useAuth } from '@/components/auth-provider';
 import { apiClient } from '@/lib/api-client';
 
 export const profileKeys = {
     all: ['profile'] as const,
-};
-
-export interface GetProfileResponse {
-    id: string;
-    emailAddress: string;
-    firstName: string;
-    lastName: string;
-    dateOfBirth: string;
-}
-
-export const useGetProfile = () => {
-    const { accessToken } = useAuth();
-
-    return useQuery({
-        queryKey: profileKeys.all,
-        queryFn: ({ signal }) =>
-            apiClient
-                .get('profile', {
-                    context: {
-                        accessToken,
-                    },
-                    signal,
-                })
-                .json<GetProfileResponse>(),
-    });
-};
-
-interface UpdateProfileRequest {
-    emailAddress: string;
-    firstName: string;
-    lastName: string;
-    dateOfBirth: string;
-}
-
-interface UpdateProfileResponse {
-    id: string;
-}
-
-export const useUpdateProfile = () => {
-    const { accessToken } = useAuth();
-
-    const queryClient = useQueryClient();
-
-    return useMutation({
-        mutationFn: (request: UpdateProfileRequest) =>
-            apiClient
-                .put('profile', {
-                    json: request,
-                    context: {
-                        accessToken,
-                    },
-                })
-                .json<UpdateProfileResponse>(),
-        onSuccess: () =>
-            queryClient.invalidateQueries({ queryKey: profileKeys.all }),
-    });
+    twoFactor: ['profile', 'two-factor'] as const,
 };
 
 interface ChangePasswordRequest {
-    currentPassword: string;
+    oldPassword: string;
     newPassword: string;
 }
 
-interface ChangePasswordResponse {
-    id: string;
+export const useChangePassword = () =>
+    useMutation({
+        mutationFn: (request: ChangePasswordRequest) =>
+            apiClient
+                .post('account/manage/info', { json: request })
+                .then(() => undefined),
+    });
+
+interface ChangeEmailRequest {
+    newEmail: string;
 }
 
-export const useChangePassword = () => {
-    const { accessToken } = useAuth();
+// The email only changes once the link sent to the new address is followed
+export const useChangeEmail = () =>
+    useMutation({
+        mutationFn: (request: ChangeEmailRequest) =>
+            apiClient
+                .post('account/manage/info', { json: request })
+                .then(() => undefined),
+    });
 
+// The API leaves out false and zero values
+export interface TwoFactorResponse {
+    sharedKey: string;
+    recoveryCodesLeft?: number;
+    recoveryCodes?: string[];
+    isTwoFactorEnabled?: boolean;
+    isMachineRemembered?: boolean;
+}
+
+interface TwoFactorRequest {
+    enable?: boolean;
+    twoFactorCode?: string;
+    resetRecoveryCodes?: boolean;
+    forgetMachine?: boolean;
+}
+
+const postTwoFactor = (request: TwoFactorRequest) =>
+    apiClient
+        .post('account/manage/2fa', { json: request })
+        .json<TwoFactorResponse>();
+
+// Posting an empty request just returns the current status
+export const useGetTwoFactor = () =>
+    useQuery({
+        queryKey: profileKeys.twoFactor,
+        queryFn: () => postTwoFactor({}),
+    });
+
+export const useUpdateTwoFactor = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (request: ChangePasswordRequest) =>
-            apiClient
-                .put('profile/change-password', {
-                    json: request,
-                    context: {
-                        accessToken,
-                    },
-                })
-                .json<ChangePasswordResponse>(),
+        mutationFn: postTwoFactor,
+        // Refetch rather than use the response, as after forgetting the browser
+        // it still reports the browser as remembered
         onSuccess: () =>
-            queryClient.invalidateQueries({ queryKey: profileKeys.all }),
+            queryClient.invalidateQueries({ queryKey: profileKeys.twoFactor }),
     });
 };
 
@@ -95,24 +76,8 @@ interface DeleteAccountResponse {
     id: string;
 }
 
-export const useDeleteAccount = () => {
-    const { accessToken } = useAuth();
-
-    const queryClient = useQueryClient();
-
-    return useMutation({
+export const useDeleteAccount = () =>
+    useMutation({
         mutationFn: () =>
-            apiClient
-                .delete('profile', {
-                    context: {
-                        accessToken,
-                    },
-                })
-                .json<DeleteAccountResponse>(),
-        onSuccess: () =>
-            queryClient.invalidateQueries({
-                queryKey: profileKeys.all,
-                refetchType: 'none',
-            }),
+            apiClient.delete('profile').json<DeleteAccountResponse>(),
     });
-};

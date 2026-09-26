@@ -1,10 +1,8 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { DateField } from '@/components/form/date-field';
 import { TextField } from '@/components/form/text-field';
 import { LoadingButton } from '@/components/loading-button';
-import { isInPast } from '@/lib/dates';
 
 const schema = z
     .object({
@@ -16,17 +14,6 @@ const schema = z
         confirmPassword: z
             .string({ message: 'Confirm Password must be a valid string' })
             .min(1, 'Confirm Password is a required field'),
-        firstName: z
-            .string({ message: 'First Name must be a valid string' })
-            .min(1, 'First Name is a required field')
-            .max(50, 'First Name must be no more than 50 characters'),
-        lastName: z
-            .string({ message: 'Last Name must be a valid string' })
-            .min(1, 'Last Name is a required field')
-            .max(50, 'Last Name must be no more than 50 characters'),
-        dateOfBirth: z.iso
-            .date('Date Of Birth must be a valid date')
-            .refine(isInPast, { message: 'Date Of Birth must be in the past' }),
     })
     .refine((data) => data.password === data.confirmPassword, {
         message: 'Passwords do not match',
@@ -47,9 +34,6 @@ export function RegisterForm({ loading, onSubmit }: RegisterFormProps) {
             emailAddress: '',
             password: '',
             confirmPassword: '',
-            firstName: '',
-            lastName: '',
-            dateOfBirth: '',
         },
     });
 
@@ -93,36 +77,6 @@ export function RegisterForm({ loading, onSubmit }: RegisterFormProps) {
                     disabled={loading}
                 />
             </div>
-
-            <div className="flex flex-col gap-6 sm:flex-row">
-                <TextField
-                    control={form.control}
-                    name="firstName"
-                    label="First Name"
-                    maxLength={50}
-                    autoComplete="given-name"
-                    required
-                    disabled={loading}
-                />
-
-                <TextField
-                    control={form.control}
-                    name="lastName"
-                    label="Last Name"
-                    maxLength={50}
-                    autoComplete="family-name"
-                    required
-                    disabled={loading}
-                />
-            </div>
-
-            <DateField
-                control={form.control}
-                name="dateOfBirth"
-                label="Date Of Birth"
-                required
-                disabled={loading}
-            />
 
             <div className="flex flex-col-reverse justify-end gap-2 sm:flex-row">
                 <LoadingButton type="submit" loading={loading}>

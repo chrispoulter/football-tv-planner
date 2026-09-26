@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using SoccerTv.Api.Common.Authentication;
 using SoccerTv.Api.Common.Infrastructure;
-using SoccerTv.Api.Data;
+using SoccerTv.Api.Data.Users;
 
 namespace SoccerTv.Api.Features.Profile.DeleteProfile;
 
@@ -19,16 +19,13 @@ public class DeleteProfileEndpoint : IEndpoint
 
     private static async Task<IResult> HandleAsync(
         CurrentUser currentUser,
-        SoccerTvDbContext dbContext,
-        CancellationToken cancellationToken = default
+        UserManager<User> userManager,
+        SignInManager<User> signInManager
     )
     {
-        var user = await dbContext.Users.FirstOrDefaultAsync(
-            u => u.Id == currentUser.Id,
-            cancellationToken
-        );
+        var user = await userManager.FindByIdAsync(currentUser.Id.ToString());
 
-        if (user is null || user.IsLockedOut)
+        if (user is null)
         {
             return Results.Problem(
                 statusCode: StatusCodes.Status404NotFound,
@@ -36,9 +33,16 @@ public class DeleteProfileEndpoint : IEndpoint
             );
         }
 
-        dbContext.Users.Remove(user);
+        var result = await userManager.DeleteAsync(user);
 
-        await dbContext.SaveChangesAsync(cancellationToken);
+        if (!result.Succeeded)
+        {
+            return Results.ValidationProblem(
+                result.Errors.ToDictionary(e => e.Code, e => new[] { e.Description })
+            );
+        }
+
+        await signInManager.SignOutAsync();
 
         return Results.Ok(new DeleteProfileResponse(user.Id));
     }

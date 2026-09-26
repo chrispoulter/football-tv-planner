@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useSearchParams } from 'react-router';
 import { toast } from 'sonner';
 import { Metadata } from '@/components/metadata';
 import { useResetPassword } from '../account-queries';
@@ -8,10 +8,8 @@ import {
 } from './reset-password-form';
 import { Card, CardContent } from '@/components/ui/card';
 
-type ResetPasswordPageParams = { token: string };
-
 export function ResetPasswordPage() {
-    const { token } = useParams() as ResetPasswordPageParams;
+    const [searchParams] = useSearchParams();
 
     const navigate = useNavigate();
 
@@ -20,8 +18,9 @@ export function ResetPasswordPage() {
     function onSubmit(values: ResetPasswordFormValues) {
         resetPassword(
             {
-                token,
-                ...values,
+                email: searchParams.get('email') ?? '',
+                resetCode: searchParams.get('code') ?? '',
+                newPassword: values.newPassword,
             },
             {
                 onSuccess: () => {

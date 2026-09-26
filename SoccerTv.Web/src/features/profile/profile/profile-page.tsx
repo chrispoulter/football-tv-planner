@@ -1,4 +1,5 @@
 import { Link } from 'react-router';
+import { useAuth } from '@/components/auth-provider';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -9,34 +10,13 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { Metadata } from '@/components/metadata';
-import { QueryError } from '@/components/query-error';
-import { toDisplay } from '@/lib/dates';
-import { useGetProfile } from '../profile-queries';
+import { useGetTwoFactor } from '../profile-queries';
 import { DeleteAccountButton } from './delete-account-button';
-import { ProfileLoading } from './profile-loading';
 
 export function ProfilePage() {
-    const {
-        data: profile,
-        isPending,
-        isFetching,
-        isSuccess,
-        error,
-    } = useGetProfile();
+    const { user } = useAuth();
 
-    if (isPending) {
-        return <ProfileLoading />;
-    }
-
-    if (!isSuccess) {
-        return <QueryError error={error} />;
-    }
-
-    const details = [
-        { label: 'Email Address', value: profile.emailAddress },
-        { label: 'Name', value: `${profile.firstName} ${profile.lastName}` },
-        { label: 'Date Of Birth', value: toDisplay(profile.dateOfBirth) },
-    ];
+    const { data: twoFactor } = useGetTwoFactor();
 
     return (
         <div className="mx-auto w-full max-w-2xl space-y-6">
@@ -53,29 +33,6 @@ export function ProfilePage() {
 
             <Card>
                 <CardHeader>
-                    <CardTitle>Personal Details</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <dl className="grid gap-4 sm:grid-cols-2">
-                        {details.map(({ label, value }) => (
-                            <div key={label} className="space-y-1">
-                                <dt className="text-sm font-medium">{label}</dt>
-                                <dd className="truncate text-sm text-muted-foreground">
-                                    {value}
-                                </dd>
-                            </div>
-                        ))}
-                    </dl>
-                </CardContent>
-                <CardFooter>
-                    <Button asChild className="w-full sm:w-auto">
-                        <Link to="/profile/update-profile">Update Profile</Link>
-                    </Button>
-                </CardFooter>
-            </Card>
-
-            <Card>
-                <CardHeader>
                     <CardTitle>Login Details</CardTitle>
                     <CardDescription>
                         Choose a strong password and don&apos;t reuse it for
@@ -83,10 +40,41 @@ export function ProfilePage() {
                         password on a regular basis.
                     </CardDescription>
                 </CardHeader>
-                <CardFooter>
+                <CardContent>
+                    <dl className="space-y-1">
+                        <dt className="text-sm font-medium">Email Address</dt>
+                        <dd className="truncate text-sm text-muted-foreground">
+                            {user?.email}
+                        </dd>
+                    </dl>
+                </CardContent>
+                <CardFooter className="flex flex-col gap-2 sm:flex-row">
+                    <Button asChild className="w-full sm:w-auto">
+                        <Link to="/profile/change-email">Change Email</Link>
+                    </Button>
                     <Button asChild className="w-full sm:w-auto">
                         <Link to="/profile/change-password">
                             Change Password
+                        </Link>
+                    </Button>
+                </CardFooter>
+            </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>Two-Factor Authentication</CardTitle>
+                    <CardDescription>
+                        {twoFactor?.isTwoFactorEnabled
+                            ? 'Enabled. A code from your authenticator app is required when you log in with your password.'
+                            : 'Not enabled. Add an extra layer of security to your account.'}
+                    </CardDescription>
+                </CardHeader>
+                <CardFooter>
+                    <Button asChild className="w-full sm:w-auto">
+                        <Link to="/profile/two-factor">
+                            {twoFactor?.isTwoFactorEnabled
+                                ? 'Manage'
+                                : 'Set Up'}
                         </Link>
                     </Button>
                 </CardFooter>
@@ -101,10 +89,7 @@ export function ProfilePage() {
                     </CardDescription>
                 </CardHeader>
                 <CardFooter>
-                    <DeleteAccountButton
-                        disabled={isFetching}
-                        className="w-full sm:w-auto"
-                    />
+                    <DeleteAccountButton className="w-full sm:w-auto" />
                 </CardFooter>
             </Card>
         </div>

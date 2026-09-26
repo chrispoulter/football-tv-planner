@@ -10,8 +10,11 @@ public static class EmailExtensions
         string connectionName
     )
     {
+        var emailConfig = builder.Configuration.GetSection(EmailSettings.SectionName);
+        builder.Services.Configure<EmailSettings>(emailConfig);
+
         var emailSettings =
-            builder.Configuration.GetSection(EmailSettings.SectionName).Get<EmailSettings>()
+            emailConfig.Get<EmailSettings>()
             ?? throw new InvalidOperationException(
                 "Email settings section is missing in configuration."
             );

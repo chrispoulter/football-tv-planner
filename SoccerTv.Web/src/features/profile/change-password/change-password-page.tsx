@@ -21,13 +21,19 @@ export function ChangePasswordPage() {
     const { mutate: changePassword, isPending: isSaving } = useChangePassword();
 
     function onSubmit(values: ChangePasswordFormValues) {
-        changePassword(values, {
-            onSuccess: () => {
-                toast.success('Your password has been changed.');
-                navigate('/profile');
+        changePassword(
+            {
+                oldPassword: values.currentPassword,
+                newPassword: values.newPassword,
             },
-            onError: (error) => toast.error(error.message),
-        });
+            {
+                onSuccess: () => {
+                    toast.success('Your password has been changed.');
+                    navigate('/profile');
+                },
+                onError: (error) => toast.error(error.message),
+            }
+        );
     }
 
     return (
@@ -57,7 +63,7 @@ export function ChangePasswordPage() {
             </Card>
 
             <p className="text-sm text-muted-foreground">
-                Forgotten your password?{' '}
+                Forgotten your password, or signed up with Google?{' '}
                 <Link
                     to="/account/forgot-password"
                     className="underline underline-offset-4"

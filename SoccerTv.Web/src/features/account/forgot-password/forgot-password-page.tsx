@@ -14,16 +14,19 @@ export function ForgotPasswordPage() {
     const { mutate: forgotPassword, isPending: isSaving } = useForgotPassword();
 
     function onSubmit(values: ForgotPasswordFormValues) {
-        forgotPassword(values, {
-            onSuccess: () => {
-                toast.success(
-                    'Instructions as to how to reset your password have been sent to you via email.'
-                );
+        forgotPassword(
+            { email: values.emailAddress },
+            {
+                onSuccess: () => {
+                    toast.success(
+                        'Instructions as to how to reset your password have been sent to you via email.'
+                    );
 
-                navigate('/account/login');
-            },
-            onError: (error) => toast.error(error.message),
-        });
+                    navigate('/account/login');
+                },
+                onError: (error) => toast.error(error.message),
+            }
+        );
     }
 
     return (

@@ -3,7 +3,6 @@ import {
     useQueryClient,
     type QueryClient,
 } from '@tanstack/react-query';
-import { useAuth } from '@/components/auth-provider';
 import { apiClient } from '@/lib/api-client';
 import {
     fixtureKeys,
@@ -54,8 +53,6 @@ async function setBookmarked(
 }
 
 export const useToggleSchedule = () => {
-    const { accessToken } = useAuth();
-
     const queryClient = useQueryClient();
 
     return useMutation({
@@ -66,11 +63,9 @@ export const useToggleSchedule = () => {
             fixtureId: string;
             isBookmarked: boolean;
         }) => {
-            const options = { context: { accessToken } };
-
             const request = isBookmarked
-                ? apiClient.put(`schedule/${fixtureId}`, options)
-                : apiClient.delete(`schedule/${fixtureId}`, options);
+                ? apiClient.put(`schedule/${fixtureId}`)
+                : apiClient.delete(`schedule/${fixtureId}`);
 
             return request.json<ScheduleItemResponse>();
         },

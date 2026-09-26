@@ -8,16 +8,18 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useLogout } from '@/features/account/account-queries';
 import { useAuth } from './auth-provider';
 
 export function UserMenu() {
     const navigate = useNavigate();
 
-    const { user, clearAuth } = useAuth();
+    const { user } = useAuth();
+
+    const { mutate: logout } = useLogout();
 
     function onLogout() {
-        clearAuth();
-        navigate('/');
+        logout(undefined, { onSettled: () => navigate('/') });
     }
 
     if (!user) {
@@ -34,8 +36,7 @@ export function UserMenu() {
                 <Button variant="ghost" size="icon" className="rounded-full">
                     <Avatar>
                         <AvatarFallback className="bg-primary text-primary-foreground">
-                            {user.given_name[0]}
-                            {user.family_name[0]}
+                            {user.email[0].toUpperCase()}
                         </AvatarFallback>
                     </Avatar>
                     <span className="sr-only">Toggle profile menu</span>
@@ -43,12 +44,7 @@ export function UserMenu() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
                 <div className="px-2 py-1.5">
-                    <p className="truncate text-sm font-medium">
-                        {user.given_name} {user.family_name}
-                    </p>
-                    <p className="truncate text-xs text-muted-foreground">
-                        {user.email}
-                    </p>
+                    <p className="truncate text-sm font-medium">{user.email}</p>
                 </div>
 
                 <DropdownMenuSeparator />

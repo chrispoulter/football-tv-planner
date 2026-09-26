@@ -11,7 +11,11 @@
     <PackageReference Include="FluentEmail.Liquid" Version="3.0.2" />
     <PackageReference Include="FluentEmail.MailKit" Version="3.0.2" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.9" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="10.0.9" />
+    <PackageReference
+      Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore"
+      Version="10.0.9"
+    />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.9">
       <PrivateAssets>all</PrivateAssets>
@@ -24,7 +28,7 @@
     <PackageReference Include="Scalar.AspNetCore" Version="2.16.9" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Features\**\*.html" />
+    <EmbeddedResource Include="Common\**\*.html" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SoccerTv.ServiceDefaults\SoccerTv.ServiceDefaults.csproj" />

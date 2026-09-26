@@ -1,69 +1,56 @@
-import { createContext, useContext, useState } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
-import { decodeJwt } from 'jose';
-import type { SessionPayload } from '@/lib/session';
+import { useCallback } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { HTTPError } from 'ky';
+import { apiClient } from '@/lib/api-client';
 
-interface AuthProviderProps {
-    children: React.ReactNode;
-}
-
-interface AuthProviderState {
-    accessToken: string | null;
-    user?: SessionPayload;
-    setAuth: (accessToken: string) => void;
-    clearAuth: () => void;
-}
-
-const STORAGE_KEY = 'accessToken';
-
-const initialState: AuthProviderState = {
-    accessToken: null,
-    user: undefined,
-    setAuth: () => {},
-    clearAuth: () => {},
+export const sessionKeys = {
+    all: ['session'] as const,
 };
 
-const AuthProviderContext = createContext<AuthProviderState>(initialState);
-
-export function AuthProvider({ children }: AuthProviderProps) {
-    const [accessToken, setAccessToken] = useState<string | null>(
-        localStorage.getItem(STORAGE_KEY)
-    );
-
-    const queryClient = useQueryClient();
-
-    function setAuth(accessToken: string) {
-        localStorage.setItem(STORAGE_KEY, accessToken);
-        setAccessToken(accessToken);
-    }
-
-    function clearAuth() {
-        localStorage.removeItem(STORAGE_KEY);
-        setAccessToken(null);
-        queryClient.clear();
-    }
-
-    const user = accessToken
-        ? decodeJwt<SessionPayload>(accessToken)
-        : undefined;
-
-    const value = {
-        accessToken,
-        user,
-        setAuth,
-        clearAuth,
-    };
-
-    return <AuthProviderContext value={value}>{children}</AuthProviderContext>;
+export interface Session {
+    email: string;
+    isEmailConfirmed?: boolean;
 }
 
-// eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {
-    const context = useContext(AuthProviderContext);
+    const queryClient = useQueryClient();
 
-    if (context === undefined) {
-        throw new Error('useAuth must be used within an AuthProvider');
-    }
+    const { data: user, isPending } = useQuery({
+        queryKey: sessionKeys.all,
+        queryFn: async ({ signal }) => {
+            try {
+                return await apiClient
+                    .get('account/manage/info', { signal })
+                    .json<Session>();
+            } catch (error) {
+                if (
+                    error instanceof HTTPError &&
+                    error.response.status === 401
+                ) {
+                    return null;
+                }
+                throw error;
+            }
+        },
+        staleTime: Infinity,
+    });
 
-    return context;
+    // Refetch everything after signing in or out, as results depend on the user
+    const refreshAuth = useCallback(
+        () => queryClient.resetQueries(),
+        [queryClient]
+    );
+
+    // The cookie is already gone or expired, so just forget the user
+    const clearAuth = useCallback(
+        () => queryClient.setQueryData(sessionKeys.all, null),
+        [queryClient]
+    );
+
+    return {
+        user: user ?? undefined,
+        isLoading: isPending,
+        refreshAuth,
+        clearAuth,
+    };
 }
