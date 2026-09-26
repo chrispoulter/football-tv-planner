@@ -4,16 +4,16 @@ using SoccerTv.Api.Common.Infrastructure;
 using SoccerTv.Api.Common.Validation;
 using SoccerTv.Api.Data.Users;
 
-namespace SoccerTv.Api.Features.Account.SetPassword;
+namespace SoccerTv.Api.Features.Profile.SetPassword;
 
 public class SetPasswordEndpoint : IEndpoint
 {
     public void MapEndpoints(IEndpointRouteBuilder app)
     {
-        app.MapPost("/account/set-password", HandleAsync)
+        app.MapPost("/profile/set-password", HandleAsync)
             .RequireAuthorization()
             .AddValidationFilter<SetPasswordRequest>()
-            .WithTags(Tags.Account)
+            .WithTags(Tags.Profile)
             .WithSummary("Set Password")
             .WithDescription(
                 "Add a password to an account that only logs in with an external provider such as Google."

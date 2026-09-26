@@ -24,9 +24,7 @@ export const useUpdateProfile = () => {
 
     return useMutation({
         mutationFn: (request: UpdateProfileRequest) =>
-            apiClient
-                .put('account/profile', { json: request })
-                .then(() => undefined),
+            apiClient.put('profile', { json: request }).then(() => undefined),
         onSuccess: invalidateSession,
     });
 };
@@ -40,7 +38,7 @@ export const useChangeEmail = () =>
     useMutation({
         mutationFn: (request: ChangeEmailRequest) =>
             apiClient
-                .post('account/change-email', { json: request })
+                .post('profile/change-email', { json: request })
                 .then(() => undefined),
     });
 
@@ -48,7 +46,7 @@ export const useResendConfirmationEmail = () =>
     useMutation({
         mutationFn: () =>
             apiClient
-                .post('account/confirm-email/resend', { json: {} })
+                .post('profile/confirm-email/resend', { json: {} })
                 .then(() => undefined),
     });
 
@@ -61,7 +59,7 @@ export const useChangePassword = () =>
     useMutation({
         mutationFn: (request: ChangePasswordRequest) =>
             apiClient
-                .post('account/change-password', { json: request })
+                .post('profile/change-password', { json: request })
                 .then(() => undefined),
     });
 
@@ -76,7 +74,7 @@ export const useSetPassword = () => {
     return useMutation({
         mutationFn: (request: SetPasswordRequest) =>
             apiClient
-                .post('account/set-password', { json: request })
+                .post('profile/set-password', { json: request })
                 .then(() => undefined),
         onSuccess: invalidateSession,
     });
@@ -94,7 +92,7 @@ export const useGetTwoFactor = () =>
         queryKey: profileKeys.twoFactor,
         queryFn: ({ signal }) =>
             apiClient
-                .get('account/two-factor', { signal })
+                .get('profile/two-factor', { signal })
                 .json<TwoFactorResponse>(),
     });
 
@@ -108,7 +106,7 @@ export const useSetupTwoFactor = () =>
     useMutation({
         mutationFn: () =>
             apiClient
-                .post('account/two-factor/setup', { json: {} })
+                .post('profile/two-factor/setup', { json: {} })
                 .json<SetupTwoFactorResponse>(),
     });
 
@@ -137,7 +135,7 @@ export const useEnableTwoFactor = () => {
     return useMutation({
         mutationFn: (request: EnableTwoFactorRequest) =>
             apiClient
-                .post('account/two-factor/enable', { json: request })
+                .post('profile/two-factor/enable', { json: request })
                 .json<RecoveryCodesResponse>(),
         onSuccess: invalidate,
     });
@@ -149,7 +147,7 @@ export const useDisableTwoFactor = () => {
     return useMutation({
         mutationFn: () =>
             apiClient
-                .post('account/two-factor/disable', { json: {} })
+                .post('profile/two-factor/disable', { json: {} })
                 .then(() => undefined),
         onSuccess: invalidate,
     });
@@ -161,7 +159,7 @@ export const useGenerateRecoveryCodes = () => {
     return useMutation({
         mutationFn: () =>
             apiClient
-                .post('account/two-factor/recovery-codes', { json: {} })
+                .post('profile/two-factor/recovery-codes', { json: {} })
                 .json<RecoveryCodesResponse>(),
         onSuccess: invalidate,
     });
@@ -173,7 +171,7 @@ export const useForgetTwoFactorMachine = () => {
     return useMutation({
         mutationFn: () =>
             apiClient
-                .post('account/two-factor/forget-machine', { json: {} })
+                .post('profile/two-factor/forget-machine', { json: {} })
                 .then(() => undefined),
         onSuccess: invalidate,
     });
@@ -195,7 +193,7 @@ export const useGetLinkedAccounts = () =>
         queryKey: profileKeys.linkedAccounts,
         queryFn: ({ signal }) =>
             apiClient
-                .get('account/linked-accounts', { signal })
+                .get('profile/linked-accounts', { signal })
                 .json<LinkedAccountsResponse>(),
     });
 
@@ -206,7 +204,7 @@ export const useRemoveLinkedAccount = () => {
         mutationFn: (provider: string) =>
             apiClient
                 .delete(
-                    `account/linked-accounts/${encodeURIComponent(provider)}`
+                    `profile/linked-accounts/${encodeURIComponent(provider)}`
                 )
                 .then(() => undefined),
         onSuccess: () =>
@@ -220,7 +218,7 @@ export const useRemoveLinkedAccount = () => {
 export function linkAccountUrl(provider: string, returnUrl: string) {
     const searchParams = new URLSearchParams({ provider, returnUrl });
 
-    return `/api/account/external-login/link?${searchParams}`;
+    return `/api/profile/linked-accounts/link?${searchParams}`;
 }
 
 interface DeleteAccountResponse {

@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace SoccerTv.Api.Features.Account.ChangeEmail;
+namespace SoccerTv.Api.Features.Profile.ChangeEmail;
 
 public record ChangeEmailRequest(string NewEmail);
 

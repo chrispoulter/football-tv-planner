@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace SoccerTv.Api.Features.Account.ChangePassword;
+namespace SoccerTv.Api.Features.Profile.ChangePassword;
 
 public record ChangePasswordRequest(string CurrentPassword, string NewPassword);
 

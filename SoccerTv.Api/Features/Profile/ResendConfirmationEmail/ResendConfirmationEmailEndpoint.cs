@@ -4,15 +4,15 @@ using SoccerTv.Api.Common.Authentication;
 using SoccerTv.Api.Common.Infrastructure;
 using SoccerTv.Api.Data.Users;
 
-namespace SoccerTv.Api.Features.Account.ResendConfirmationEmail;
+namespace SoccerTv.Api.Features.Profile.ResendConfirmationEmail;
 
 public class ResendConfirmationEmailEndpoint : IEndpoint
 {
     public void MapEndpoints(IEndpointRouteBuilder app)
     {
-        app.MapPost("/account/confirm-email/resend", HandleAsync)
+        app.MapPost("/profile/confirm-email/resend", HandleAsync)
             .RequireAuthorization()
-            .WithTags(Tags.Account)
+            .WithTags(Tags.Profile)
             .WithSummary("Resend Confirmation Email")
             .WithDescription("Send another email to confirm the current user's email address.");
     }

@@ -4,17 +4,17 @@ using SoccerTv.Api.Common.Infrastructure;
 using SoccerTv.Api.Common.Validation;
 using SoccerTv.Api.Data.Users;
 
-namespace SoccerTv.Api.Features.Account.EnableTwoFactor;
+namespace SoccerTv.Api.Features.Profile.EnableTwoFactor;
 
 public class EnableTwoFactorEndpoint : IEndpoint
 {
     public void MapEndpoints(IEndpointRouteBuilder app)
     {
-        app.MapPost("/account/two-factor/enable", HandleAsync)
+        app.MapPost("/profile/two-factor/enable", HandleAsync)
             .RequireAuthorization()
             .AddValidationFilter<EnableTwoFactorRequest>()
             .Produces<RecoveryCodesResponse>()
-            .WithTags(Tags.Account)
+            .WithTags(Tags.Profile)
             .WithSummary("Enable Two-Factor")
             .WithDescription(
                 "Enable two-factor authentication with a code from the authenticator app, returning a new set of recovery codes."

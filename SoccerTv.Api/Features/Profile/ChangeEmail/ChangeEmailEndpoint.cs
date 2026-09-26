@@ -4,16 +4,16 @@ using SoccerTv.Api.Common.Infrastructure;
 using SoccerTv.Api.Common.Validation;
 using SoccerTv.Api.Data.Users;
 
-namespace SoccerTv.Api.Features.Account.ChangeEmail;
+namespace SoccerTv.Api.Features.Profile.ChangeEmail;
 
 public class ChangeEmailEndpoint : IEndpoint
 {
     public void MapEndpoints(IEndpointRouteBuilder app)
     {
-        app.MapPost("/account/change-email", HandleAsync)
+        app.MapPost("/profile/change-email", HandleAsync)
             .RequireAuthorization()
             .AddValidationFilter<ChangeEmailRequest>()
-            .WithTags(Tags.Account)
+            .WithTags(Tags.Profile)
             .WithSummary("Change Email")
             .WithDescription(
                 "Send a link to the new email address. The email only changes once the link is followed."

@@ -3,14 +3,15 @@ using Microsoft.AspNetCore.Identity;
 using SoccerTv.Api.Common.Authentication;
 using SoccerTv.Api.Common.Infrastructure;
 using SoccerTv.Api.Data.Users;
+using SoccerTv.Api.Features.Account.ExternalLogin;
 
-namespace SoccerTv.Api.Features.Account.ExternalLogin;
+namespace SoccerTv.Api.Features.Profile.LinkAccount;
 
-public class LinkLoginCallbackEndpoint : IEndpoint
+public class LinkAccountCallbackEndpoint : IEndpoint
 {
     public void MapEndpoints(IEndpointRouteBuilder app)
     {
-        app.MapGet("/account/external-login/link/callback", HandleAsync)
+        app.MapGet("/profile/linked-accounts/link/callback", HandleAsync)
             .RequireAuthorization()
             .ExcludeFromDescription();
     }

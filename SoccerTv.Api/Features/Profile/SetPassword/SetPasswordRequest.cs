@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace SoccerTv.Api.Features.Account.SetPassword;
+namespace SoccerTv.Api.Features.Profile.SetPassword;
 
 public record SetPasswordRequest(string NewPassword);
 

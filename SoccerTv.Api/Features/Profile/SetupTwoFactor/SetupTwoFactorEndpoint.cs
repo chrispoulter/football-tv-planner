@@ -4,7 +4,7 @@ using SoccerTv.Api.Common.Authentication;
 using SoccerTv.Api.Common.Infrastructure;
 using SoccerTv.Api.Data.Users;
 
-namespace SoccerTv.Api.Features.Account.SetupTwoFactor;
+namespace SoccerTv.Api.Features.Profile.SetupTwoFactor;
 
 public class SetupTwoFactorEndpoint : IEndpoint
 {
@@ -12,10 +12,10 @@ public class SetupTwoFactorEndpoint : IEndpoint
 
     public void MapEndpoints(IEndpointRouteBuilder app)
     {
-        app.MapPost("/account/two-factor/setup", HandleAsync)
+        app.MapPost("/profile/two-factor/setup", HandleAsync)
             .RequireAuthorization()
             .Produces<SetupTwoFactorResponse>()
-            .WithTags(Tags.Account)
+            .WithTags(Tags.Profile)
             .WithSummary("Setup Two-Factor")
             .WithDescription(
                 "Get the key to add to an authenticator app, before enabling two-factor authentication with a code from the app."

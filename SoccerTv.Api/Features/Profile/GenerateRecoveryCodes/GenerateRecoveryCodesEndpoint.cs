@@ -4,16 +4,16 @@ using SoccerTv.Api.Common.Authentication;
 using SoccerTv.Api.Common.Infrastructure;
 using SoccerTv.Api.Data.Users;
 
-namespace SoccerTv.Api.Features.Account.GenerateRecoveryCodes;
+namespace SoccerTv.Api.Features.Profile.GenerateRecoveryCodes;
 
 public class GenerateRecoveryCodesEndpoint : IEndpoint
 {
     public void MapEndpoints(IEndpointRouteBuilder app)
     {
-        app.MapPost("/account/two-factor/recovery-codes", HandleAsync)
+        app.MapPost("/profile/two-factor/recovery-codes", HandleAsync)
             .RequireAuthorization()
             .Produces<RecoveryCodesResponse>()
-            .WithTags(Tags.Account)
+            .WithTags(Tags.Profile)
             .WithSummary("Generate Recovery Codes")
             .WithDescription(
                 "Generate a new set of two-factor recovery codes. The previous codes stop working."

@@ -4,16 +4,16 @@ using SoccerTv.Api.Common.Infrastructure;
 using SoccerTv.Api.Common.Validation;
 using SoccerTv.Api.Data.Users;
 
-namespace SoccerTv.Api.Features.Account.UpdateProfile;
+namespace SoccerTv.Api.Features.Profile.UpdateProfile;
 
 public class UpdateProfileEndpoint : IEndpoint
 {
     public void MapEndpoints(IEndpointRouteBuilder app)
     {
-        app.MapPut("/account/profile", HandleAsync)
+        app.MapPut("/profile", HandleAsync)
             .RequireAuthorization()
             .AddValidationFilter<UpdateProfileRequest>()
-            .WithTags(Tags.Account)
+            .WithTags(Tags.Profile)
             .WithSummary("Update Profile")
             .WithDescription("Update the personal details of the current user.");
     }

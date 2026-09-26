@@ -3,15 +3,15 @@ using Microsoft.AspNetCore.Mvc;
 using SoccerTv.Api.Common.Infrastructure;
 using SoccerTv.Api.Data.Users;
 
-namespace SoccerTv.Api.Features.Account.ForgetTwoFactorMachine;
+namespace SoccerTv.Api.Features.Profile.ForgetTwoFactorMachine;
 
 public class ForgetTwoFactorMachineEndpoint : IEndpoint
 {
     public void MapEndpoints(IEndpointRouteBuilder app)
     {
-        app.MapPost("/account/two-factor/forget-machine", HandleAsync)
+        app.MapPost("/profile/two-factor/forget-machine", HandleAsync)
             .RequireAuthorization()
-            .WithTags(Tags.Account)
+            .WithTags(Tags.Profile)
             .WithSummary("Forget Two-Factor Machine")
             .WithDescription("Ask for a two-factor code the next time this browser logs in.");
     }

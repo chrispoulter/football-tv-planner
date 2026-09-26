@@ -4,15 +4,15 @@ using SoccerTv.Api.Common.Infrastructure;
 using SoccerTv.Api.Common.Validation;
 using SoccerTv.Api.Data.Users;
 
-namespace SoccerTv.Api.Features.Account.RemoveLinkedAccount;
+namespace SoccerTv.Api.Features.Profile.RemoveLinkedAccount;
 
 public class RemoveLinkedAccountEndpoint : IEndpoint
 {
     public void MapEndpoints(IEndpointRouteBuilder app)
     {
-        app.MapDelete("/account/linked-accounts/{provider}", HandleAsync)
+        app.MapDelete("/profile/linked-accounts/{provider}", HandleAsync)
             .RequireAuthorization()
-            .WithTags(Tags.Account)
+            .WithTags(Tags.Profile)
             .WithSummary("Remove Linked Account")
             .WithDescription(
                 "Unlink an external login provider, such as Google, from the current user."

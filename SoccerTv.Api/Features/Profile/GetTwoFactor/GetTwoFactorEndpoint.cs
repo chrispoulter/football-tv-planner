@@ -3,16 +3,16 @@ using SoccerTv.Api.Common.Authentication;
 using SoccerTv.Api.Common.Infrastructure;
 using SoccerTv.Api.Data.Users;
 
-namespace SoccerTv.Api.Features.Account.GetTwoFactor;
+namespace SoccerTv.Api.Features.Profile.GetTwoFactor;
 
 public class GetTwoFactorEndpoint : IEndpoint
 {
     public void MapEndpoints(IEndpointRouteBuilder app)
     {
-        app.MapGet("/account/two-factor", HandleAsync)
+        app.MapGet("/profile/two-factor", HandleAsync)
             .RequireAuthorization()
             .Produces<TwoFactorResponse>()
-            .WithTags(Tags.Account)
+            .WithTags(Tags.Profile)
             .WithSummary("Get Two-Factor")
             .WithDescription("Get the current user's two-factor authentication status.");
     }

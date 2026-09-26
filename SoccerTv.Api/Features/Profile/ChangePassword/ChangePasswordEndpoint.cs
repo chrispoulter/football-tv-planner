@@ -4,16 +4,16 @@ using SoccerTv.Api.Common.Infrastructure;
 using SoccerTv.Api.Common.Validation;
 using SoccerTv.Api.Data.Users;
 
-namespace SoccerTv.Api.Features.Account.ChangePassword;
+namespace SoccerTv.Api.Features.Profile.ChangePassword;
 
 public class ChangePasswordEndpoint : IEndpoint
 {
     public void MapEndpoints(IEndpointRouteBuilder app)
     {
-        app.MapPost("/account/change-password", HandleAsync)
+        app.MapPost("/profile/change-password", HandleAsync)
             .RequireAuthorization()
             .AddValidationFilter<ChangePasswordRequest>()
-            .WithTags(Tags.Account)
+            .WithTags(Tags.Profile)
             .WithSummary("Change Password")
             .WithDescription("Change the current user's password.");
     }

@@ -1,4 +1,4 @@
-namespace SoccerTv.Api.Features.Account;
+namespace SoccerTv.Api.Features.Profile;
 
 /// <summary>
 /// Only ever shown once, as just their hashes aren't stored.

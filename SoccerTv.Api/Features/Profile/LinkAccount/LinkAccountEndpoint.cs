@@ -4,17 +4,18 @@ using Microsoft.AspNetCore.WebUtilities;
 using SoccerTv.Api.Common.Authentication;
 using SoccerTv.Api.Common.Infrastructure;
 using SoccerTv.Api.Data.Users;
+using SoccerTv.Api.Features.Account.ExternalLogin;
 
-namespace SoccerTv.Api.Features.Account.ExternalLogin;
+namespace SoccerTv.Api.Features.Profile.LinkAccount;
 
-public class LinkLoginEndpoint : IEndpoint
+public class LinkAccountEndpoint : IEndpoint
 {
     public void MapEndpoints(IEndpointRouteBuilder app)
     {
-        app.MapGet("/account/external-login/link", HandleAsync)
+        app.MapGet("/profile/linked-accounts/link", HandleAsync)
             .RequireAuthorization()
-            .WithTags(Tags.Account)
-            .WithSummary("Link External Login")
+            .WithTags(Tags.Profile)
+            .WithSummary("Link Account")
             .WithDescription(
                 "Redirect to an external login provider such as Google, to link it to the current user."
             );
@@ -42,7 +43,7 @@ public class LinkLoginEndpoint : IEndpoint
         await httpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
         var callbackUrl = QueryHelpers.AddQueryString(
-            $"{httpContext.Request.PathBase}/account/external-login/link/callback",
+            $"{httpContext.Request.PathBase}/profile/linked-accounts/link/callback",
             "returnUrl",
             ExternalLoginRedirects.LocalOrRoot(returnUrl)
         );

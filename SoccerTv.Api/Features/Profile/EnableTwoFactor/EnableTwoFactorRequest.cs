@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace SoccerTv.Api.Features.Account.EnableTwoFactor;
+namespace SoccerTv.Api.Features.Profile.EnableTwoFactor;
 
 public record EnableTwoFactorRequest(string Code);
 

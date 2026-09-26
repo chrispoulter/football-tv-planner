@@ -1,4 +1,4 @@
-namespace SoccerTv.Api.Features.Account;
+namespace SoccerTv.Api.Features;
 
 public static class AccountProblems
 {

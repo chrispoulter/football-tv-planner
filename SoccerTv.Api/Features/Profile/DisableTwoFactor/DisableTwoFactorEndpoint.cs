@@ -5,15 +5,15 @@ using SoccerTv.Api.Common.Infrastructure;
 using SoccerTv.Api.Common.Validation;
 using SoccerTv.Api.Data.Users;
 
-namespace SoccerTv.Api.Features.Account.DisableTwoFactor;
+namespace SoccerTv.Api.Features.Profile.DisableTwoFactor;
 
 public class DisableTwoFactorEndpoint : IEndpoint
 {
     public void MapEndpoints(IEndpointRouteBuilder app)
     {
-        app.MapPost("/account/two-factor/disable", HandleAsync)
+        app.MapPost("/profile/two-factor/disable", HandleAsync)
             .RequireAuthorization()
-            .WithTags(Tags.Account)
+            .WithTags(Tags.Profile)
             .WithSummary("Disable Two-Factor")
             .WithDescription("Disable two-factor authentication for the current user.");
     }

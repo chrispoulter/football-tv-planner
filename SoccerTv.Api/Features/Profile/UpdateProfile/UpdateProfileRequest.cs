@@ -1,7 +1,7 @@
 using FluentValidation;
 using SoccerTv.Api.Data.Users;
 
-namespace SoccerTv.Api.Features.Account.UpdateProfile;
+namespace SoccerTv.Api.Features.Profile.UpdateProfile;
 
 public record UpdateProfileRequest(string Name);
 

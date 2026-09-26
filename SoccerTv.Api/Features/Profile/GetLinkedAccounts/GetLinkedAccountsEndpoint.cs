@@ -3,16 +3,16 @@ using SoccerTv.Api.Common.Authentication;
 using SoccerTv.Api.Common.Infrastructure;
 using SoccerTv.Api.Data.Users;
 
-namespace SoccerTv.Api.Features.Account.GetLinkedAccounts;
+namespace SoccerTv.Api.Features.Profile.GetLinkedAccounts;
 
 public class GetLinkedAccountsEndpoint : IEndpoint
 {
     public void MapEndpoints(IEndpointRouteBuilder app)
     {
-        app.MapGet("/account/linked-accounts", HandleAsync)
+        app.MapGet("/profile/linked-accounts", HandleAsync)
             .RequireAuthorization()
             .Produces<LinkedAccountsResponse>()
-            .WithTags(Tags.Account)
+            .WithTags(Tags.Profile)
             .WithSummary("Get Linked Accounts")
             .WithDescription(
                 "List the external login providers, such as Google, and whether the current user has linked each one."

@@ -6,5 +6,7 @@ public static class Tags
 
     public const string Fixtures = "Fixtures";
 
+    public const string Profile = "Profile";
+
     public const string Schedule = "Schedule";
 }
