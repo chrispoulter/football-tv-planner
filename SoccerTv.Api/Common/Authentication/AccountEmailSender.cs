@@ -32,7 +32,13 @@ public class AccountEmailSender(
             }
         );
 
-        await SendAsync(user.Email!, "Confirm your email // SoccerTv", "ConfirmEmail.html", link);
+        await SendAsync(
+            user,
+            user.Email!,
+            "Verify your email address | SoccerTv",
+            "ConfirmEmail.html",
+            link
+        );
     }
 
     public async Task SendChangeEmailLinkAsync(User user, string newEmail)
@@ -49,7 +55,13 @@ public class AccountEmailSender(
             }
         );
 
-        await SendAsync(newEmail, "Confirm your email // SoccerTv", "ConfirmEmail.html", link);
+        await SendAsync(
+            user,
+            newEmail,
+            "Verify your email address | SoccerTv",
+            "ConfirmEmail.html",
+            link
+        );
     }
 
     public async Task SendPasswordResetLinkAsync(User user)
@@ -65,16 +77,33 @@ public class AccountEmailSender(
             }
         );
 
-        await SendAsync(user.Email!, "Reset Password // SoccerTv", "ResetPassword.html", link);
+        await SendAsync(
+            user,
+            user.Email!,
+            "Reset your password | SoccerTv",
+            "ResetPassword.html",
+            link
+        );
     }
 
-    private async Task SendAsync(string email, string subject, string template, string link)
+    private async Task SendAsync(
+        User user,
+        string email,
+        string subject,
+        string template,
+        string link
+    )
     {
         await emailService.SendTemplateEmailAsync(
             toAddress: email,
             subject: subject,
             template: $"{TemplatePrefix}.{template}",
-            model: new { Link = link, _emailSettings.SiteUrl }
+            model: new
+            {
+                Link = link,
+                Name = string.IsNullOrWhiteSpace(user.Name) ? email : user.Name,
+                _emailSettings.SiteUrl,
+            }
         );
     }
 }
