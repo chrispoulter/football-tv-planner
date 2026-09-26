@@ -112,6 +112,7 @@ export function LinkedAccounts({ hasPassword }: LinkedAccountsProps) {
                                 isRemoving &&
                                 removingProvider === account.provider
                             }
+                            loadingText="Disconnecting..."
                             disabled={!canUnlink}
                             title={
                                 canUnlink

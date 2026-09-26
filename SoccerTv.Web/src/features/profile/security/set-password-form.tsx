@@ -10,12 +10,10 @@ import { useSetPassword } from '../profile-queries';
 const schema = z
     .object({
         newPassword: z
-            .string({ message: 'Password must be a valid string' })
+            .string()
             .min(8, 'Password must be at least 8 characters')
             .max(50, 'Password must be no more than 50 characters'),
-        confirmNewPassword: z
-            .string({ message: 'Confirm Password must be a valid string' })
-            .min(1, 'Confirm Password is a required field'),
+        confirmNewPassword: z.string(),
     })
     .refine((data) => data.newPassword === data.confirmNewPassword, {
         message: 'Passwords do not match',
@@ -84,7 +82,11 @@ export function SetPasswordForm() {
                 />
 
                 <div className="flex flex-col-reverse gap-2 sm:flex-row">
-                    <LoadingButton type="submit" loading={isPending}>
+                    <LoadingButton
+                        type="submit"
+                        loading={isPending}
+                        loadingText="Setting..."
+                    >
                         Set Password
                     </LoadingButton>
                 </div>

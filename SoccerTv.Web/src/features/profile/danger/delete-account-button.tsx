@@ -47,6 +47,7 @@ export function DeleteAccountButton({
                 <LoadingButton
                     variant="destructive"
                     loading={isDeleting}
+                    loadingText="Deleting..."
                     disabled={disabled}
                     className={className}
                 >

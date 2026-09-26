@@ -78,6 +78,7 @@ export function ProfileTab() {
                                     variant="outline"
                                     size="sm"
                                     loading={isResending}
+                                    loadingText="Sending..."
                                     onClick={onResendConfirmation}
                                 >
                                     Resend Confirmation Email

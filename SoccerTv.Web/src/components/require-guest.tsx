@@ -1,6 +1,7 @@
 import { Navigate, Outlet, useLocation } from 'react-router';
 import { returnUrl } from '@/lib/return-url';
 import { useAuth } from './auth-provider';
+import { PageLoading } from './page-loading';
 
 export function RequireGuest() {
     const location = useLocation();
@@ -8,7 +9,7 @@ export function RequireGuest() {
     const { user, isLoading } = useAuth();
 
     if (isLoading) {
-        return null;
+        return <PageLoading />;
     }
 
     if (user) {

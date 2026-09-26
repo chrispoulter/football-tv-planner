@@ -149,6 +149,7 @@ export function TwoFactorSettings() {
                 <TwoFactorConfirm
                     message="You'll no longer need a code from your authenticator app to sign in. Your authenticator app entry and recovery codes will stop working."
                     confirmLabel="Disable 2FA"
+                    loadingLabel="Disabling..."
                     destructive
                     loading={isDisabling}
                     onConfirm={onDisable}
@@ -161,6 +162,7 @@ export function TwoFactorSettings() {
                 <TwoFactorConfirm
                     message="Your existing recovery codes will stop working and be replaced with new ones."
                     confirmLabel="Regenerate Codes"
+                    loadingLabel="Regenerating..."
                     loading={isGenerating}
                     onConfirm={onRegenerate}
                     onCancel={() => setStep('idle')}
@@ -172,6 +174,7 @@ export function TwoFactorSettings() {
         return (
             <LoadingButton
                 loading={isSettingUp}
+                loadingText="Setting Up..."
                 onClick={onSetup}
                 className="w-full sm:w-auto"
             >
@@ -203,6 +206,7 @@ export function TwoFactorSettings() {
                     <LoadingButton
                         variant="outline"
                         loading={isForgetting}
+                        loadingText="Forgetting..."
                         onClick={onForgetMachine}
                     >
                         Forget This Browser

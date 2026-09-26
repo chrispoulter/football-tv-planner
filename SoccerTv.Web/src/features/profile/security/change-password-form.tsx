@@ -9,16 +9,12 @@ import { useChangePassword } from '../profile-queries';
 
 const schema = z
     .object({
-        currentPassword: z
-            .string({ message: 'Current Password must be a valid string' })
-            .min(1, 'Current Password is a required field'),
+        currentPassword: z.string().min(1, 'Current password is required'),
         newPassword: z
-            .string({ message: 'New Password must be a valid string' })
-            .min(8, 'New Password must be at least 8 characters')
-            .max(50, 'New Password must be no more than 50 characters'),
-        confirmNewPassword: z
-            .string({ message: 'Confirm New Password must be a valid string' })
-            .min(1, 'Confirm New Password is a required field'),
+            .string()
+            .min(8, 'Password must be at least 8 characters')
+            .max(50, 'Password must be no more than 50 characters'),
+        confirmNewPassword: z.string(),
     })
     .refine((data) => data.newPassword === data.confirmNewPassword, {
         message: 'Passwords do not match',
@@ -95,7 +91,11 @@ export function ChangePasswordForm() {
                 />
 
                 <div className="flex flex-col-reverse gap-2 sm:flex-row">
-                    <LoadingButton type="submit" loading={isPending}>
+                    <LoadingButton
+                        type="submit"
+                        loading={isPending}
+                        loadingText="Changing..."
+                    >
                         Change Password
                     </LoadingButton>
                 </div>

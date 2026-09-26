@@ -11,7 +11,7 @@ import { FieldGroup } from '@/components/ui/field';
 import { useChangeEmail } from '../profile-queries';
 
 const schema = z.object({
-    newEmail: z.email('New Email Address must be a valid email'),
+    newEmail: z.email('Invalid email address'),
 });
 
 type UpdateEmailFormValues = z.infer<typeof schema>;
@@ -83,7 +83,11 @@ export function UpdateEmailForm() {
                 />
 
                 <div className="flex flex-col-reverse gap-2 sm:flex-row">
-                    <LoadingButton type="submit" loading={isPending}>
+                    <LoadingButton
+                        type="submit"
+                        loading={isPending}
+                        loadingText="Sending Verification..."
+                    >
                         Update Email
                     </LoadingButton>
                 </div>

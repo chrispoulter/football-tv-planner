@@ -9,9 +9,9 @@ import { useUpdateProfile } from '../profile-queries';
 
 const schema = z.object({
     name: z
-        .string({ message: 'Name must be a valid string' })
+        .string()
         .trim()
-        .min(1, 'Name is a required field')
+        .min(1, 'Name is required')
         .max(100, 'Name must be no more than 100 characters'),
 });
 
@@ -56,7 +56,11 @@ export function UpdateProfileForm({ name }: UpdateProfileFormProps) {
                 />
 
                 <div className="flex flex-col-reverse gap-2 sm:flex-row">
-                    <LoadingButton type="submit" loading={isPending}>
+                    <LoadingButton
+                        type="submit"
+                        loading={isPending}
+                        loadingText="Saving..."
+                    >
                         Save Changes
                     </LoadingButton>
                 </div>

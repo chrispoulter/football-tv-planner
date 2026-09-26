@@ -8,18 +8,16 @@ import { FieldGroup } from '@/components/ui/field';
 const schema = z
     .object({
         name: z
-            .string({ message: 'Name must be a valid string' })
+            .string()
             .trim()
-            .min(1, 'Name is a required field')
+            .min(1, 'Name is required')
             .max(100, 'Name must be no more than 100 characters'),
-        emailAddress: z.email('Email Address must be a valid email'),
+        emailAddress: z.email('Invalid email address'),
         password: z
-            .string({ message: 'Password must be a valid string' })
+            .string()
             .min(8, 'Password must be at least 8 characters')
             .max(50, 'Password must be no more than 50 characters'),
-        confirmPassword: z
-            .string({ message: 'Confirm Password must be a valid string' })
-            .min(1, 'Confirm Password is a required field'),
+        confirmPassword: z.string(),
     })
     .refine((data) => data.password === data.confirmPassword, {
         message: 'Passwords do not match',
@@ -94,7 +92,11 @@ export function RegisterForm({ loading, onSubmit }: RegisterFormProps) {
                     disabled={loading}
                 />
 
-                <LoadingButton type="submit" loading={loading}>
+                <LoadingButton
+                    type="submit"
+                    loading={loading}
+                    loadingText="Creating Account..."
+                >
                     Create Account
                 </LoadingButton>
             </FieldGroup>

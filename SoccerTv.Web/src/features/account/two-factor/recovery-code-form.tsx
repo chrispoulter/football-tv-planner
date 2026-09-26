@@ -7,10 +7,7 @@ import { Button } from '@/components/ui/button';
 import { FieldGroup } from '@/components/ui/field';
 
 const schema = z.object({
-    recoveryCode: z
-        .string({ message: 'Recovery Code must be a valid string' })
-        .trim()
-        .min(1, 'Recovery Code is a required field'),
+    recoveryCode: z.string().trim().min(1, 'Recovery code is required'),
 });
 
 export type RecoveryCodeFormValues = z.infer<typeof schema>;
@@ -48,7 +45,11 @@ export function RecoveryCodeForm({
                     disabled={loading}
                 />
 
-                <LoadingButton type="submit" loading={loading}>
+                <LoadingButton
+                    type="submit"
+                    loading={loading}
+                    loadingText="Verifying..."
+                >
                     Verify
                 </LoadingButton>
                 <Button

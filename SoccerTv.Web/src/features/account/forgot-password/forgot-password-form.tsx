@@ -6,7 +6,7 @@ import { LoadingButton } from '@/components/loading-button';
 import { FieldGroup } from '@/components/ui/field';
 
 const schema = z.object({
-    emailAddress: z.email('Email Address must be a valid email'),
+    emailAddress: z.email('Invalid email address'),
 });
 
 export type ForgotPasswordFormValues = z.infer<typeof schema>;
@@ -42,7 +42,11 @@ export function ForgotPasswordForm({
                     disabled={loading}
                 />
 
-                <LoadingButton type="submit" loading={loading}>
+                <LoadingButton
+                    type="submit"
+                    loading={loading}
+                    loadingText="Sending..."
+                >
                     Send Reset Link
                 </LoadingButton>
             </FieldGroup>

@@ -88,7 +88,11 @@ export function TwoFactorVerifyForm({
                     >
                         Back
                     </Button>
-                    <LoadingButton type="submit" loading={loading}>
+                    <LoadingButton
+                        type="submit"
+                        loading={loading}
+                        loadingText="Verifying..."
+                    >
                         Verify &amp; Enable
                     </LoadingButton>
                 </div>

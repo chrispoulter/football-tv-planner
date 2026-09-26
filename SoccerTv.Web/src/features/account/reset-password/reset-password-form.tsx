@@ -8,12 +8,10 @@ import { FieldGroup } from '@/components/ui/field';
 const schema = z
     .object({
         newPassword: z
-            .string({ message: 'New Password must be a valid string' })
-            .min(8, 'New Password must be at least 8 characters')
-            .max(50, 'New Password must be no more than 50 characters'),
-        confirmNewPassword: z
-            .string({ message: 'Confirm New Password must be a valid string' })
-            .min(1, 'Confirm New Password is a required field'),
+            .string()
+            .min(8, 'Password must be at least 8 characters')
+            .max(50, 'Password must be no more than 50 characters'),
+        confirmNewPassword: z.string(),
     })
     .refine((data) => data.newPassword === data.confirmNewPassword, {
         message: 'Passwords do not match',
@@ -66,7 +64,11 @@ export function ResetPasswordForm({
                     disabled={loading}
                 />
 
-                <LoadingButton type="submit" loading={loading}>
+                <LoadingButton
+                    type="submit"
+                    loading={loading}
+                    loadingText="Resetting..."
+                >
                     Reset Password
                 </LoadingButton>
             </FieldGroup>

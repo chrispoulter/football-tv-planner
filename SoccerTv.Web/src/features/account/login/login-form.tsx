@@ -8,10 +8,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 
 const schema = z.object({
-    emailAddress: z.email('Email Address must be a valid email'),
-    password: z
-        .string({ message: 'Password must be a valid string' })
-        .min(1, 'Password is a required field'),
+    emailAddress: z.email('Invalid email address'),
+    password: z.string().min(1, 'Password is required'),
     rememberMe: z.boolean(),
 });
 
@@ -90,7 +88,11 @@ export function LoginForm({ loading, onSubmit }: LoginFormProps) {
                     </Link>
                 </div>
 
-                <LoadingButton type="submit" loading={loading}>
+                <LoadingButton
+                    type="submit"
+                    loading={loading}
+                    loadingText="Signing In..."
+                >
                     Sign In
                 </LoadingButton>
             </FieldGroup>

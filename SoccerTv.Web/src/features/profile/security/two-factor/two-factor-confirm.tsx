@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 interface TwoFactorConfirmProps {
     message: string;
     confirmLabel: string;
+    loadingLabel: string;
     destructive?: boolean;
     loading?: boolean;
     onConfirm: () => void;
@@ -16,6 +17,7 @@ interface TwoFactorConfirmProps {
 export function TwoFactorConfirm({
     message,
     confirmLabel,
+    loadingLabel,
     destructive,
     loading,
     onConfirm,
@@ -31,6 +33,7 @@ export function TwoFactorConfirm({
                 <LoadingButton
                     variant={destructive ? 'destructive' : 'default'}
                     loading={loading}
+                    loadingText={loadingLabel}
                     onClick={onConfirm}
                 >
                     {confirmLabel}

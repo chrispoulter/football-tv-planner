@@ -1,27 +1,21 @@
 import { Button } from '@/components/ui/button';
-import { Spinner } from '@/components/ui/spinner';
-import { cn } from '@/lib/utils';
 
 interface LoadingButtonProps extends React.ComponentProps<typeof Button> {
     loading?: boolean;
+    // Shown in place of the label while loading, e.g. "Saving..."
+    loadingText: string;
 }
 
 export function LoadingButton({
     loading,
+    loadingText,
     children,
     disabled,
     ...rest
 }: LoadingButtonProps) {
     return (
         <Button {...rest} disabled={disabled || loading}>
-            {loading && <Spinner className="absolute" />}
-            <span
-                className={cn({
-                    invisible: loading,
-                })}
-            >
-                {children}
-            </span>
+            {loading ? loadingText : children}
         </Button>
     );
 }

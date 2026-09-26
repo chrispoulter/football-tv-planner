@@ -107,7 +107,11 @@ export function AuthenticatorCodeForm({
                     )}
                 />
 
-                <LoadingButton type="submit" loading={loading}>
+                <LoadingButton
+                    type="submit"
+                    loading={loading}
+                    loadingText="Verifying..."
+                >
                     Verify
                 </LoadingButton>
                 <Button

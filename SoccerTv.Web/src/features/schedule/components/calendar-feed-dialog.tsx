@@ -163,6 +163,7 @@ function CalendarFeedOptions({ feed }: CalendarFeedOptionsProps) {
                     <LoadingButton
                         variant="link"
                         loading={isResetting}
+                        loadingText="Resetting..."
                         className="h-auto px-0"
                     >
                         Reset link
