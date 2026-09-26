@@ -1,4 +1,4 @@
-namespace SoccerTv.Api.Features.Profile.GetLinkedAccounts;
+namespace SoccerTv.Api.Features.Profile.LinkedAccounts.GetLinkedAccounts;
 
 public record LinkedAccountsResponse(IEnumerable<LinkedAccount> Accounts);
 

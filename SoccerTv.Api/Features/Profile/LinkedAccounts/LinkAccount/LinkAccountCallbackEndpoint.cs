@@ -5,7 +5,7 @@ using SoccerTv.Api.Common.Infrastructure;
 using SoccerTv.Api.Data.Users;
 using SoccerTv.Api.Features.Account.ExternalLogin;
 
-namespace SoccerTv.Api.Features.Profile.LinkAccount;
+namespace SoccerTv.Api.Features.Profile.LinkedAccounts.LinkAccount;
 
 public class LinkAccountCallbackEndpoint : IEndpoint
 {

@@ -1,4 +1,4 @@
-namespace SoccerTv.Api.Features.Profile.SetupTwoFactor;
+namespace SoccerTv.Api.Features.Profile.TwoFactor.SetupTwoFactor;
 
 /// <summary>
 /// The key to add to an authenticator app, and the same as a URI to show as a QR code.

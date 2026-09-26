@@ -5,7 +5,7 @@ using SoccerTv.Api.Common.Infrastructure;
 using SoccerTv.Api.Common.Validation;
 using SoccerTv.Api.Data.Users;
 
-namespace SoccerTv.Api.Features.Profile.DisableTwoFactor;
+namespace SoccerTv.Api.Features.Profile.TwoFactor.DisableTwoFactor;
 
 public class DisableTwoFactorEndpoint : IEndpoint
 {

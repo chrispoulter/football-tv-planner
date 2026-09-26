@@ -3,7 +3,7 @@ using SoccerTv.Api.Common.Authentication;
 using SoccerTv.Api.Common.Infrastructure;
 using SoccerTv.Api.Data.Users;
 
-namespace SoccerTv.Api.Features.Profile.GetTwoFactor;
+namespace SoccerTv.Api.Features.Profile.TwoFactor.GetTwoFactor;
 
 public class GetTwoFactorEndpoint : IEndpoint
 {

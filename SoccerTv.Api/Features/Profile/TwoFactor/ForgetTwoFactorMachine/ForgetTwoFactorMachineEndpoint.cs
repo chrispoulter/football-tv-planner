@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SoccerTv.Api.Common.Infrastructure;
 using SoccerTv.Api.Data.Users;
 
-namespace SoccerTv.Api.Features.Profile.ForgetTwoFactorMachine;
+namespace SoccerTv.Api.Features.Profile.TwoFactor.ForgetTwoFactorMachine;
 
 public class ForgetTwoFactorMachineEndpoint : IEndpoint
 {

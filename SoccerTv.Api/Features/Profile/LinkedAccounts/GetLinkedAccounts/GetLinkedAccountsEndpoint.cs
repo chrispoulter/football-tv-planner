@@ -3,7 +3,7 @@ using SoccerTv.Api.Common.Authentication;
 using SoccerTv.Api.Common.Infrastructure;
 using SoccerTv.Api.Data.Users;
 
-namespace SoccerTv.Api.Features.Profile.GetLinkedAccounts;
+namespace SoccerTv.Api.Features.Profile.LinkedAccounts.GetLinkedAccounts;
 
 public class GetLinkedAccountsEndpoint : IEndpoint
 {

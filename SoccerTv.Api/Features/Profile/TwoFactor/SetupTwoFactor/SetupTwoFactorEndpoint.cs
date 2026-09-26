@@ -4,7 +4,7 @@ using SoccerTv.Api.Common.Authentication;
 using SoccerTv.Api.Common.Infrastructure;
 using SoccerTv.Api.Data.Users;
 
-namespace SoccerTv.Api.Features.Profile.SetupTwoFactor;
+namespace SoccerTv.Api.Features.Profile.TwoFactor.SetupTwoFactor;
 
 public class SetupTwoFactorEndpoint : IEndpoint
 {

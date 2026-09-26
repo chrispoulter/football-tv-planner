@@ -4,7 +4,7 @@ using SoccerTv.Api.Common.Authentication;
 using SoccerTv.Api.Common.Infrastructure;
 using SoccerTv.Api.Data.Users;
 
-namespace SoccerTv.Api.Features.Profile.GenerateRecoveryCodes;
+namespace SoccerTv.Api.Features.Profile.TwoFactor.GenerateRecoveryCodes;
 
 public class GenerateRecoveryCodesEndpoint : IEndpoint
 {
