@@ -42,7 +42,6 @@ export function RecoveryCodeForm({
                     autoComplete="off"
                     autoFocus
                     required
-                    disabled={loading}
                 />
 
                 <LoadingButton
@@ -56,7 +55,6 @@ export function RecoveryCodeForm({
                     type="button"
                     variant="link"
                     onClick={onUseAuthenticator}
-                    disabled={loading}
                 >
                     Use Authenticator App Instead
                 </Button>

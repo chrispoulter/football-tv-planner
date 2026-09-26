@@ -59,7 +59,6 @@ export function TwoFactorVerifyForm({
                                 pattern={REGEXP_ONLY_DIGITS}
                                 autoComplete="one-time-code"
                                 autoFocus
-                                disabled={loading}
                                 aria-invalid={fieldState.invalid}
                                 {...field}
                             >
@@ -80,12 +79,7 @@ export function TwoFactorVerifyForm({
                 />
 
                 <div className="flex flex-col-reverse gap-2 sm:flex-row">
-                    <Button
-                        type="button"
-                        variant="outline"
-                        onClick={onBack}
-                        disabled={loading}
-                    >
+                    <Button type="button" variant="outline" onClick={onBack}>
                         Back
                     </Button>
                     <LoadingButton

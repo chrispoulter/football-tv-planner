@@ -49,7 +49,6 @@ export function ResetPasswordForm({
                     maxLength={50}
                     autoComplete="new-password"
                     required
-                    disabled={loading}
                 />
 
                 <TextField
@@ -61,7 +60,6 @@ export function ResetPasswordForm({
                     maxLength={50}
                     autoComplete="new-password"
                     required
-                    disabled={loading}
                 />
 
                 <LoadingButton

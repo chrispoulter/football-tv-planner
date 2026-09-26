@@ -79,7 +79,6 @@ export function UpdateEmailForm() {
                     maxLength={254}
                     autoComplete="email"
                     required
-                    disabled={isPending}
                 />
 
                 <div className="flex flex-col-reverse gap-2 sm:flex-row">

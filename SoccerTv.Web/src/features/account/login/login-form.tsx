@@ -42,7 +42,6 @@ export function LoginForm({ loading, onSubmit }: LoginFormProps) {
                     maxLength={254}
                     autoComplete="username"
                     required
-                    disabled={loading}
                 />
 
                 <TextField
@@ -54,7 +53,6 @@ export function LoginForm({ loading, onSubmit }: LoginFormProps) {
                     maxLength={50}
                     autoComplete="current-password"
                     required
-                    disabled={loading}
                 />
 
                 <div className="flex items-center justify-between">
@@ -68,7 +66,6 @@ export function LoginForm({ loading, onSubmit }: LoginFormProps) {
                                     name={field.name}
                                     checked={field.value}
                                     onCheckedChange={field.onChange}
-                                    disabled={loading}
                                 />
                                 <FieldLabel
                                     htmlFor={field.name}

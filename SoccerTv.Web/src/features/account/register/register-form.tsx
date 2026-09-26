@@ -53,7 +53,6 @@ export function RegisterForm({ loading, onSubmit }: RegisterFormProps) {
                     maxLength={100}
                     autoComplete="name"
                     required
-                    disabled={loading}
                 />
 
                 <TextField
@@ -65,7 +64,6 @@ export function RegisterForm({ loading, onSubmit }: RegisterFormProps) {
                     maxLength={254}
                     autoComplete="username"
                     required
-                    disabled={loading}
                 />
 
                 <TextField
@@ -77,7 +75,6 @@ export function RegisterForm({ loading, onSubmit }: RegisterFormProps) {
                     maxLength={50}
                     autoComplete="new-password"
                     required
-                    disabled={loading}
                 />
 
                 <TextField
@@ -89,7 +86,6 @@ export function RegisterForm({ loading, onSubmit }: RegisterFormProps) {
                     maxLength={50}
                     autoComplete="new-password"
                     required
-                    disabled={loading}
                 />
 
                 <LoadingButton

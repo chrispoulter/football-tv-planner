@@ -39,7 +39,6 @@ export function ForgotPasswordForm({
                     maxLength={254}
                     autoComplete="username"
                     required
-                    disabled={loading}
                 />
 
                 <LoadingButton

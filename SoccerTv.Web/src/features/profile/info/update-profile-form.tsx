@@ -52,7 +52,6 @@ export function UpdateProfileForm({ name }: UpdateProfileFormProps) {
                     maxLength={100}
                     autoComplete="name"
                     required
-                    disabled={isPending}
                 />
 
                 <div className="flex flex-col-reverse gap-2 sm:flex-row">

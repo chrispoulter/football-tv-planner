@@ -65,7 +65,6 @@ export function AuthenticatorCodeForm({
                                 pattern={REGEXP_ONLY_DIGITS}
                                 autoComplete="one-time-code"
                                 autoFocus
-                                disabled={loading}
                                 aria-invalid={fieldState.invalid}
                                 {...field}
                             >
@@ -95,7 +94,6 @@ export function AuthenticatorCodeForm({
                                 name={field.name}
                                 checked={field.value}
                                 onCheckedChange={field.onChange}
-                                disabled={loading}
                             />
                             <FieldLabel
                                 htmlFor={field.name}
@@ -118,7 +116,6 @@ export function AuthenticatorCodeForm({
                     type="button"
                     variant="link"
                     onClick={onUseRecoveryCode}
-                    disabled={loading}
                 >
                     Use Recovery Code Instead
                 </Button>

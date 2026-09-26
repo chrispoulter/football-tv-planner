@@ -27,7 +27,7 @@ export function TwoFactorConfirm({
         <div className="space-y-4">
             <p className="text-sm text-muted-foreground">{message}</p>
             <div className="flex flex-col-reverse gap-2 sm:flex-row">
-                <Button variant="outline" onClick={onCancel} disabled={loading}>
+                <Button variant="outline" onClick={onCancel}>
                     Cancel
                 </Button>
                 <LoadingButton

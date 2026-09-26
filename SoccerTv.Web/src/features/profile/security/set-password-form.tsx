@@ -66,7 +66,6 @@ export function SetPasswordForm() {
                     maxLength={50}
                     autoComplete="new-password"
                     required
-                    disabled={isPending}
                 />
 
                 <TextField
@@ -78,7 +77,6 @@ export function SetPasswordForm() {
                     maxLength={50}
                     autoComplete="new-password"
                     required
-                    disabled={isPending}
                 />
 
                 <div className="flex flex-col-reverse gap-2 sm:flex-row">
