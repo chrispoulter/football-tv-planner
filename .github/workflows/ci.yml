@@ -29,8 +29,8 @@ jobs:
 
       - name: Build and test (dotnet)
         run: |
-          dotnet build "soccertv.slnx"
-          dotnet test "soccertv.slnx"
+          dotnet build "SoccerTv.slnx"
+          dotnet test "SoccerTv.slnx"
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
