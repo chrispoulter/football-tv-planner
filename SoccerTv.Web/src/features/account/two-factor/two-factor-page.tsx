@@ -1,0 +1,85 @@
+import { useState } from 'react';
+import { Navigate, useLocation, useNavigate } from 'react-router';
+import { toast } from 'sonner';
+import { Metadata } from '@/components/metadata';
+import {
+    type LoginTwoFactorRequest,
+    useLoginTwoFactor,
+} from '../account-queries';
+import { AccountLayout, AccountLink } from '../components/account-layout';
+import {
+    AuthenticatorCodeForm,
+    type AuthenticatorCodeFormValues,
+} from './authenticator-code-form';
+import {
+    RecoveryCodeForm,
+    type RecoveryCodeFormValues,
+} from './recovery-code-form';
+import type { TwoFactorState } from './two-factor-state';
+
+export function TwoFactorPage() {
+    const navigate = useNavigate();
+
+    const location = useLocation();
+
+    const state = location.state as TwoFactorState | null;
+
+    const [useRecoveryCode, setUseRecoveryCode] = useState(false);
+
+    const { mutate: loginTwoFactor, isPending } = useLoginTwoFactor();
+
+    // Only reachable from the login page, once the password has been accepted
+    if (!state) {
+        return <Navigate to="/account/login" replace />;
+    }
+
+    const { rememberMe, from } = state;
+
+    function submit(request: Omit<LoginTwoFactorRequest, 'rememberMe'>) {
+        loginTwoFactor(
+            { ...request, rememberMe },
+            {
+                onSuccess: () => navigate(from, { replace: true }),
+                onError: (error) => toast.error(error.message),
+            }
+        );
+    }
+
+    function onAuthenticatorSubmit(values: AuthenticatorCodeFormValues) {
+        submit(values);
+    }
+
+    function onRecoveryCodeSubmit(values: RecoveryCodeFormValues) {
+        submit(values);
+    }
+
+    return (
+        <AccountLayout
+            title="Two-Factor Authentication"
+            description={
+                useRecoveryCode
+                    ? 'Enter one of your recovery codes'
+                    : 'Enter the 6-digit code from your authenticator app'
+            }
+            footer={
+                <AccountLink to="/account/login">Back to sign in</AccountLink>
+            }
+        >
+            <Metadata title="Two-Factor Authentication" />
+
+            {useRecoveryCode ? (
+                <RecoveryCodeForm
+                    loading={isPending}
+                    onSubmit={onRecoveryCodeSubmit}
+                    onUseAuthenticator={() => setUseRecoveryCode(false)}
+                />
+            ) : (
+                <AuthenticatorCodeForm
+                    loading={isPending}
+                    onSubmit={onAuthenticatorSubmit}
+                    onUseRecoveryCode={() => setUseRecoveryCode(true)}
+                />
+            )}
+        </AccountLayout>
+    );
+}

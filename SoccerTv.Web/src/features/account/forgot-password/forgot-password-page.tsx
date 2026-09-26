@@ -1,56 +1,52 @@
-import { useNavigate } from 'react-router';
+import { useState } from 'react';
 import { toast } from 'sonner';
 import { Metadata } from '@/components/metadata';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useForgotPassword } from '../account-queries';
+import { AccountLayout, AccountLink } from '../components/account-layout';
 import {
     ForgotPasswordForm,
     type ForgotPasswordFormValues,
 } from './forgot-password-form';
-import { Card, CardContent } from '@/components/ui/card';
 
 export function ForgotPasswordPage() {
-    const navigate = useNavigate();
+    const [isSent, setIsSent] = useState(false);
 
-    const { mutate: forgotPassword, isPending: isSaving } = useForgotPassword();
+    const { mutate: forgotPassword, isPending } = useForgotPassword();
 
     function onSubmit(values: ForgotPasswordFormValues) {
         forgotPassword(
             { email: values.emailAddress },
             {
-                onSuccess: () => {
-                    toast.success(
-                        'Instructions as to how to reset your password have been sent to you via email.'
-                    );
-
-                    navigate('/account/login');
-                },
+                onSuccess: () => setIsSent(true),
                 onError: (error) => toast.error(error.message),
             }
         );
     }
 
     return (
-        <div className="flex flex-1 items-center justify-center">
-            <Card className="w-full max-w-md">
-                <CardContent className="space-y-6">
-                    <Metadata title="Forgot Password" />
+        <AccountLayout
+            title="Forgot Your Password?"
+            description="Enter your email and we'll send you a reset link"
+            footer={
+                <AccountLink to="/account/login">Back to sign in</AccountLink>
+            }
+        >
+            <Metadata title="Forgot Password" />
 
-                    <div className="space-y-1">
-                        <h1 className="text-2xl font-bold tracking-tight">
-                            Forgot Password
-                        </h1>
-                        <p className="text-sm text-muted-foreground">
-                            Request a password reset link by providing your
-                            email address.
+            {isSent ? (
+                <Alert>
+                    <AlertDescription>
+                        <p>
+                            If an account with that email exists, we&apos;ve
+                            sent a password reset link.
                         </p>
-                    </div>
-
-                    <ForgotPasswordForm
-                        loading={isSaving}
-                        onSubmit={onSubmit}
-                    />
-                </CardContent>
-            </Card>
-        </div>
+                        <p>Please check your inbox.</p>
+                    </AlertDescription>
+                </Alert>
+            ) : (
+                <ForgotPasswordForm loading={isPending} onSubmit={onSubmit} />
+            )}
+        </AccountLayout>
     );
 }

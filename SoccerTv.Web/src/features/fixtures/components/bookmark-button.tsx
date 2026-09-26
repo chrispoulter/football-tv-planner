@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import { Star } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/components/auth-provider';
@@ -14,6 +14,8 @@ interface BookmarkButtonProps {
 export function BookmarkButton({ fixture }: BookmarkButtonProps) {
     const navigate = useNavigate();
 
+    const location = useLocation();
+
     const { user } = useAuth();
 
     const { mutate: toggleSchedule } = useToggleSchedule();
@@ -26,8 +28,8 @@ export function BookmarkButton({ fixture }: BookmarkButtonProps) {
 
     function onClick() {
         if (!user) {
-            toast.info('Log in to build your own schedule.');
-            navigate('/account/login');
+            toast.info('Sign in to build your own schedule.');
+            navigate('/account/login', { state: { from: location } });
             return;
         }
 

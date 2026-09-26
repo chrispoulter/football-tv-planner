@@ -3,6 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { TextField } from '@/components/form/text-field';
 import { LoadingButton } from '@/components/loading-button';
+import { FieldGroup } from '@/components/ui/field';
 
 const schema = z
     .object({
@@ -44,38 +45,37 @@ export function RegisterForm({ loading, onSubmit }: RegisterFormProps) {
     });
 
     return (
-        <form
-            noValidate
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-6"
-        >
-            <TextField
-                control={form.control}
-                name="name"
-                label="Name"
-                maxLength={100}
-                autoComplete="name"
-                required
-                disabled={loading}
-            />
+        <form noValidate onSubmit={form.handleSubmit(onSubmit)}>
+            <FieldGroup>
+                <TextField
+                    control={form.control}
+                    name="name"
+                    label="Name"
+                    placeholder="John Smith"
+                    maxLength={100}
+                    autoComplete="name"
+                    required
+                    disabled={loading}
+                />
 
-            <TextField
-                control={form.control}
-                name="emailAddress"
-                label="Email Address"
-                type="email"
-                maxLength={254}
-                autoComplete="username"
-                required
-                disabled={loading}
-            />
+                <TextField
+                    control={form.control}
+                    name="emailAddress"
+                    label="Email"
+                    type="email"
+                    placeholder="john@example.com"
+                    maxLength={254}
+                    autoComplete="username"
+                    required
+                    disabled={loading}
+                />
 
-            <div className="flex flex-col gap-6 sm:flex-row">
                 <TextField
                     control={form.control}
                     name="password"
                     label="Password"
                     type="password"
+                    placeholder="••••••••"
                     maxLength={50}
                     autoComplete="new-password"
                     required
@@ -85,20 +85,19 @@ export function RegisterForm({ loading, onSubmit }: RegisterFormProps) {
                 <TextField
                     control={form.control}
                     name="confirmPassword"
-                    label="Confirm Password"
+                    label="Confirm password"
                     type="password"
+                    placeholder="••••••••"
                     maxLength={50}
                     autoComplete="new-password"
                     required
                     disabled={loading}
                 />
-            </div>
 
-            <div className="flex flex-col-reverse justify-end gap-2 sm:flex-row">
                 <LoadingButton type="submit" loading={loading}>
-                    Submit
+                    Create Account
                 </LoadingButton>
-            </div>
+            </FieldGroup>
         </form>
     );
 }

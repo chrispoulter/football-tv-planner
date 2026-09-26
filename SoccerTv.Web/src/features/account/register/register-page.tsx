@@ -1,15 +1,15 @@
-import { Link, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 import { toast } from 'sonner';
 import { Metadata } from '@/components/metadata';
 import { useRegister } from '../account-queries';
-import { GoogleButton } from '../components/google-button';
+import { AccountLayout, AccountLink } from '../components/account-layout';
+import { SocialLoginButtons } from '../components/social-login-buttons';
 import { RegisterForm, type RegisterFormValues } from './register-form';
-import { Card, CardContent } from '@/components/ui/card';
 
 export function RegisterPage() {
     const navigate = useNavigate();
 
-    const { mutate: register, isPending: isSaving } = useRegister();
+    const { mutate: register, isPending } = useRegister();
 
     // Logs straight in, as the email doesn't need confirming first
     function onSubmit({ name, emailAddress, password }: RegisterFormValues) {
@@ -28,36 +28,22 @@ export function RegisterPage() {
     }
 
     return (
-        <div className="flex flex-1 items-center justify-center">
-            <Card className="w-full max-w-md">
-                <CardContent className="space-y-6">
-                    <Metadata title="Register" />
+        <AccountLayout
+            title="Create an Account"
+            description="Enter your details to get started"
+            className="max-w-md"
+            footer={
+                <>
+                    Already have an account?{' '}
+                    <AccountLink to="/account/login">Sign in</AccountLink>
+                </>
+            }
+        >
+            <Metadata title="Register" />
 
-                    <div className="space-y-1">
-                        <h1 className="text-2xl font-bold tracking-tight">
-                            Register
-                        </h1>
-                        <p className="text-sm text-muted-foreground">
-                            Register for a new account to access the full range
-                            of features available on this site.
-                        </p>
-                    </div>
+            <SocialLoginButtons />
 
-                    <RegisterForm loading={isSaving} onSubmit={onSubmit} />
-
-                    <GoogleButton />
-
-                    <p className="text-sm text-muted-foreground">
-                        Already have an account?{' '}
-                        <Link
-                            to="/account/login"
-                            className="underline underline-offset-4"
-                        >
-                            Log in now
-                        </Link>
-                    </p>
-                </CardContent>
-            </Card>
-        </div>
+            <RegisterForm loading={isPending} onSubmit={onSubmit} />
+        </AccountLayout>
     );
 }

@@ -1,10 +1,11 @@
+import { Link } from 'react-router';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { TextField } from '@/components/form/text-field';
 import { LoadingButton } from '@/components/loading-button';
-import { Field, FieldLabel } from '@/components/ui/field';
-import { Switch } from '@/components/ui/switch';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 
 const schema = z.object({
     emailAddress: z.email('Email Address must be a valid email'),
@@ -32,56 +33,67 @@ export function LoginForm({ loading, onSubmit }: LoginFormProps) {
     });
 
     return (
-        <form
-            noValidate
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-6"
-        >
-            <TextField
-                control={form.control}
-                name="emailAddress"
-                label="Email Address"
-                type="email"
-                maxLength={254}
-                autoComplete="username"
-                required
-                disabled={loading}
-            />
+        <form noValidate onSubmit={form.handleSubmit(onSubmit)}>
+            <FieldGroup>
+                <TextField
+                    control={form.control}
+                    name="emailAddress"
+                    label="Email"
+                    type="email"
+                    placeholder="john@example.com"
+                    maxLength={254}
+                    autoComplete="username"
+                    required
+                    disabled={loading}
+                />
 
-            <TextField
-                control={form.control}
-                name="password"
-                label="Password"
-                type="password"
-                maxLength={50}
-                autoComplete="current-password"
-                required
-                disabled={loading}
-            />
+                <TextField
+                    control={form.control}
+                    name="password"
+                    label="Password"
+                    type="password"
+                    placeholder="••••••••"
+                    maxLength={50}
+                    autoComplete="current-password"
+                    required
+                    disabled={loading}
+                />
 
-            <Controller
-                name="rememberMe"
-                control={form.control}
-                render={({ field }) => (
-                    <Field orientation="horizontal">
-                        <Switch
-                            id={field.name}
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                            disabled={loading}
-                        />
-                        <FieldLabel htmlFor={field.name}>
-                            Remember me
-                        </FieldLabel>
-                    </Field>
-                )}
-            />
+                <div className="flex items-center justify-between">
+                    <Controller
+                        name="rememberMe"
+                        control={form.control}
+                        render={({ field }) => (
+                            <Field orientation="horizontal">
+                                <Checkbox
+                                    id={field.name}
+                                    name={field.name}
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                    disabled={loading}
+                                />
+                                <FieldLabel
+                                    htmlFor={field.name}
+                                    className="font-normal"
+                                >
+                                    Remember me
+                                </FieldLabel>
+                            </Field>
+                        )}
+                    />
 
-            <div className="flex flex-col-reverse justify-end gap-2 sm:flex-row">
+                    <Link
+                        to="/account/forgot-password"
+                        className="text-sm whitespace-nowrap text-muted-foreground underline-offset-4 hover:underline"
+                    >
+                        Forgot password?
+                    </Link>
+                </div>
+
                 <LoadingButton type="submit" loading={loading}>
-                    Submit
+                    Sign In
                 </LoadingButton>
-            </div>
+            </FieldGroup>
         </form>
     );
 }

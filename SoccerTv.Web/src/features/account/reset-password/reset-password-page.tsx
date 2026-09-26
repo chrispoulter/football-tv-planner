@@ -1,30 +1,37 @@
 import { useNavigate, useSearchParams } from 'react-router';
 import { toast } from 'sonner';
 import { Metadata } from '@/components/metadata';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useResetPassword } from '../account-queries';
+import { AccountLayout, AccountLink } from '../components/account-layout';
 import {
     ResetPasswordForm,
     type ResetPasswordFormValues,
 } from './reset-password-form';
-import { Card, CardContent } from '@/components/ui/card';
 
 export function ResetPasswordPage() {
     const [searchParams] = useSearchParams();
 
     const navigate = useNavigate();
 
-    const { mutate: resetPassword, isPending: isSaving } = useResetPassword();
+    const { mutate: resetPassword, isPending } = useResetPassword();
+
+    // From the link in the password reset email
+    const email = searchParams.get('email');
+    const code = searchParams.get('code');
 
     function onSubmit(values: ResetPasswordFormValues) {
+        if (!email || !code) {
+            return;
+        }
+
         resetPassword(
-            {
-                email: searchParams.get('email') ?? '',
-                code: searchParams.get('code') ?? '',
-                newPassword: values.newPassword,
-            },
+            { email, code, newPassword: values.newPassword },
             {
                 onSuccess: () => {
-                    toast.success('Your password has been reset.');
+                    toast.success(
+                        'Your password has been reset. Please sign in.'
+                    );
                     navigate('/account/login');
                 },
                 onError: (error) => toast.error(error.message),
@@ -33,26 +40,28 @@ export function ResetPasswordPage() {
     }
 
     return (
-        <div className="flex flex-1 items-center justify-center">
-            <Card className="w-full max-w-md">
-                <CardContent className="space-y-6">
-                    <Metadata title="Reset Password" />
+        <AccountLayout
+            title="Reset Your Password"
+            description="Choose a strong password and don't reuse it for other accounts"
+            footer={
+                <AccountLink to="/account/login">Back to sign in</AccountLink>
+            }
+        >
+            <Metadata title="Reset Password" />
 
-                    <div className="space-y-1">
-                        <h1 className="text-2xl font-bold tracking-tight">
-                            Reset Password
-                        </h1>
-                        <p className="text-sm text-muted-foreground">
-                            Reset your password below. Choose a strong password
-                            and don&apos;t reuse it for other accounts. For
-                            security reasons, change your password on a regular
-                            basis.
-                        </p>
-                    </div>
-
-                    <ResetPasswordForm loading={isSaving} onSubmit={onSubmit} />
-                </CardContent>
-            </Card>
-        </div>
+            {email && code ? (
+                <ResetPasswordForm loading={isPending} onSubmit={onSubmit} />
+            ) : (
+                <Alert variant="destructive">
+                    <AlertDescription>
+                        This link is invalid or has expired. Please{' '}
+                        <AccountLink to="/account/forgot-password">
+                            request a new one
+                        </AccountLink>
+                        .
+                    </AlertDescription>
+                </Alert>
+            )}
+        </AccountLayout>
     );
 }

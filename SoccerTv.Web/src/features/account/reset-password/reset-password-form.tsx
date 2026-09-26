@@ -3,6 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { TextField } from '@/components/form/text-field';
 import { LoadingButton } from '@/components/loading-button';
+import { FieldGroup } from '@/components/ui/field';
 
 const schema = z
     .object({
@@ -39,17 +40,14 @@ export function ResetPasswordForm({
     });
 
     return (
-        <form
-            noValidate
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-6"
-        >
-            <div className="flex flex-col gap-6 sm:flex-row">
+        <form noValidate onSubmit={form.handleSubmit(onSubmit)}>
+            <FieldGroup>
                 <TextField
                     control={form.control}
                     name="newPassword"
-                    label="New Password"
+                    label="New password"
                     type="password"
+                    placeholder="••••••••"
                     maxLength={50}
                     autoComplete="new-password"
                     required
@@ -59,20 +57,19 @@ export function ResetPasswordForm({
                 <TextField
                     control={form.control}
                     name="confirmNewPassword"
-                    label="Confirm New Password"
+                    label="Confirm new password"
                     type="password"
+                    placeholder="••••••••"
                     maxLength={50}
                     autoComplete="new-password"
                     required
                     disabled={loading}
                 />
-            </div>
 
-            <div className="flex flex-col-reverse justify-end gap-2 sm:flex-row">
                 <LoadingButton type="submit" loading={loading}>
-                    Submit
+                    Reset Password
                 </LoadingButton>
-            </div>
+            </FieldGroup>
         </form>
     );
 }

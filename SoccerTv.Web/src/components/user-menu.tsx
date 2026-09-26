@@ -25,7 +25,7 @@ export function UserMenu() {
     if (!user) {
         return (
             <Button asChild variant="secondary">
-                <Link to="/account/login">Login</Link>
+                <Link to="/account/login">Sign In</Link>
             </Button>
         );
     }
@@ -68,7 +68,7 @@ export function UserMenu() {
 
                 <DropdownMenuSeparator />
 
-                <DropdownMenuItem onClick={onLogout}>Log out</DropdownMenuItem>
+                <DropdownMenuItem onClick={onLogout}>Sign Out</DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
     );
