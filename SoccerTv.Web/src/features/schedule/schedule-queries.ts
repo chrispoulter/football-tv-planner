@@ -1,5 +1,6 @@
 import {
     useMutation,
+    useQuery,
     useQueryClient,
     type QueryClient,
 } from '@tanstack/react-query';
@@ -11,6 +12,7 @@ import {
 
 export const scheduleKeys = {
     all: ['schedule'] as const,
+    calendarFeed: ['schedule', 'calendar-feed'] as const,
 };
 
 interface ScheduleItemResponse {
@@ -74,5 +76,47 @@ export const useToggleSchedule = () => {
         onError: (_error, _variables, rollback) => rollback?.(),
         onSettled: () =>
             queryClient.invalidateQueries({ queryKey: fixtureKeys.all }),
+    });
+};
+
+export interface CalendarFeedResponse {
+    httpsUrl: string;
+    webcalUrl: string;
+}
+
+export const useGetCalendarFeed = ({ enabled }: { enabled?: boolean } = {}) => {
+    const { accessToken } = useAuth();
+
+    return useQuery({
+        enabled,
+        queryKey: scheduleKeys.calendarFeed,
+        queryFn: ({ signal }) =>
+            apiClient
+                .get('schedule/calendar-feed', {
+                    context: {
+                        accessToken,
+                    },
+                    signal,
+                })
+                .json<CalendarFeedResponse>(),
+    });
+};
+
+export const useResetCalendarFeed = () => {
+    const { accessToken } = useAuth();
+
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: () =>
+            apiClient
+                .post('schedule/calendar-feed/reset', {
+                    context: {
+                        accessToken,
+                    },
+                })
+                .json<CalendarFeedResponse>(),
+        onSuccess: (data) =>
+            queryClient.setQueryData(scheduleKeys.calendarFeed, data),
     });
 };

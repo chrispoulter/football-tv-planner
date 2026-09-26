@@ -24,7 +24,11 @@ public static class CalendarBuilder
 
     private static readonly TimeSpan MatchDuration = TimeSpan.FromHours(2);
 
-    public static string Build(IEnumerable<CalendarFixture> fixtures, DateTimeOffset timestamp)
+    public static string Build(
+        IEnumerable<CalendarFixture> fixtures,
+        DateTimeOffset timestamp,
+        string? calendarName = null
+    )
     {
         var sb = new StringBuilder();
 
@@ -33,6 +37,13 @@ public static class CalendarBuilder
         AppendLine(sb, "PRODID:-//SoccerTv//Soccer TV Schedule//EN");
         AppendLine(sb, "CALSCALE:GREGORIAN");
         AppendLine(sb, "METHOD:PUBLISH");
+
+        if (calendarName is not null)
+        {
+            AppendLine(sb, $"X-WR-CALNAME:{Escape(calendarName)}");
+            AppendLine(sb, "REFRESH-INTERVAL;VALUE=DURATION:PT1H");
+            AppendLine(sb, "X-PUBLISHED-TTL:PT1H");
+        }
 
         foreach (var fixture in fixtures)
         {
