@@ -54,15 +54,11 @@ export const useGetFixtures = (request: GetFixturesRequest) => {
     });
 };
 
-export interface Competition {
-    name: string;
-}
-
 export const useGetCompetitions = () =>
     useQuery({
         queryKey: fixtureKeys.competitions,
         queryFn: ({ signal }) =>
-            apiClient.get('competitions', { signal }).json<Competition[]>(),
+            apiClient.get('competitions', { signal }).json<string[]>(),
         staleTime: 1000 * 60 * 60,
     });
 

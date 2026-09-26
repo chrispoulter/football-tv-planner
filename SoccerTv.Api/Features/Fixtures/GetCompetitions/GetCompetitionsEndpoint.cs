@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using SoccerTv.Api.Common.Infrastructure;
 using SoccerTv.Api.Data;
 
-namespace SoccerTv.Api.Features.Competitions.GetCompetitions;
+namespace SoccerTv.Api.Features.Fixtures.GetCompetitions;
 
 public class GetCompetitionsEndpoint : IEndpoint
 {
@@ -10,7 +10,7 @@ public class GetCompetitionsEndpoint : IEndpoint
     {
         app.MapGet("/competitions", HandleAsync)
             .AllowAnonymous()
-            .Produces<List<GetCompetitionsResponse>>()
+            .Produces<List<string>>()
             .WithTags(Tags.Fixtures)
             .WithSummary("Get Competitions")
             .WithDescription("List the competitions that have televised fixtures.");
@@ -26,7 +26,6 @@ public class GetCompetitionsEndpoint : IEndpoint
             .Select(f => f.Competition)
             .Distinct()
             .OrderBy(c => c)
-            .Select(c => new GetCompetitionsResponse(c))
             .ToListAsync(cancellationToken);
 
         return Results.Ok(competitions);

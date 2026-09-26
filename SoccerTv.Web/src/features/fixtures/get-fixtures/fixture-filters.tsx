@@ -53,7 +53,7 @@ export function FixtureFilters({
                 </SelectTrigger>
                 <SelectContent position="popper" align="start">
                     <SelectItem value={ALL}>All competitions</SelectItem>
-                    {competitions?.map(({ name }) => (
+                    {competitions?.map((name) => (
                         <SelectItem key={name} value={name}>
                             {name}
                         </SelectItem>

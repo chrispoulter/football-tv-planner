@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using SoccerTv.Api.Common.Infrastructure;
 using SoccerTv.Api.Data;
 
-namespace SoccerTv.Api.Features.Channels.GetChannels;
+namespace SoccerTv.Api.Features.Fixtures.GetChannels;
 
 public class GetChannelsEndpoint : IEndpoint
 {
