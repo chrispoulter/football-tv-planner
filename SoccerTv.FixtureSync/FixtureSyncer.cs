@@ -30,6 +30,15 @@ public class FixtureSyncer(
 
         var items = await fixtureProvider.GetFixturesAsync(from, to, cancellationToken);
 
+        // An empty result is far more likely to be a broken provider than a genuinely empty
+        // schedule, and would otherwise delete every upcoming fixture below.
+        if (items.Count == 0)
+        {
+            throw new InvalidOperationException(
+                $"{fixtureProvider.Source} returned no fixtures."
+            );
+        }
+
         var externalIds = items.Select(i => i.ExternalId).ToList();
 
         var fixtures = await dbContext
@@ -63,6 +72,22 @@ public class FixtureSyncer(
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        logger.LogInformation("Synced {Count} fixtures", items.Count);
+        // Upcoming fixtures the provider no longer lists have been moved or dropped. A moved
+        // fixture comes back under a new external id, so the old row would be a duplicate.
+        var now = timeProvider.GetUtcNow();
+
+        var removed = await dbContext
+            .Fixtures.Where(f =>
+                f.Source == fixtureProvider.Source
+                && f.KickoffUtc > now
+                && !externalIds.Contains(f.ExternalId)
+            )
+            .ExecuteDeleteAsync(cancellationToken);
+
+        logger.LogInformation(
+            "Synced {Count} fixtures and removed {Removed} no longer listed",
+            items.Count,
+            removed
+        );
     }
 }
