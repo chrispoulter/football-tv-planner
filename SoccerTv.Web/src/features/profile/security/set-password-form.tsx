@@ -40,10 +40,7 @@ export function SetPasswordForm() {
         setPassword(
             { newPassword },
             {
-                onSuccess: () =>
-                    toast.success(
-                        'Your password has been set. You can now also sign in with your email address.'
-                    ),
+                onSuccess: () => toast.success('Password set successfully'),
                 onError: (error) => toast.error(error.message),
             }
         );

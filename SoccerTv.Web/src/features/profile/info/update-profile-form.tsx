@@ -34,7 +34,7 @@ export function UpdateProfileForm({ name }: UpdateProfileFormProps) {
     function onSubmit(values: UpdateProfileFormValues) {
         updateProfile(values, {
             onSuccess: () => {
-                toast.success('Your profile has been updated.');
+                toast.success('Profile updated');
                 form.reset(values);
             },
             onError: (error) => toast.error(error.message),

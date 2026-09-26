@@ -85,14 +85,14 @@ function CalendarFeedOptions({ feed }: CalendarFeedOptionsProps) {
 
     async function onCopy() {
         await navigator.clipboard.writeText(feed.httpsUrl);
-        toast.success('Calendar link copied.');
+        toast.success('Calendar link copied to clipboard');
     }
 
     function onReset() {
         resetFeed(undefined, {
             onSuccess: () =>
                 toast.success(
-                    'A new calendar link has been created. Re-subscribe using the new link.'
+                    'Calendar link reset. Re-subscribe using the new link.'
                 ),
             onError: (error) => toast.error(error.message),
         });

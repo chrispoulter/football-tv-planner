@@ -71,9 +71,7 @@ export function TwoFactorSettings() {
             { code },
             {
                 onSuccess: (response) => {
-                    toast.success(
-                        'Two-factor authentication has been enabled.'
-                    );
+                    toast.success('Two-factor authentication enabled');
                     setRecoveryCodes(response.recoveryCodes);
                     setStep('recovery-codes');
                 },
@@ -85,7 +83,7 @@ export function TwoFactorSettings() {
     function onDisable() {
         disable(undefined, {
             onSuccess: () => {
-                toast.success('Two-factor authentication has been disabled.');
+                toast.success('Two-factor authentication disabled');
                 setStep('idle');
             },
             onError: (error) => toast.error(error.message),
@@ -95,7 +93,7 @@ export function TwoFactorSettings() {
     function onRegenerate() {
         generateRecoveryCodes(undefined, {
             onSuccess: (response) => {
-                toast.success('New recovery codes have been generated.');
+                toast.success('Recovery codes regenerated');
                 setRecoveryCodes(response.recoveryCodes);
                 setStep('recovery-codes');
             },
@@ -106,7 +104,7 @@ export function TwoFactorSettings() {
     function onForgetMachine() {
         forgetMachine(undefined, {
             onSuccess: () =>
-                toast.success('This browser will ask for a code next time.'),
+                toast.success('This browser will ask for a code next time'),
             onError: (error) => toast.error(error.message),
         });
     }

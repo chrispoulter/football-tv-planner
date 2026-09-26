@@ -30,7 +30,7 @@ export function ResetPasswordPage() {
             {
                 onSuccess: () => {
                     toast.success(
-                        'Your password has been reset. Please sign in.'
+                        'Password reset successfully. Please sign in.'
                     );
                     navigate('/account/login');
                 },

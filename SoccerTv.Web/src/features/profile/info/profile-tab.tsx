@@ -23,9 +23,7 @@ export function ProfileTab() {
     function onResendConfirmation() {
         resendConfirmation(undefined, {
             onSuccess: () =>
-                toast.success(
-                    `A confirmation link has been sent to ${user?.email}.`
-                ),
+                toast.success(`Confirmation email sent to ${user?.email}`),
             onError: (error) => toast.error(error.message),
         });
     }

@@ -17,9 +17,7 @@ export function RegisterPage() {
             { name, email: emailAddress, password },
             {
                 onSuccess: () => {
-                    toast.success(
-                        'Welcome! We have sent you an email to confirm your address.'
-                    );
+                    toast.success('Account created! Welcome.');
                     navigate('/');
                 },
                 onError: (error) => toast.error(error.message),

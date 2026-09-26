@@ -78,7 +78,7 @@ export function LinkedAccounts({ hasPassword }: LinkedAccountsProps) {
     function onUnlink(provider: string, displayName: string) {
         removeLinkedAccount(provider, {
             onSuccess: () =>
-                toast.success(`Your ${displayName} account has been unlinked.`),
+                toast.success(`${displayName} account disconnected`),
             onError: (error) => toast.error(error.message),
         });
     }

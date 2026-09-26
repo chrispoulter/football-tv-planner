@@ -33,7 +33,7 @@ export function DeleteAccountButton({
     function onDelete() {
         deleteAccount(undefined, {
             onSuccess: () => {
-                toast.success('Your account has been deleted.');
+                toast.success('Account deleted');
                 refreshAuth();
                 navigate('/');
             },

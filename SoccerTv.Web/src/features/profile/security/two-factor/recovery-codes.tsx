@@ -11,7 +11,7 @@ export function RecoveryCodes({ codes, onDone }: RecoveryCodesProps) {
 
     async function onCopy() {
         await navigator.clipboard.writeText(text);
-        toast.success('Recovery codes copied.');
+        toast.success('Recovery codes copied to clipboard');
     }
 
     function onDownload() {

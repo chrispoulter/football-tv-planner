@@ -43,7 +43,7 @@ export function ChangePasswordForm() {
             { currentPassword, newPassword },
             {
                 onSuccess: () => {
-                    toast.success('Your password has been changed.');
+                    toast.success('Password changed successfully');
                     form.reset();
                 },
                 onError: (error) => toast.error(error.message),
