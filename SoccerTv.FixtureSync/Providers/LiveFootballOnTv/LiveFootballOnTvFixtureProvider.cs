@@ -24,8 +24,6 @@ public partial class LiveFootballOnTvFixtureProvider(
     public string Source => "LiveFootballOnTv";
 
     public async Task<IReadOnlyList<ProviderFixture>> GetFixturesAsync(
-        DateOnly from,
-        DateOnly to,
         CancellationToken cancellationToken = default
     )
     {

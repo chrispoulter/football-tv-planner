@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Options;
+
 namespace SoccerTv.FixtureSync.Providers.Mock;
 
 /// <summary>
@@ -5,17 +7,22 @@ namespace SoccerTv.FixtureSync.Providers.Mock;
 /// developed without a licensed data feed. Each date is seeded from its day number, so
 /// re-syncing the same range produces the same fixtures.
 /// </summary>
-public class MockFixtureProvider : IFixtureProvider
+public class MockFixtureProvider(IOptions<MockSettings> settings, TimeProvider timeProvider)
+    : IFixtureProvider
 {
+    private readonly MockSettings _settings = settings.Value;
+
     public string Source => "Mock";
 
     public Task<IReadOnlyList<ProviderFixture>> GetFixturesAsync(
-        DateOnly from,
-        DateOnly to,
         CancellationToken cancellationToken = default
     )
     {
         var fixtures = new List<ProviderFixture>();
+
+        // Start a day back so every time zone's "today" is covered.
+        var from = DateOnly.FromDateTime(timeProvider.GetUtcNow().UtcDateTime).AddDays(-1);
+        var to = from.AddDays(_settings.DaysAhead + 1);
 
         for (var date = from; date <= to; date = date.AddDays(1))
         {

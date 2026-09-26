@@ -9,12 +9,9 @@ public interface IFixtureProvider
     string Source { get; }
 
     /// <summary>
-    /// Returns the televised fixtures kicking off between <paramref name="from"/> and
-    /// <paramref name="to"/> (inclusive, UK dates).
+    /// Returns the upcoming televised fixtures. Each provider decides how far ahead to look.
     /// </summary>
     Task<IReadOnlyList<ProviderFixture>> GetFixturesAsync(
-        DateOnly from,
-        DateOnly to,
         CancellationToken cancellationToken = default
     );
 }

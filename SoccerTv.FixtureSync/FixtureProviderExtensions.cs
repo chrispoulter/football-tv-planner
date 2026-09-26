@@ -17,6 +17,9 @@ public static class FixtureProviderExtensions
         switch (fixtureSyncSettings.Provider)
         {
             case "Mock":
+                builder.Services.Configure<MockSettings>(
+                    builder.Configuration.GetSection(MockSettings.SectionName)
+                );
                 builder.Services.AddSingleton<IFixtureProvider, MockFixtureProvider>();
                 break;
 
