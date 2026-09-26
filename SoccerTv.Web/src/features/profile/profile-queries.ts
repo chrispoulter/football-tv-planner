@@ -79,5 +79,5 @@ interface DeleteAccountResponse {
 export const useDeleteAccount = () =>
     useMutation({
         mutationFn: () =>
-            apiClient.delete('profile').json<DeleteAccountResponse>(),
+            apiClient.delete('account').json<DeleteAccountResponse>(),
     });

@@ -1,3 +1,3 @@
-﻿namespace SoccerTv.Api.Features.Profile.DeleteProfile;
+﻿namespace SoccerTv.Api.Features.Account.DeleteAccount;
 
-public record DeleteProfileResponse(Guid Id);
+public record DeleteAccountResponse(Guid Id);

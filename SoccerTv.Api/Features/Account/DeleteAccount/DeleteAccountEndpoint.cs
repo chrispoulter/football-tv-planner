@@ -3,18 +3,18 @@ using SoccerTv.Api.Common.Authentication;
 using SoccerTv.Api.Common.Infrastructure;
 using SoccerTv.Api.Data.Users;
 
-namespace SoccerTv.Api.Features.Profile.DeleteProfile;
+namespace SoccerTv.Api.Features.Account.DeleteAccount;
 
-public class DeleteProfileEndpoint : IEndpoint
+public class DeleteAccountEndpoint : IEndpoint
 {
     public void MapEndpoints(IEndpointRouteBuilder app)
     {
-        app.MapDelete("/profile", HandleAsync)
+        app.MapDelete("/account", HandleAsync)
             .RequireAuthorization()
-            .Produces<DeleteProfileResponse>()
-            .WithTags(Tags.Profile)
-            .WithSummary("Delete Profile")
-            .WithDescription("Delete the profile of the current user.");
+            .Produces<DeleteAccountResponse>()
+            .WithTags(Tags.Account)
+            .WithSummary("Delete Account")
+            .WithDescription("Delete the account of the current user.");
     }
 
     private static async Task<IResult> HandleAsync(
@@ -44,6 +44,6 @@ public class DeleteProfileEndpoint : IEndpoint
 
         await signInManager.SignOutAsync();
 
-        return Results.Ok(new DeleteProfileResponse(user.Id));
+        return Results.Ok(new DeleteAccountResponse(user.Id));
     }
 }
