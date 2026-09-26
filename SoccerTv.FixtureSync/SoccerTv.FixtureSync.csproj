@@ -9,7 +9,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="AngleSharp" Version="1.8.2" />
-    <PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="13.5.0" />
+    <PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="13.5.4" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SoccerTv.ServiceDefaults\SoccerTv.ServiceDefaults.csproj" />
