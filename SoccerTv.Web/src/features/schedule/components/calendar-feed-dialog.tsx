@@ -68,10 +68,33 @@ export function CalendarFeedDialog({ disabled }: CalendarFeedDialogProps) {
                 {isSuccess ? (
                     <CalendarFeedOptions feed={feed} />
                 ) : (
-                    <Skeleton className="h-56" />
+                    <CalendarFeedOptionsSkeleton />
                 )}
             </DialogContent>
         </Dialog>
+    );
+}
+
+// Matches the layout of CalendarFeedOptions
+function CalendarFeedOptionsSkeleton() {
+    return (
+        <div className="space-y-4">
+            <div className="flex gap-2">
+                <Skeleton className="h-9 flex-1" />
+                <Skeleton className="size-9" />
+            </div>
+
+            <div className="grid gap-2 sm:grid-cols-2">
+                {Array.from({ length: 4 }, (_, i) => (
+                    <Skeleton key={i} className="h-9" />
+                ))}
+            </div>
+
+            <div className="space-y-2">
+                <Skeleton className="h-3 w-full" />
+                <Skeleton className="h-3 w-2/3" />
+            </div>
+        </div>
     );
 }
 

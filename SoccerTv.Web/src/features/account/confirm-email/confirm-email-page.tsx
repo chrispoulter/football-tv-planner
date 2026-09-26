@@ -3,8 +3,8 @@ import { useSearchParams } from 'react-router';
 import { useQueryClient } from '@tanstack/react-query';
 import { sessionKeys, useAuth } from '@/components/auth-provider';
 import { Metadata } from '@/components/metadata';
+import { PageLoading } from '@/components/page-loading';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Spinner } from '@/components/ui/spinner';
 import { useConfirmEmail } from '../account-queries';
 import { AccountLayout, AccountLink } from '../components/account-layout';
 
@@ -58,9 +58,7 @@ export function ConfirmEmailPage() {
             <Metadata title="Confirm Email" />
 
             {isPending ? (
-                <div className="flex justify-center">
-                    <Spinner />
-                </div>
+                <PageLoading />
             ) : (
                 <Alert variant={isSuccess ? 'default' : 'destructive'}>
                     <AlertDescription>{message}</AlertDescription>
