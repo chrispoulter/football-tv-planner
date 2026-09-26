@@ -1,5 +1,6 @@
 using SoccerTv.FixtureSync.Providers;
 using SoccerTv.FixtureSync.Providers.LiveFootballOnTv;
+using SoccerTv.FixtureSync.Providers.Mock;
 
 namespace SoccerTv.FixtureSync;
 
@@ -23,11 +24,7 @@ public static class FixtureProviderExtensions
                 builder.Services.Configure<LiveFootballOnTvSettings>(
                     builder.Configuration.GetSection(LiveFootballOnTvSettings.SectionName)
                 );
-                builder.Services.AddHttpClient(
-                    LiveFootballOnTvFixtureProvider.HttpClientName,
-                    client =>
-                        client.DefaultRequestHeaders.UserAgent.ParseAdd("SoccerTvSchedule/1.0")
-                );
+                builder.Services.AddHttpClient(LiveFootballOnTvFixtureProvider.HttpClientName);
                 builder.Services.AddSingleton<IFixtureProvider, LiveFootballOnTvFixtureProvider>();
                 break;
 
