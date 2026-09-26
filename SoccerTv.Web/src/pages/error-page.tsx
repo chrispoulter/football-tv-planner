@@ -1,29 +1,58 @@
 import { Link } from 'react-router';
-import { Button } from '@/components/ui/button';
+import type { FallbackProps } from 'react-error-boundary';
 import { Metadata } from '@/components/metadata';
-import { Card, CardContent } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 
-export function ErrorPage() {
+// Only given the reset callback when rendered by an error boundary
+export function ErrorPage({
+    resetErrorBoundary,
+}: Partial<Pick<FallbackProps, 'resetErrorBoundary'>>) {
     return (
-        <div className="flex flex-1 items-center justify-center">
-            <Card className="w-full max-w-md">
-                <CardContent className="space-y-6">
-                    <Metadata title="Error" />
-
-                    <div className="space-y-1">
-                        <h1 className="text-2xl font-bold tracking-tight">
-                            Error
-                        </h1>
-                        <p className="text-sm text-muted-foreground">
-                            Sorry, something went wrong. Please try again later.
-                        </p>
-                    </div>
-
-                    <Button asChild className="w-full sm:w-auto">
-                        <Link to="/">Home</Link>
-                    </Button>
-                </CardContent>
-            </Card>
-        </div>
+        <>
+            <Metadata title="Error" />
+            <div className="flex flex-1 items-center justify-center">
+                <div className="w-full max-w-sm">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="text-2xl">
+                                Something went wrong
+                            </CardTitle>
+                            <CardDescription>
+                                An unexpected error occurred
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <Alert variant="destructive">
+                                <AlertDescription>
+                                    Sorry, something went wrong. Please try
+                                    again or return to the home page.
+                                </AlertDescription>
+                            </Alert>
+                            <div className="flex flex-col-reverse gap-2">
+                                {resetErrorBoundary && (
+                                    <Button
+                                        variant="outline"
+                                        onClick={resetErrorBoundary}
+                                    >
+                                        Try again
+                                    </Button>
+                                )}
+                                <Button asChild>
+                                    <Link to="/">Home</Link>
+                                </Button>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+            </div>
+        </>
     );
 }

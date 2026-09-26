@@ -1,29 +1,38 @@
 import { Link } from 'react-router';
-import { Button } from '@/components/ui/button';
 import { Metadata } from '@/components/metadata';
-import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 
 export function ForbiddenPage() {
     return (
-        <div className="flex flex-1 items-center justify-center">
-            <Card className="w-full max-w-md">
-                <CardContent className="space-y-6">
-                    <Metadata title="Forbidden" />
-
-                    <div className="space-y-1">
-                        <h1 className="text-2xl font-bold tracking-tight">
-                            Forbidden
-                        </h1>
-                        <p className="text-sm text-muted-foreground">
-                            Sorry, you do not have access to this resource.
-                        </p>
-                    </div>
-
-                    <Button asChild className="w-full sm:w-auto">
-                        <Link to="/">Home</Link>
-                    </Button>
-                </CardContent>
-            </Card>
-        </div>
+        <>
+            <Metadata title="Forbidden" />
+            <div className="flex flex-1 items-center justify-center">
+                <div className="w-full max-w-sm">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="text-2xl">
+                                Access denied
+                            </CardTitle>
+                            <CardDescription>
+                                You don&apos;t have permission to view this
+                                page.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <Button asChild className="w-full">
+                                <Link to="/">Home</Link>
+                            </Button>
+                        </CardContent>
+                    </Card>
+                </div>
+            </div>
+        </>
     );
 }

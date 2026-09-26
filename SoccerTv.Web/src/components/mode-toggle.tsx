@@ -1,4 +1,4 @@
-import { Moon, Sun } from 'lucide-react';
+import { Sun, Moon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
@@ -9,25 +9,46 @@ import {
 import { useTheme } from './theme-provider';
 
 export function ModeToggle() {
-    const { setTheme } = useTheme();
+    const { theme, setTheme } = useTheme();
 
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="icon">
-                    <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
-                    <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
+                <Button variant="ghost" size="icon">
+                    <Sun className="h-5 w-5 dark:hidden" />
+                    <Moon className="hidden h-5 w-5 dark:block" />
                     <span className="sr-only">Toggle theme</span>
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setTheme('light')}>
+                <DropdownMenuItem
+                    onClick={() => setTheme('light')}
+                    className={
+                        theme === 'light'
+                            ? 'text-foreground'
+                            : 'text-muted-foreground'
+                    }
+                >
                     Light
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme('dark')}>
+                <DropdownMenuItem
+                    onClick={() => setTheme('dark')}
+                    className={
+                        theme === 'dark'
+                            ? 'text-foreground'
+                            : 'text-muted-foreground'
+                    }
+                >
                     Dark
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme('system')}>
+                <DropdownMenuItem
+                    onClick={() => setTheme('system')}
+                    className={
+                        theme === 'system'
+                            ? 'text-foreground'
+                            : 'text-muted-foreground'
+                    }
+                >
                     System
                 </DropdownMenuItem>
             </DropdownMenuContent>

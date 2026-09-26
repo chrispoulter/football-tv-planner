@@ -16,7 +16,7 @@ export function UserMenu() {
 
     const { user } = useAuth();
 
-    const { mutate: logout } = useLogout();
+    const { mutate: logout, isPending } = useLogout();
 
     function onLogout() {
         logout(undefined, { onSettled: () => navigate('/') });
@@ -68,7 +68,9 @@ export function UserMenu() {
 
                 <DropdownMenuSeparator />
 
-                <DropdownMenuItem onClick={onLogout}>Sign Out</DropdownMenuItem>
+                <DropdownMenuItem onClick={onLogout} disabled={isPending}>
+                    {isPending ? 'Signing Out...' : 'Sign Out'}
+                </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
     );
