@@ -5,51 +5,47 @@ import { toast } from 'sonner';
 import { TextField } from '@/components/form/text-field';
 import { LoadingButton } from '@/components/loading-button';
 import { FieldGroup } from '@/components/ui/field';
-import { useChangePassword } from '../profile-queries';
+import { useSetPassword } from '../profile-queries';
 
 const schema = z
     .object({
-        currentPassword: z
-            .string({ message: 'Current Password must be a valid string' })
-            .min(1, 'Current Password is a required field'),
         newPassword: z
-            .string({ message: 'New Password must be a valid string' })
-            .min(8, 'New Password must be at least 8 characters')
-            .max(50, 'New Password must be no more than 50 characters'),
+            .string({ message: 'Password must be a valid string' })
+            .min(8, 'Password must be at least 8 characters')
+            .max(50, 'Password must be no more than 50 characters'),
         confirmNewPassword: z
-            .string({ message: 'Confirm New Password must be a valid string' })
-            .min(1, 'Confirm New Password is a required field'),
+            .string({ message: 'Confirm Password must be a valid string' })
+            .min(1, 'Confirm Password is a required field'),
     })
     .refine((data) => data.newPassword === data.confirmNewPassword, {
         message: 'Passwords do not match',
         path: ['confirmNewPassword'],
     });
 
-type ChangePasswordFormValues = z.infer<typeof schema>;
+type SetPasswordFormValues = z.infer<typeof schema>;
 
-export function ChangePasswordForm() {
-    const { mutate: changePassword, isPending } = useChangePassword();
+/**
+ * For accounts created with Google, so they can also sign in with their email.
+ */
+export function SetPasswordForm() {
+    const { mutate: setPassword, isPending } = useSetPassword();
 
-    const form = useForm<ChangePasswordFormValues>({
+    const form = useForm<SetPasswordFormValues>({
         resolver: zodResolver(schema),
         defaultValues: {
-            currentPassword: '',
             newPassword: '',
             confirmNewPassword: '',
         },
     });
 
-    function onSubmit({
-        currentPassword,
-        newPassword,
-    }: ChangePasswordFormValues) {
-        changePassword(
-            { currentPassword, newPassword },
+    function onSubmit({ newPassword }: SetPasswordFormValues) {
+        setPassword(
+            { newPassword },
             {
-                onSuccess: () => {
-                    toast.success('Your password has been changed.');
-                    form.reset();
-                },
+                onSuccess: () =>
+                    toast.success(
+                        'Your password has been set. You can now also sign in with your email address.'
+                    ),
                 onError: (error) => toast.error(error.message),
             }
         );
@@ -58,22 +54,15 @@ export function ChangePasswordForm() {
     return (
         <form noValidate onSubmit={form.handleSubmit(onSubmit)}>
             <FieldGroup>
-                <TextField
-                    control={form.control}
-                    name="currentPassword"
-                    label="Current password"
-                    type="password"
-                    placeholder="••••••••"
-                    maxLength={50}
-                    autoComplete="current-password"
-                    required
-                    disabled={isPending}
-                />
+                <p className="text-sm text-muted-foreground">
+                    You currently sign in with a linked account. Add a password
+                    to also sign in with your email address.
+                </p>
 
                 <TextField
                     control={form.control}
                     name="newPassword"
-                    label="New password"
+                    label="Password"
                     type="password"
                     placeholder="••••••••"
                     maxLength={50}
@@ -85,7 +74,7 @@ export function ChangePasswordForm() {
                 <TextField
                     control={form.control}
                     name="confirmNewPassword"
-                    label="Confirm new password"
+                    label="Confirm password"
                     type="password"
                     placeholder="••••••••"
                     maxLength={50}
@@ -96,7 +85,7 @@ export function ChangePasswordForm() {
 
                 <div className="flex flex-col-reverse gap-2 sm:flex-row">
                     <LoadingButton type="submit" loading={isPending}>
-                        Change Password
+                        Set Password
                     </LoadingButton>
                 </div>
             </FieldGroup>

@@ -5,8 +5,52 @@ import { apiClient } from '@/lib/api-client';
 export const profileKeys = {
     all: ['profile'] as const,
     twoFactor: ['profile', 'two-factor'] as const,
-    twoFactorSetup: ['profile', 'two-factor', 'setup'] as const,
+    linkedAccounts: ['profile', 'linked-accounts'] as const,
 };
+
+// Most profile changes are also reflected in the session
+function useInvalidateSession() {
+    const queryClient = useQueryClient();
+
+    return () => queryClient.invalidateQueries({ queryKey: sessionKeys.all });
+}
+
+interface UpdateProfileRequest {
+    name: string;
+}
+
+export const useUpdateProfile = () => {
+    const invalidateSession = useInvalidateSession();
+
+    return useMutation({
+        mutationFn: (request: UpdateProfileRequest) =>
+            apiClient
+                .put('account/profile', { json: request })
+                .then(() => undefined),
+        onSuccess: invalidateSession,
+    });
+};
+
+interface ChangeEmailRequest {
+    newEmail: string;
+}
+
+// The email only changes once the link sent to the new address is followed
+export const useChangeEmail = () =>
+    useMutation({
+        mutationFn: (request: ChangeEmailRequest) =>
+            apiClient
+                .post('account/change-email', { json: request })
+                .then(() => undefined),
+    });
+
+export const useResendConfirmationEmail = () =>
+    useMutation({
+        mutationFn: () =>
+            apiClient
+                .post('account/confirm-email/resend', { json: {} })
+                .then(() => undefined),
+    });
 
 interface ChangePasswordRequest {
     currentPassword: string;
@@ -21,18 +65,22 @@ export const useChangePassword = () =>
                 .then(() => undefined),
     });
 
-interface ChangeEmailRequest {
-    newEmail: string;
+interface SetPasswordRequest {
+    newPassword: string;
 }
 
-// The email only changes once the link sent to the new address is followed
-export const useChangeEmail = () =>
-    useMutation({
-        mutationFn: (request: ChangeEmailRequest) =>
+// For accounts that only sign in with Google
+export const useSetPassword = () => {
+    const invalidateSession = useInvalidateSession();
+
+    return useMutation({
+        mutationFn: (request: SetPasswordRequest) =>
             apiClient
-                .post('account/change-email', { json: request })
+                .post('account/set-password', { json: request })
                 .then(() => undefined),
+        onSuccess: invalidateSession,
     });
+};
 
 // The API leaves out false and zero values
 export interface TwoFactorResponse {
@@ -55,16 +103,13 @@ interface SetupTwoFactorResponse {
     authenticatorUri: string;
 }
 
-// A query rather than a mutation, as the key stays the same until 2FA is enabled
-export const useSetupTwoFactor = (enabled: boolean) =>
-    useQuery({
-        queryKey: profileKeys.twoFactorSetup,
-        queryFn: ({ signal }) =>
+// The key stays the same until 2FA is enabled, so setup can be restarted
+export const useSetupTwoFactor = () =>
+    useMutation({
+        mutationFn: () =>
             apiClient
-                .post('account/two-factor/setup', { json: {}, signal })
+                .post('account/two-factor/setup', { json: {} })
                 .json<SetupTwoFactorResponse>(),
-        enabled,
-        staleTime: Infinity,
     });
 
 interface RecoveryCodesResponse {
@@ -133,6 +178,50 @@ export const useForgetTwoFactorMachine = () => {
         onSuccess: invalidate,
     });
 };
+
+// The API leaves out false values
+export interface LinkedAccount {
+    provider: string;
+    displayName: string;
+    isLinked?: boolean;
+}
+
+interface LinkedAccountsResponse {
+    accounts: LinkedAccount[];
+}
+
+export const useGetLinkedAccounts = () =>
+    useQuery({
+        queryKey: profileKeys.linkedAccounts,
+        queryFn: ({ signal }) =>
+            apiClient
+                .get('account/linked-accounts', { signal })
+                .json<LinkedAccountsResponse>(),
+    });
+
+export const useRemoveLinkedAccount = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (provider: string) =>
+            apiClient
+                .delete(
+                    `account/linked-accounts/${encodeURIComponent(provider)}`
+                )
+                .then(() => undefined),
+        onSuccess: () =>
+            queryClient.invalidateQueries({
+                queryKey: profileKeys.linkedAccounts,
+            }),
+    });
+};
+
+// A full page navigation, as the provider redirects back to the API
+export function linkAccountUrl(provider: string, returnUrl: string) {
+    const searchParams = new URLSearchParams({ provider, returnUrl });
+
+    return `/api/account/external-login/link?${searchParams}`;
+}
 
 interface DeleteAccountResponse {
     id: string;

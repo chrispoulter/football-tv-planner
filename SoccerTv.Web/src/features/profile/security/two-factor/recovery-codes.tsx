@@ -3,9 +3,10 @@ import { Button } from '@/components/ui/button';
 
 interface RecoveryCodesProps {
     codes: string[];
+    onDone: () => void;
 }
 
-export function RecoveryCodes({ codes }: RecoveryCodesProps) {
+export function RecoveryCodes({ codes, onDone }: RecoveryCodesProps) {
     const text = codes.join('\n');
 
     async function onCopy() {
@@ -25,26 +26,29 @@ export function RecoveryCodes({ codes }: RecoveryCodesProps) {
     }
 
     return (
-        <div className="space-y-4 rounded-md border p-4">
+        <div className="space-y-4">
             <p className="text-sm text-muted-foreground">
                 Save these recovery codes somewhere safe. Each one can be used
-                once to log in if you lose access to your authenticator app.
+                once to sign in if you lose access to your authenticator app.
                 They won&apos;t be shown again.
             </p>
 
-            <ul className="grid grid-cols-2 gap-2 font-mono text-sm">
+            <ul className="grid grid-cols-2 gap-2 rounded-md border p-4 font-mono text-sm">
                 {codes.map((code) => (
-                    <li key={code}>{code}</li>
+                    <li key={code} className="select-all">
+                        {code}
+                    </li>
                 ))}
             </ul>
 
-            <div className="flex flex-col gap-2 sm:flex-row">
+            <div className="flex flex-col-reverse gap-2 sm:flex-row">
                 <Button variant="outline" onClick={onCopy}>
                     Copy
                 </Button>
                 <Button variant="outline" onClick={onDownload}>
                     Download
                 </Button>
+                <Button onClick={onDone}>Done</Button>
             </div>
         </div>
     );
