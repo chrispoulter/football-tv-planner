@@ -60,7 +60,8 @@ export function CalendarFeedDialog({ disabled }: CalendarFeedDialogProps) {
                     <DialogTitle>Subscribe in your calendar</DialogTitle>
                     <DialogDescription>
                         Games you star appear in your calendar automatically,
-                        with a reminder 30 minutes before kick-off. Keep this link private.
+                        with a reminder 30 minutes before kick-off. Keep this
+                        link private.
                     </DialogDescription>
                 </DialogHeader>
 

@@ -23,9 +23,11 @@ export function useAuth() {
                     .get('account/manage/info', { signal })
                     .json<Session>();
             } catch (error) {
+                // 404 means the cookie is valid but its user no longer exists
                 if (
                     error instanceof HTTPError &&
-                    error.response.status === 401
+                    (error.response.status === 401 ||
+                        error.response.status === 404)
                 ) {
                     return null;
                 }

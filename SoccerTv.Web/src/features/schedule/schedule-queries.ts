@@ -84,37 +84,23 @@ export interface CalendarFeedResponse {
     webcalUrl: string;
 }
 
-export const useGetCalendarFeed = ({ enabled }: { enabled?: boolean } = {}) => {
-    const { accessToken } = useAuth();
-
-    return useQuery({
+export const useGetCalendarFeed = ({ enabled }: { enabled?: boolean } = {}) =>
+    useQuery({
         enabled,
         queryKey: scheduleKeys.calendarFeed,
         queryFn: ({ signal }) =>
             apiClient
-                .get('schedule/calendar-feed', {
-                    context: {
-                        accessToken,
-                    },
-                    signal,
-                })
+                .get('schedule/calendar-feed', { signal })
                 .json<CalendarFeedResponse>(),
     });
-};
 
 export const useResetCalendarFeed = () => {
-    const { accessToken } = useAuth();
-
     const queryClient = useQueryClient();
 
     return useMutation({
         mutationFn: () =>
             apiClient
-                .post('schedule/calendar-feed/reset', {
-                    context: {
-                        accessToken,
-                    },
-                })
+                .post('schedule/calendar-feed/reset')
                 .json<CalendarFeedResponse>(),
         onSuccess: (data) =>
             queryClient.setQueryData(scheduleKeys.calendarFeed, data),
