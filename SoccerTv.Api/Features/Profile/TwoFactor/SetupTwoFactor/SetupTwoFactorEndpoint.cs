@@ -8,7 +8,7 @@ namespace SoccerTv.Api.Features.Profile.TwoFactor.SetupTwoFactor;
 
 public class SetupTwoFactorEndpoint : IEndpoint
 {
-    private const string Issuer = "SoccerTv";
+    private const string Issuer = "Soccer TV";
 
     public void MapEndpoints(IEndpointRouteBuilder app)
     {
@@ -55,7 +55,7 @@ public class SetupTwoFactorEndpoint : IEndpoint
 
         var label = Uri.EscapeDataString($"{Issuer}:{user.Email}");
         var authenticatorUri =
-            $"otpauth://totp/{label}?secret={sharedKey}&issuer={Issuer}&digits=6";
+            $"otpauth://totp/{label}?secret={sharedKey}&issuer={Uri.EscapeDataString(Issuer)}&digits=6";
 
         return Results.Ok(new SetupTwoFactorResponse(sharedKey, authenticatorUri));
     }

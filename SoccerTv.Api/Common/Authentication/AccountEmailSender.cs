@@ -35,7 +35,7 @@ public class AccountEmailSender(
         await SendAsync(
             user,
             user.Email!,
-            "Verify your email address | SoccerTv",
+            "Verify your email address | Soccer TV",
             "ConfirmEmail.html",
             link
         );
@@ -58,7 +58,7 @@ public class AccountEmailSender(
         await SendAsync(
             user,
             newEmail,
-            "Verify your email address | SoccerTv",
+            "Verify your email address | Soccer TV",
             "ConfirmEmail.html",
             link
         );
@@ -80,7 +80,7 @@ public class AccountEmailSender(
         await SendAsync(
             user,
             user.Email!,
-            "Reset your password | SoccerTv",
+            "Reset your password | Soccer TV",
             "ResetPassword.html",
             link
         );
