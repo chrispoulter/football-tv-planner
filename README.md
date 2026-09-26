@@ -1,89 +1,150 @@
 # Soccer TV
 
-Lists the football shown on UK TV and streaming services, day by day. Signed-in users can star games to build a personal schedule. They can then add games to Google Calendar or Outlook, or subscribe to a private calendar feed that stays in sync with their schedule.
-
-The app is built on the [halcyon-dotnet](../halcyon-dotnet) template: a .NET 10 minimal API, EF Core with PostgreSQL, React 19 with Vite, TanStack Query and shadcn/ui, and Aspire.
+Shows the football on UK TV and streaming services, day by day. Signed-in users can star games to build their own schedule, then add games to their calendar or subscribe to a private feed that keeps up with the schedule.
 
 ## Features
 
-- **Fixtures by day.** Pick a day from the 14-day strip. Filter by competition or by broadcaster (Sky, TNT, Amazon, BBC, Premier Sports…). Kick-off times, and what counts as a "day", follow the viewer's local time zone.
-- **My Schedule.** Star a game to add it to your schedule. The **My Schedule** filter on the fixtures page narrows the selected day to your starred games and shows your calendar subscription link.
-- **Add to calendar.** Each game has one-click links for Google Calendar, Outlook.com and Outlook (Microsoft 365), plus a `.ics` download.
-- **Calendar subscription.** Each user gets a private `webcal://` feed of their starred games. The link can be reset, which stops the old one working.
-- **Reminders.** Reminders are calendar alarms (`VALARM`), not server-sent notifications. You choose how long before kick-off under **My Account → Update Profile**.
+- **Fixtures by day.** Pick one of the next 14 days, then filter by competition or channel. Kick-off times, and which games fall on which day, use the viewer's local time zone.
+- **My Schedule.** Star a game to add it to your schedule. The **My Schedule** filter narrows the list to your starred games.
+- **Add to calendar.** Each game has links for Google Calendar, Outlook.com and Outlook (Microsoft 365), plus an `.ics` download. Events include a reminder 30 minutes before kick-off.
+- **Calendar feed.** Each user gets a private `webcal://` feed of their starred games, with one-click subscribe for Google and Outlook. Resetting the link stops the old one from working.
+- **Accounts.** Email and password registration with email confirmation and password reset, optional Google sign-in, linking Google to an existing account, two-factor authentication with recovery codes, and account deletion.
 
-## Getting Started
+## Projects
+
+| Project                    | Description                                                                                                                                                                   |
+| -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SoccerTv.Api`             | .NET 10 minimal API. ASP.NET Core Identity with cookie auth, EF Core with PostgreSQL, and Scalar API docs at `/`. Owns the database schema and applies migrations on startup. |
+| `SoccerTv.FixtureSync`     | Console job that pulls fixtures from a provider into the `fixtures` table, then exits. Run it on a schedule.                                                                  |
+| `SoccerTv.Web`             | React 19 app built with Vite, React Router, TanStack Query, shadcn/ui and Tailwind CSS.                                                                                       |
+| `SoccerTv.AppHost`         | Aspire app host for local development.                                                                                                                                        |
+| `SoccerTv.ServiceDefaults` | Shared Aspire setup: OpenTelemetry, health checks, service discovery and resilience.                                                                                          |
+
+## Getting started
 
 ### Prerequisites
 
-- .NET SDK (see `global.json`)
+- .NET SDK 10 (see `global.json`)
 - Node.js 24
 - Docker, which Aspire uses to run PostgreSQL and Mailpit
 
-### Run the application
+### Run the app
 
 ```
-dotnet run --project "SoccerTv.AppHost/SoccerTv.AppHost.csproj"
+dotnet run --project SoccerTv.AppHost
 ```
 
-Aspire starts PostgreSQL, Mailpit, the API and the web app. The web app runs at http://localhost:5173, and the API docs (Scalar) are available from the Aspire dashboard.
+Aspire starts PostgreSQL, Mailpit, the API, the fixture sync and the web app. When they're up:
 
-On startup, the API applies migrations, seeds the admin user from the `Seed` settings, and syncs fixtures. Syncing then repeats every `FixtureProvider:SyncIntervalHours`.
+- Web app: http://localhost:5173
+- API docs (Scalar): the API's link in the Aspire dashboard
+- Mailpit, which receives confirmation and password reset emails: http://localhost:8025
 
-> The AppHost uses fixed host ports for PostgreSQL (5432) and Mailpit (1025/8025). Stop any other containers using those ports first, or change the ports in `SoccerTv.AppHost/AppHost.cs`.
+When the API starts, it applies migrations and seeds the users listed under `Seed:Users`. The default is `system.administrator@example.com` with the password from `SoccerTv.Api/appsettings.json`. The fixture sync runs once after the API starts. To pick up new fixtures, restart the `fixture-sync` resource from the dashboard.
 
-### Configuration
+> PostgreSQL (5432) and Mailpit (1025 and 8025) use fixed host ports and persistent containers. Stop anything else that uses those ports, or change them in `SoccerTv.AppHost/AppHost.cs`.
 
-Create `SoccerTv.Api/appsettings.Development.json` to override `appsettings.json` locally. Git ignores this file. The settings specific to this app are:
+You can also run everything with `docker compose up`, which builds the three app images and uses the same ports.
 
-```json
-{
-  "FixtureProvider": {
-    "Provider": "Mock",
-    "SyncIntervalHours": 6,
-    "DaysAhead": 14
-  }
-}
+## Configuration
+
+`appsettings.json` in each project lists every setting, with blank values where you need to supply your own. To override them locally, create an `appsettings.Development.json` next to it. Git ignores these files. You can also use user secrets (the API has these set up) or environment variables such as `Authentication__Google__ClientId`.
+
+### Google sign-in
+
+Google sign-in is optional. It's turned on only when `Authentication:Google:ClientId` is set.
+
+1. In Google Cloud Console, go to **APIs & Services → Credentials** and create an OAuth client ID of type **Web application**.
+2. Add these authorised redirect URIs. The web app proxies `/api` to the API, so the callback goes through the web app's origin:
+   - `http://localhost:5173/api/signin-google`
+   - `https://<web app host>/api/signin-google`
+3. Put the credentials in `SoccerTv.Api/appsettings.Development.json`:
+
+   ```json
+   {
+     "Authentication": {
+       "Google": {
+         "ClientId": "<client id>",
+         "ClientSecret": "<client secret>"
+       }
+     }
+   }
+   ```
+
+### Fixture provider
+
+The fixture sync reads fixtures from the provider named in `FixtureSync:Provider`:
+
+| Provider         | Description                                                                                                            |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `Mock` (default) | Generates repeatable fake fixtures `FixtureSync:Mock:DaysAhead` days ahead. The same dates always give the same games. |
+
+Set `FixtureSync:Provider` in `SoccerTv.FixtureSync/appsettings.Development.json` to switch.
+
+### Email
+
+The API sends email over SMTP using the `Mail` connection string, for example `Endpoint=smtp://localhost:1025`. `Email:NoReplyAddress` is the sender. `Email:SiteUrl` is the web app URL used for links in emails. Aspire sets `Email:SiteUrl` for you.
+
+## How it works
+
+### Authentication and the `/api` proxy
+
+The web app never calls the API directly. It proxies `/api/*` to the API: Vite does this in development (`API_PROXY_TARGET`) and nginx does it in the container (`API_UPSTREAM`). This keeps the Identity cookie first-party even when the API is hosted on a different domain.
+
+The proxy sends the public host, scheme and path prefix in `X-SoccerTv-*` headers. The API reads them in `ForwardedHeadersExtensions` so it can build correct external login redirect URIs. Custom header names are used so they can't clash with the `X-Forwarded-*` headers that the hosting provider sets.
+
+### Dates and times
+
+Every time is stored and returned in UTC: `timestamptz` in Postgres, ISO 8601 strings in the API, and UTC `DTSTART` values in `.ics` files. The web app converts them to the viewer's time zone (`src/lib/local-time.ts`). When you pick a day, the web app sends it to `GET /fixtures` as a UTC `from`/`to` range, so the API doesn't need to know the viewer's time zone. The only code that knows about UK time is in the fixture providers, which convert UK kick-off times to UTC with `UkTime`.
+
+### Fixture sync
+
+Each run, `FixtureSyncer`:
+
+- upserts fixtures by `(Source, ExternalId)`
+- replaces each fixture's channel list
+- deletes upcoming fixtures from the same source that the provider no longer lists, because a moved game comes back under a new ID
+
+If a provider returns nothing, the run fails instead of deleting every upcoming fixture.
+
+The API owns the schema. `SoccerTv.FixtureSync/Data/Fixture.cs` maps the same table, so update it whenever the API's `Fixture` entity changes.
+
+To add a provider:
+
+1. Implement `IFixtureProvider` with a unique `Source` and external IDs that don't change between runs.
+2. Register it in `FixtureProviderExtensions.AddFixtureProvider` under a new `FixtureSync:Provider` name.
+
+## Development
+
+### Database migrations
+
+Migrations are in `SoccerTv.Api/Migrations`. To add one:
+
+```
+dotnet tool restore
+dotnet ef migrations add <Name> --project SoccerTv.Api
 ```
 
-### Authentication
-
-Accounts use ASP.NET Core Identity (`MapIdentityApi`) with a cookie. The web app proxies `/api` to the API (Vite in development, nginx in the container), so the cookie is first-party even when the two are hosted on different domains.
-
-Google sign-in is optional and only enabled when a client ID is configured. Create an OAuth client in the Google Cloud console, add the redirect URIs `http://localhost:5173/api/signin-google` and `https://<web app host>/api/signin-google`, then store the credentials in the API's user secrets:
+### Formatting and linting
 
 ```
-dotnet user-secrets --project SoccerTv.Api set "Authentication:Google:ClientId" "<client id>"
-dotnet user-secrets --project SoccerTv.Api set "Authentication:Google:ClientSecret" "<client secret>"
+dotnet csharpier format .
+
+cd SoccerTv.Web
+npm run lint
+npm run format
 ```
 
-In production, set `Authentication__Google__ClientId` and `Authentication__Google__ClientSecret` on the API, and `API_UPSTREAM` (the API's URL) on the web app.
+## Deployment
 
-## Dates and times
+On every push to `main`, `develop`, `feature/**`, `release/**` and `hotfix/**`, GitHub Actions builds and lints everything, versions it with GitVersion, and pushes three images to GitHub Container Registry: `-api`, `-fixture-sync` and `-web`.
 
-All instants are stored and returned in UTC: Postgres `timestamptz`, ISO 8601 strings with `Z`, and UTC `DTSTART` values in `.ics` files. The UI converts them to the viewer's local time zone (`src/lib/local-time.ts`). When you pick a day, the UI sends that local day to `GET /fixtures` as a UTC `from`/`to` range, so the API never needs to know the viewer's time zone. The only place that knows about UK time is fixture ingestion, which converts UK kick-off slots to UTC (`Common/Time/UkTime.cs`).
+In production:
 
-## Fixture data
-
-Fixtures come in through `IFixtureProvider` (`SoccerTv.Api/Common/Fixtures`). `FixtureSyncService` calls the configured provider on a timer. It upserts competitions, teams and channels by name, and fixtures by `(Source, ExternalId)`. It also replaces each fixture's broadcasters on every sync, so the rest of the app never talks to a provider directly.
-
-The only provider for now is `MockFixtureProvider`. It generates deterministic fixtures with kick-off slots and channels based on the current UK rights holders, and no Saturday 15:00 games because of the UK TV blackout.
-
-### Adding a real provider
-
-1. Implement `IFixtureProvider` with a unique `Source` and stable external IDs.
-2. Register it in `FixtureSyncExtensions.AddFixtureSync` under a new `FixtureProvider:Provider` name.
-
-Options considered:
-
-| Source | Pros | Cons |
-| --- | --- | --- |
-| [TheSportsDB](https://www.thesportsdb.com/documentation) premium (~$9/month) | The v2 API can filter TV events by country and day (`/filter/tv/country/united_kingdom`) and returns channel names | Paid; data is community-maintained |
-| [football-data.org](https://www.football-data.org/) (free tier) + manual channels | Reliable fixtures | No broadcaster data, so channels need an admin screen |
-| Scraping a listings site (e.g. live-footballontv.com) | Very complete UK listings | Fragile, and likely against the site's terms |
-
-Official fixture lists for the English and Scottish leagues are licensed through Football DataCo. Only personal, non-commercial use has been considered here.
+- **API:** set `ConnectionStrings__Database`, `ConnectionStrings__Mail`, `Email__SiteUrl`, `Email__NoReplyAddress`, the `Seed__Users__*` values and, optionally, `Authentication__Google__*`.
+- **Web:** set `API_UPSTREAM` to the API's URL.
+- **Fixture sync:** set `ConnectionStrings__Database` and `FixtureSync__Provider`, and run it as a scheduled job, for example an Azure Container Apps job or a cron job.
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+MIT. See [LICENSE](LICENSE).
