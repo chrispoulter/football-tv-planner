@@ -13,7 +13,7 @@ using SoccerTv.Api.Data;
 namespace SoccerTv.Api.Migrations
 {
     [DbContext(typeof(SoccerTvDbContext))]
-    [Migration("20260926134854_InitialCreate")]
+    [Migration("20260926145843_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -242,6 +242,9 @@ namespace SoccerTv.Api.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
 
+                    b.Property<string>("CalendarFeedToken")
+                        .HasColumnType("text");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("text");
@@ -287,6 +290,9 @@ namespace SoccerTv.Api.Migrations
                         .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CalendarFeedToken")
+                        .IsUnique();
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
