@@ -1,7 +1,8 @@
 import { config } from '@/lib/config';
-import { currentYear } from '@/lib/dates';
 
 export function Footer() {
+    const currentYear = new Date().getUTCFullYear();
+
     return (
         <footer className="border-t py-4">
             <div className="container mx-auto flex items-center justify-between px-4 text-sm text-muted-foreground">
