@@ -13,7 +13,6 @@ public static class AuthenticationExtensions
             .Services.AddIdentityApiEndpoints<User>(options =>
             {
                 options.User.RequireUniqueEmail = true;
-                options.SignIn.RequireConfirmedEmail = true;
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
 
                 // Favour length over composition rules, matching the web app's validation

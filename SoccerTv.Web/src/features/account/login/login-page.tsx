@@ -2,14 +2,9 @@ import { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router';
 import { toast } from 'sonner';
 import { Metadata } from '@/components/metadata';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { getProblemDetail } from '@/lib/api-client';
-import {
-    type LoginRequest,
-    useLogin,
-    useResendConfirmationEmail,
-} from '../account-queries';
+import { type LoginRequest, useLogin } from '../account-queries';
 import { GoogleButton } from '../components/google-button';
 import { LoginForm, type LoginFormValues } from './login-form';
 import { type TwoFactorCode, TwoFactorForm } from './two-factor-form';
@@ -18,7 +13,6 @@ import { type TwoFactorCode, TwoFactorForm } from './two-factor-form';
 const loginErrors: Record<string, string> = {
     Failed: 'The credentials provided were invalid.',
     LockedOut: 'This account has been locked out, please try again later.',
-    NotAllowed: 'Please confirm your email address before logging in.',
 };
 
 // Set by the API when a Google login fails
@@ -34,12 +28,7 @@ export function LoginPage() {
 
     const [credentials, setCredentials] = useState<LoginRequest>();
 
-    const [unconfirmedEmail, setUnconfirmedEmail] = useState<string>();
-
     const { mutate: login, isPending: isSaving } = useLogin();
-
-    const { mutate: resendConfirmationEmail, isPending: isResending } =
-        useResendConfirmationEmail();
 
     const externalError = externalLoginErrors[searchParams.get('error') ?? ''];
 
@@ -52,10 +41,6 @@ export function LoginPage() {
                 if (detail === 'RequiresTwoFactor') {
                     setCredentials(request);
                     return;
-                }
-
-                if (detail === 'NotAllowed') {
-                    setUnconfirmedEmail(request.email);
                 }
 
                 toast.error(
@@ -74,21 +59,6 @@ export function LoginPage() {
     function onTwoFactorSubmit(code: TwoFactorCode) {
         if (credentials) {
             submit({ ...credentials, ...code });
-        }
-    }
-
-    function onResend() {
-        if (unconfirmedEmail) {
-            resendConfirmationEmail(
-                { email: unconfirmedEmail },
-                {
-                    onSuccess: () =>
-                        toast.success(
-                            'A new confirmation link has been sent to your email address.'
-                        ),
-                    onError: (error) => toast.error(error.message),
-                }
-            );
         }
     }
 
@@ -130,20 +100,6 @@ export function LoginPage() {
                             {externalError && (
                                 <p className="text-sm text-destructive">
                                     {externalError}
-                                </p>
-                            )}
-
-                            {unconfirmedEmail && (
-                                <p className="text-sm text-muted-foreground">
-                                    Not received a confirmation email?{' '}
-                                    <Button
-                                        variant="link"
-                                        className="h-auto p-0"
-                                        disabled={isResending}
-                                        onClick={onResend}
-                                    >
-                                        Send it again
-                                    </Button>
                                 </p>
                             )}
 

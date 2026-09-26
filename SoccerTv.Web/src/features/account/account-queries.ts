@@ -77,14 +77,6 @@ interface EmailRequest {
     email: string;
 }
 
-export const useResendConfirmationEmail = () =>
-    useMutation({
-        mutationFn: (request: EmailRequest) =>
-            apiClient
-                .post('account/resendConfirmationEmail', { json: request })
-                .then(() => undefined),
-    });
-
 export const useForgotPassword = () =>
     useMutation({
         mutationFn: (request: EmailRequest) =>

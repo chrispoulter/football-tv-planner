@@ -1,25 +1,38 @@
-import { useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { toast } from 'sonner';
 import { Metadata } from '@/components/metadata';
-import { useRegister } from '../account-queries';
+import { useLogin, useRegister } from '../account-queries';
 import { GoogleButton } from '../components/google-button';
 import { RegisterForm, type RegisterFormValues } from './register-form';
 import { Card, CardContent } from '@/components/ui/card';
 
 export function RegisterPage() {
-    const [registeredEmail, setRegisteredEmail] = useState<string>();
+    const navigate = useNavigate();
 
-    const { mutate: register, isPending: isSaving } = useRegister();
+    const { mutate: register, isPending: isRegistering } = useRegister();
 
+    const { mutate: login, isPending: isLoggingIn } = useLogin();
+
+    // Log straight in, as the email doesn't need confirming first
     function onSubmit({ emailAddress, password }: RegisterFormValues) {
-        register(
-            { email: emailAddress, password },
-            {
-                onSuccess: () => setRegisteredEmail(emailAddress),
-                onError: (error) => toast.error(error.message),
-            }
-        );
+        const credentials = { email: emailAddress, password };
+
+        register(credentials, {
+            onSuccess: () =>
+                login(
+                    { ...credentials, rememberMe: false },
+                    {
+                        onSuccess: () => {
+                            toast.success(
+                                'Welcome! We have sent you an email to confirm your address.'
+                            );
+                            navigate('/');
+                        },
+                        onError: (error) => toast.error(error.message),
+                    }
+                ),
+            onError: (error) => toast.error(error.message),
+        });
     }
 
     return (
@@ -28,38 +41,22 @@ export function RegisterPage() {
                 <CardContent className="space-y-6">
                     <Metadata title="Register" />
 
-                    {registeredEmail ? (
-                        <div className="space-y-1">
-                            <h1 className="text-2xl font-bold tracking-tight">
-                                Check your email
-                            </h1>
-                            <p className="text-sm text-muted-foreground">
-                                We have sent a confirmation link to{' '}
-                                <strong>{registeredEmail}</strong>. Follow the
-                                link to activate your account.
-                            </p>
-                        </div>
-                    ) : (
-                        <>
-                            <div className="space-y-1">
-                                <h1 className="text-2xl font-bold tracking-tight">
-                                    Register
-                                </h1>
-                                <p className="text-sm text-muted-foreground">
-                                    Register for a new account to access the
-                                    full range of features available on this
-                                    site.
-                                </p>
-                            </div>
+                    <div className="space-y-1">
+                        <h1 className="text-2xl font-bold tracking-tight">
+                            Register
+                        </h1>
+                        <p className="text-sm text-muted-foreground">
+                            Register for a new account to access the full range
+                            of features available on this site.
+                        </p>
+                    </div>
 
-                            <RegisterForm
-                                loading={isSaving}
-                                onSubmit={onSubmit}
-                            />
+                    <RegisterForm
+                        loading={isRegistering || isLoggingIn}
+                        onSubmit={onSubmit}
+                    />
 
-                            <GoogleButton />
-                        </>
-                    )}
+                    <GoogleButton />
 
                     <p className="text-sm text-muted-foreground">
                         Already have an account?{' '}
