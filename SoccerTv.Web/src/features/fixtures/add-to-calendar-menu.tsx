@@ -17,7 +17,7 @@ import {
 import {
     useDownloadFixtureCalendar,
     type FixtureSummary,
-} from '../fixtures-queries';
+} from './fixtures-queries';
 
 interface AddToCalendarMenuProps {
     fixture: FixtureSummary;

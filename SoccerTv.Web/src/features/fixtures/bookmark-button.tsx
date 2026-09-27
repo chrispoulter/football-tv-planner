@@ -5,7 +5,7 @@ import { useAuth } from '@/components/auth-provider';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useToggleSchedule } from '@/features/schedule/schedule-queries';
-import type { FixtureSummary } from '../fixtures-queries';
+import type { FixtureSummary } from './fixtures-queries';
 
 interface BookmarkButtonProps {
     fixture: FixtureSummary;

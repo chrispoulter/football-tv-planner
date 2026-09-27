@@ -1,5 +1,5 @@
 import { toLocalTime } from '@/lib/local-time';
-import type { FixtureSummary } from '../fixtures-queries';
+import type { FixtureSummary } from './fixtures-queries';
 import { AddToCalendarMenu } from './add-to-calendar-menu';
 import { BookmarkButton } from './bookmark-button';
 import { ChannelBadge } from './channel-badge';

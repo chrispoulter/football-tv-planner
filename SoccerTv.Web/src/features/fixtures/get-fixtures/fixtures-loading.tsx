@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { FixtureCardSkeleton } from '../components/fixture-card-skeleton';
+import { FixtureCardSkeleton } from '../fixture-card-skeleton';
 
 // Fixtures per competition, so the placeholder looks like a typical day
 const GROUP_SIZES = [3, 2, 1];

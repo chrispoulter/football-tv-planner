@@ -33,7 +33,7 @@ import {
     useGetCalendarFeed,
     useResetCalendarFeed,
     type CalendarFeedResponse,
-} from '../schedule-queries';
+} from './schedule-queries';
 
 const CALENDAR_NAME = 'My Soccer on TV';
 

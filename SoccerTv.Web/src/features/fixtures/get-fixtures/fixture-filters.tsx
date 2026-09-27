@@ -1,7 +1,6 @@
 import { Star } from 'lucide-react';
 import { useAuth } from '@/components/auth-provider';
 import { Button } from '@/components/ui/button';
-import { CalendarFeedDialog } from '@/features/schedule/components/calendar-feed-dialog';
 import {
     Select,
     SelectContent,
@@ -9,6 +8,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { CalendarFeedDialog } from '@/features/schedule/calendar-feed-dialog';
 import { useGetChannels, useGetCompetitions } from '../fixtures-queries';
 
 const ALL = 'all';
