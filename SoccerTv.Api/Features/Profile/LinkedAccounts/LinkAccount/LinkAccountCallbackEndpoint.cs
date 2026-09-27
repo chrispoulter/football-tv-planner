@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Identity;
 using SoccerTv.Api.Common.Authentication;
 using SoccerTv.Api.Common.Infrastructure;
 using SoccerTv.Api.Data.Users;
-using SoccerTv.Api.Features.Account;
 
 namespace SoccerTv.Api.Features.Profile.LinkedAccounts.LinkAccount;
 

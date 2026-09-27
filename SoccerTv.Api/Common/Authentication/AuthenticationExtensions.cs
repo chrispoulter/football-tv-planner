@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity;
+using SoccerTv.Api.Common.Authentication;
 using SoccerTv.Api.Data;
 using SoccerTv.Api.Data.Users;
-using SoccerTv.Api.Features.Account;
 
 namespace SoccerTv.Api.Common.Authentication;
 

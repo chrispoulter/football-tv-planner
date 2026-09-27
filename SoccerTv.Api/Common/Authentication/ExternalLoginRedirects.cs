@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.WebUtilities;
 
-namespace SoccerTv.Api.Features.Account;
+namespace SoccerTv.Api.Common.Authentication;
 
 public static class ExternalLoginRedirects
 {
