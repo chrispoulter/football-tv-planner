@@ -2,9 +2,6 @@ using FluentValidation;
 
 namespace SoccerTv.Api.Features.Account.LoginTwoFactor;
 
-/// <summary>
-/// Either a code from the authenticator app or one of the recovery codes.
-/// </summary>
 public record LoginTwoFactorRequest(
     string? Code,
     string? RecoveryCode,

@@ -28,24 +28,25 @@ public class ConfirmEmailEndpoint : IEndpoint
     )
     {
         var user = await userManager.FindByIdAsync(request.UserId.ToString());
-        var code = AccountCodes.Decode(request.Code);
 
-        if (user is null || code is null)
+        if (user is null)
         {
-            return InvalidLink();
+            return Results.Problem(
+                statusCode: StatusCodes.Status400BadRequest,
+                title: "This link is invalid or has expired."
+            );
         }
 
         IdentityResult result;
 
         if (string.IsNullOrEmpty(request.ChangedEmail))
         {
-            result = await userManager.ConfirmEmailAsync(user, code);
+            result = await userManager.ConfirmEmailAsync(user, request.Code);
         }
         else
         {
-            result = await userManager.ChangeEmailAsync(user, request.ChangedEmail, code);
+            result = await userManager.ChangeEmailAsync(user, request.ChangedEmail, request.Code);
 
-            // The email is also the user name
             if (result.Succeeded)
             {
                 result = await userManager.SetUserNameAsync(user, request.ChangedEmail);
@@ -54,10 +55,12 @@ public class ConfirmEmailEndpoint : IEndpoint
 
         if (!result.Succeeded)
         {
-            return InvalidLink();
+            return Results.Problem(
+                statusCode: StatusCodes.Status400BadRequest,
+                title: "This link is invalid or has expired."
+            );
         }
 
-        // Changing the email updates the security stamp, which would otherwise log the user out
         if (currentUser?.Id == user.Id)
         {
             await signInManager.RefreshSignInAsync(user);
@@ -65,7 +68,4 @@ public class ConfirmEmailEndpoint : IEndpoint
 
         return Results.Ok();
     }
-
-    private static IResult InvalidLink() =>
-        AccountProblems.BadRequest("This link is invalid or has expired.");
 }

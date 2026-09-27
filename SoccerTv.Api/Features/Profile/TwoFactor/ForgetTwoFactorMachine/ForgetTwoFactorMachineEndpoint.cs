@@ -16,7 +16,6 @@ public class ForgetTwoFactorMachineEndpoint : IEndpoint
             .WithDescription("Ask for a two-factor code the next time this browser logs in.");
     }
 
-    // Requiring a JSON body means a cross-site form post can't trigger this
     private static async Task<IResult> HandleAsync(
         [FromBody] object empty,
         SignInManager<User> signInManager

@@ -16,7 +16,7 @@ public class FixtureSyncer(
         logger.LogInformation("Syncing fixtures from {Source}", fixtureProvider.Source);
 
         var items = await fixtureProvider.GetFixturesAsync(cancellationToken);
-        
+
         if (items.Count == 0)
         {
             throw new InvalidOperationException($"{fixtureProvider.Source} returned no fixtures.");

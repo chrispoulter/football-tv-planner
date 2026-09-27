@@ -24,20 +24,25 @@ public class UpdateProfileEndpoint : IEndpoint
         UserManager<User> userManager
     )
     {
-        var user = await userManager.FindByIdAsync(currentUser);
+        var user = await userManager.FindByIdAsync(currentUser.Id.ToString());
 
         if (user is null)
         {
-            return AccountProblems.UserNotFound();
+            return Results.Problem(
+                statusCode: StatusCodes.Status404NotFound,
+                title: "User not found."
+            );
         }
-
-        user.Name = request.Name.Trim();
 
         var result = await userManager.UpdateAsync(user);
 
         if (!result.Succeeded)
         {
-            return result.ToValidationProblem();
+            return Results.ValidationProblem(
+                result
+                    .Errors.GroupBy(e => e.Code)
+                    .ToDictionary(g => g.Key, g => g.Select(e => e.Description).ToArray())
+            );
         }
 
         return Results.Ok();

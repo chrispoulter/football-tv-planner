@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Options;
 using SoccerTv.Api.Common.Authentication;
+using SoccerTv.Api.Common.Email;
 using SoccerTv.Api.Common.Infrastructure;
 using SoccerTv.Api.Common.Validation;
 using SoccerTv.Api.Data.Users;
@@ -24,34 +27,58 @@ public class ChangeEmailEndpoint : IEndpoint
         ChangeEmailRequest request,
         CurrentUser currentUser,
         UserManager<User> userManager,
-        AccountEmailSender emailSender
+        IEmailService emailService,
+        IOptions<EmailSettings> emailSettings,
+        CancellationToken cancellationToken
     )
     {
-        var user = await userManager.FindByIdAsync(currentUser);
+        var user = await userManager.FindByIdAsync(currentUser.Id.ToString());
 
         if (user is null)
         {
-            return AccountProblems.UserNotFound();
+            return Results.Problem(
+                statusCode: StatusCodes.Status404NotFound,
+                title: "User not found."
+            );
         }
 
         var existingUser = await userManager.FindByEmailAsync(request.NewEmail);
 
         if (existingUser?.Id == user.Id)
         {
-            return AccountProblems.Validation(
-                nameof(request.NewEmail),
-                "This is already your email address."
+            return Results.Problem(
+                statusCode: StatusCodes.Status400BadRequest,
+                title: "This is already your email address."
             );
         }
 
         if (existingUser is not null)
         {
-            return IdentityResult
-                .Failed(userManager.ErrorDescriber.DuplicateEmail(request.NewEmail))
-                .ToValidationProblem();
+            return Results.Problem(
+                statusCode: StatusCodes.Status400BadRequest,
+                title: "This email address is already in use."
+            );
         }
 
-        await emailSender.SendChangeEmailLinkAsync(user, request.NewEmail);
+        var code = await userManager.GenerateChangeEmailTokenAsync(user, request.NewEmail);
+
+        var link = QueryHelpers.AddQueryString(
+            $"{emailSettings.Value.SiteUrl}/account/confirm-email",
+            new Dictionary<string, string?>
+            {
+                ["userId"] = user.Id.ToString(),
+                ["code"] = code,
+                ["changedEmail"] = request.NewEmail,
+            }
+        );
+
+        await emailService.SendTemplateEmailAsync(
+            toAddress: request.NewEmail,
+            subject: "Verify your email address | Soccer TV",
+            template: "SoccerTv.Api.Features.Emails.ConfirmEmail.html",
+            model: new { name = user.Name, link },
+            cancellationToken
+        );
 
         return Results.Ok();
     }

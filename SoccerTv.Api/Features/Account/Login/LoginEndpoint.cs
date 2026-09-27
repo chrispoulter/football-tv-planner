@@ -28,14 +28,20 @@ public class LoginEndpoint : IEndpoint
     {
         var user = await userManager.FindByEmailAsync(request.Email);
 
-        var result = user is null
-            ? SignInResult.Failed
-            : await signInManager.PasswordSignInAsync(
-                user,
-                request.Password,
-                request.RememberMe,
-                lockoutOnFailure: true
+        if (user is null)
+        {
+            return Results.Problem(
+                statusCode: StatusCodes.Status400BadRequest,
+                title: "The credentials provided were invalid."
             );
+        }
+
+        var result = await signInManager.PasswordSignInAsync(
+            user,
+            request.Password,
+            request.RememberMe,
+            lockoutOnFailure: true
+        );
 
         if (result.RequiresTwoFactor)
         {
@@ -44,14 +50,18 @@ public class LoginEndpoint : IEndpoint
 
         if (result.IsLockedOut)
         {
-            return AccountProblems.Unauthorized(
-                "This account has been locked out, please try again later."
+            return Results.Problem(
+                statusCode: StatusCodes.Status400BadRequest,
+                title: "This account has been locked out, please try again later."
             );
         }
 
         if (!result.Succeeded)
         {
-            return AccountProblems.Unauthorized("The credentials provided were invalid.");
+            return Results.Problem(
+                statusCode: StatusCodes.Status400BadRequest,
+                title: "The credentials provided were invalid."
+            );
         }
 
         return Results.Ok(new LoginResponse(RequiresTwoFactor: false));

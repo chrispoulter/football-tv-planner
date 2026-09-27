@@ -28,29 +28,35 @@ public class EnableTwoFactorEndpoint : IEndpoint
         SignInManager<User> signInManager
     )
     {
-        var user = await userManager.FindByIdAsync(currentUser);
+        var user = await userManager.FindByIdAsync(currentUser.Id.ToString());
 
         if (user is null)
         {
-            return AccountProblems.UserNotFound();
+            return Results.Problem(
+                statusCode: StatusCodes.Status404NotFound,
+                title: "User not found."
+            );
         }
 
         if (user.TwoFactorEnabled)
         {
-            return AccountProblems.BadRequest("Two-factor authentication is already enabled.");
+            return Results.Problem(
+                statusCode: StatusCodes.Status400BadRequest,
+                title: "Two-factor authentication is already enabled."
+            );
         }
 
         var isValid = await userManager.VerifyTwoFactorTokenAsync(
             user,
             userManager.Options.Tokens.AuthenticatorTokenProvider,
-            AccountCodes.NormalizeAuthenticatorCode(request.Code)
+            request.Code
         );
 
         if (!isValid)
         {
-            return AccountProblems.Validation(
-                nameof(request.Code),
-                "The code provided was invalid."
+            return Results.Problem(
+                statusCode: StatusCodes.Status400BadRequest,
+                title: "Invalid two-factor authentication code."
             );
         }
 
@@ -58,10 +64,13 @@ public class EnableTwoFactorEndpoint : IEndpoint
 
         if (!result.Succeeded)
         {
-            return result.ToValidationProblem();
+            return Results.ValidationProblem(
+                result
+                    .Errors.GroupBy(e => e.Code)
+                    .ToDictionary(g => g.Key, g => g.Select(e => e.Description).ToArray())
+            );
         }
 
-        // Always issue fresh recovery codes, as any old ones survive disabling 2FA
         var recoveryCodes = await userManager.GenerateNewTwoFactorRecoveryCodesAsync(
             user,
             RecoveryCodesResponse.Count

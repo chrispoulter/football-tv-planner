@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using SoccerTv.Api.Data;
 using SoccerTv.Api.Data.Users;
-using SoccerTv.Api.Features.Account.ExternalLogin;
+using SoccerTv.Api.Features.Account;
 
 namespace SoccerTv.Api.Common.Authentication;
 
@@ -19,7 +19,6 @@ public static class AuthenticationExtensions
                 options.User.RequireUniqueEmail = true;
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
 
-                // Favour length over composition rules, matching the web app's validation
                 options.Password.RequiredLength = 8;
                 options.Password.RequireDigit = false;
                 options.Password.RequireLowercase = false;
@@ -30,7 +29,6 @@ public static class AuthenticationExtensions
             .AddSignInManager()
             .AddDefaultTokenProviders();
 
-        // Report 401 and 403 to the web app rather than redirecting to a login page
         builder.Services.ConfigureApplicationCookie(options =>
         {
             options.Events.OnRedirectToLogin = context =>
@@ -49,7 +47,6 @@ public static class AuthenticationExtensions
             .Configuration.GetSection(GoogleSettings.SectionName)
             .Get<GoogleSettings>();
 
-        // Google sign-in is optional so the app still runs without OAuth credentials
         if (!string.IsNullOrEmpty(googleSettings?.ClientId))
         {
             builder
@@ -60,7 +57,6 @@ public static class AuthenticationExtensions
                     options.ClientSecret = googleSettings.ClientSecret;
                     options.SignInScheme = IdentityConstants.ExternalScheme;
 
-                    // e.g. the user cancelled on the consent screen
                     options.Events.OnRemoteFailure = context =>
                     {
                         context.Response.Redirect(
@@ -73,7 +69,6 @@ public static class AuthenticationExtensions
                 });
         }
 
-        builder.Services.AddScoped<AccountEmailSender>();
         builder.Services.AddAuthorization();
 
         return builder;

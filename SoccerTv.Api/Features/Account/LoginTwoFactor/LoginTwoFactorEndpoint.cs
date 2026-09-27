@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Identity;
-using SoccerTv.Api.Common.Authentication;
 using SoccerTv.Api.Common.Infrastructure;
 using SoccerTv.Api.Common.Validation;
 using SoccerTv.Api.Data.Users;
@@ -25,32 +24,36 @@ public class LoginTwoFactorEndpoint : IEndpoint
         SignInManager<User> signInManager
     )
     {
-        // Set by the login endpoint, and only valid for a few minutes
         if (await signInManager.GetTwoFactorAuthenticationUserAsync() is null)
         {
-            return AccountProblems.Unauthorized("Your login has expired, please log in again.");
+            return Results.Problem(
+                statusCode: StatusCodes.Status400BadRequest,
+                title: "Your login has expired, please log in again."
+            );
         }
 
         var result = string.IsNullOrEmpty(request.RecoveryCode)
             ? await signInManager.TwoFactorAuthenticatorSignInAsync(
-                AccountCodes.NormalizeAuthenticatorCode(request.Code!),
+                request.Code!,
                 request.RememberMe,
                 request.RememberMachine
             )
-            : await signInManager.TwoFactorRecoveryCodeSignInAsync(
-                AccountCodes.NormalizeRecoveryCode(request.RecoveryCode)
-            );
+            : await signInManager.TwoFactorRecoveryCodeSignInAsync(request.RecoveryCode);
 
         if (result.IsLockedOut)
         {
-            return AccountProblems.Unauthorized(
-                "This account has been locked out, please try again later."
+            return Results.Problem(
+                statusCode: StatusCodes.Status400BadRequest,
+                title: "This account has been locked out, please try again later."
             );
         }
 
         if (!result.Succeeded)
         {
-            return AccountProblems.Unauthorized("The code provided was invalid.");
+            return Results.Problem(
+                statusCode: StatusCodes.Status400BadRequest,
+                title: "The code provided was invalid."
+            );
         }
 
         return Results.Ok();

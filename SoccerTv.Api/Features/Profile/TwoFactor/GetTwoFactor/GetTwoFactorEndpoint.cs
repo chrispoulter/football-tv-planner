@@ -23,11 +23,14 @@ public class GetTwoFactorEndpoint : IEndpoint
         SignInManager<User> signInManager
     )
     {
-        var user = await userManager.FindByIdAsync(currentUser);
+        var user = await userManager.FindByIdAsync(currentUser.Id.ToString());
 
         if (user is null)
         {
-            return AccountProblems.UserNotFound();
+            return Results.Problem(
+                statusCode: StatusCodes.Status404NotFound,
+                title: "User not found."
+            );
         }
 
         return Results.Ok(

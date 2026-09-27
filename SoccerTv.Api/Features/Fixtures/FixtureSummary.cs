@@ -1,5 +1,4 @@
 using System.Linq.Expressions;
-using SoccerTv.Api.Common.Calendar;
 using SoccerTv.Api.Data;
 using SoccerTv.Api.Data.Fixtures;
 

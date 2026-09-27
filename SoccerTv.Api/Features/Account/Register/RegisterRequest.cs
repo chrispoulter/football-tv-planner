@@ -1,5 +1,4 @@
 using FluentValidation;
-using SoccerTv.Api.Data.Users;
 
 namespace SoccerTv.Api.Features.Account.Register;
 
@@ -9,7 +8,7 @@ public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
 {
     public RegisterRequestValidator()
     {
-        RuleFor(x => x.Name).NotEmpty().MaximumLength(UserConfiguration.NameMaxLength);
+        RuleFor(x => x.Name).NotEmpty().MaximumLength(100);
         RuleFor(x => x.Email).NotEmpty().EmailAddress().MaximumLength(256);
         RuleFor(x => x.Password).NotEmpty();
     }

@@ -29,7 +29,6 @@ public class ExternalLoginCallbackEndpoint : IEndpoint
             return Results.Redirect(ExternalLoginRedirects.LoginError("external"));
         }
 
-        // The external provider handles its own 2FA, as in the scaffolded Identity UI
         var result = await signInManager.ExternalLoginSignInAsync(
             info.LoginProvider,
             info.ProviderKey,
@@ -47,7 +46,6 @@ public class ExternalLoginCallbackEndpoint : IEndpoint
             return Results.Redirect(ExternalLoginRedirects.LoginError("locked"));
         }
 
-        // No user is linked to this login yet, so link or create one by email
         var email = info.Principal.FindFirstValue(ClaimTypes.Email);
 
         if (string.IsNullOrEmpty(email))
@@ -81,8 +79,6 @@ public class ExternalLoginCallbackEndpoint : IEndpoint
 
             if (!user.EmailConfirmed)
             {
-                // Whoever registered this email never proved they own it, so drop their password
-                // before the provider-verified owner takes over the account
                 if (await userManager.HasPasswordAsync(user))
                 {
                     await userManager.RemovePasswordAsync(user);

@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using SoccerTv.Api.Common.Authentication;
 using SoccerTv.Api.Common.Infrastructure;
-using SoccerTv.Api.Common.Validation;
 using SoccerTv.Api.Data.Users;
 
 namespace SoccerTv.Api.Features.Profile.TwoFactor.DisableTwoFactor;
@@ -18,29 +16,33 @@ public class DisableTwoFactorEndpoint : IEndpoint
             .WithDescription("Disable two-factor authentication for the current user.");
     }
 
-    // Requiring a JSON body means a cross-site form post can't trigger this
     private static async Task<IResult> HandleAsync(
-        [FromBody] object empty,
         CurrentUser currentUser,
         UserManager<User> userManager,
         SignInManager<User> signInManager
     )
     {
-        var user = await userManager.FindByIdAsync(currentUser);
+        var user = await userManager.FindByIdAsync(currentUser.Id.ToString());
 
         if (user is null)
         {
-            return AccountProblems.UserNotFound();
+            return Results.Problem(
+                statusCode: StatusCodes.Status404NotFound,
+                title: "User not found."
+            );
         }
 
         var result = await userManager.SetTwoFactorEnabledAsync(user, false);
 
         if (!result.Succeeded)
         {
-            return result.ToValidationProblem();
+            return Results.ValidationProblem(
+                result
+                    .Errors.GroupBy(e => e.Code)
+                    .ToDictionary(g => g.Key, g => g.Select(e => e.Description).ToArray())
+            );
         }
 
-        // Re-enabling starts again with a new key, so the old authenticator entry stops working
         await userManager.ResetAuthenticatorKeyAsync(user);
         await signInManager.RefreshSignInAsync(user);
 

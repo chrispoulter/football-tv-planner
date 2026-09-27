@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.WebUtilities;
 
-namespace SoccerTv.Api.Features.Account.ExternalLogin;
+namespace SoccerTv.Api.Features.Account;
 
 public static class ExternalLoginRedirects
 {
@@ -18,10 +18,6 @@ public static class ExternalLoginRedirects
     public static string WithError(string returnUrl, string error) =>
         QueryHelpers.AddQueryString(returnUrl, "error", error);
 
-    /// <summary>
-    /// When linking to the current user, return to the page that started it rather than the
-    /// login page. Identity marks a link by storing the user ID in the properties.
-    /// </summary>
     public static string RemoteFailure(AuthenticationProperties? properties)
     {
         if (properties?.Items.ContainsKey(XsrfKey) == true && properties.RedirectUri is { } uri)

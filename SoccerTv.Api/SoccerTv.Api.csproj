@@ -28,7 +28,7 @@
     <PackageReference Include="Scalar.AspNetCore" Version="2.17.10" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Common\**\*.html" />
+    <EmbeddedResource Include="Features\**\*.html" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SoccerTv.ServiceDefaults\SoccerTv.ServiceDefaults.csproj" />

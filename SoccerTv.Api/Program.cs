@@ -24,7 +24,6 @@ builder.Services.AddValidatorsFromAssembly(assembly);
 builder.Services.AddProblemDetails();
 
 builder.ConfigureJsonOptions();
-builder.AddForwardedHeaders();
 builder.AddAuthentication();
 builder.AddOpenApi(serviceVersion);
 

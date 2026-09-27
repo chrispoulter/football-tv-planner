@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Identity;
-using SoccerTv.Api.Common.Authentication;
 using SoccerTv.Api.Common.Infrastructure;
 using SoccerTv.Api.Common.Validation;
 using SoccerTv.Api.Data.Users;
@@ -24,26 +23,26 @@ public class ResetPasswordEndpoint : IEndpoint
     )
     {
         var user = await userManager.FindByEmailAsync(request.Email);
-        var code = AccountCodes.Decode(request.Code);
 
-        // Links are only sent to confirmed emails, so treat anything else as an invalid link
-        if (user is null || code is null || !await userManager.IsEmailConfirmedAsync(user))
+        if (user is null || !await userManager.IsEmailConfirmedAsync(user))
         {
-            return InvalidLink();
+            return Results.Problem(
+                statusCode: StatusCodes.Status400BadRequest,
+                title: "This link is invalid or has expired."
+            );
         }
 
-        var result = await userManager.ResetPasswordAsync(user, code, request.NewPassword);
+        var result = await userManager.ResetPasswordAsync(user, request.Code, request.NewPassword);
 
         if (!result.Succeeded)
         {
-            return result.Errors.Any(e => e.Code == nameof(IdentityErrorDescriber.InvalidToken))
-                ? InvalidLink()
-                : result.ToValidationProblem();
+            var errorDictionary = result
+                .Errors.GroupBy(e => e.Code)
+                .ToDictionary(g => g.Key, g => g.Select(e => e.Description).ToArray());
+
+            return Results.ValidationProblem(errorDictionary);
         }
 
         return Results.Ok();
     }
-
-    private static IResult InvalidLink() =>
-        AccountProblems.BadRequest("This link is invalid or has expired.");
 }

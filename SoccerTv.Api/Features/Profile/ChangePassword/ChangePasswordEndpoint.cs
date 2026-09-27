@@ -25,11 +25,14 @@ public class ChangePasswordEndpoint : IEndpoint
         SignInManager<User> signInManager
     )
     {
-        var user = await userManager.FindByIdAsync(currentUser);
+        var user = await userManager.FindByIdAsync(currentUser.Id.ToString());
 
         if (user is null)
         {
-            return AccountProblems.UserNotFound();
+            return Results.Problem(
+                statusCode: StatusCodes.Status404NotFound,
+                title: "User not found."
+            );
         }
 
         var result = await userManager.ChangePasswordAsync(
@@ -40,10 +43,13 @@ public class ChangePasswordEndpoint : IEndpoint
 
         if (!result.Succeeded)
         {
-            return result.ToValidationProblem();
+            return Results.ValidationProblem(
+                result
+                    .Errors.GroupBy(e => e.Code)
+                    .ToDictionary(g => g.Key, g => g.Select(e => e.Description).ToArray())
+            );
         }
 
-        // Changing the password updates the security stamp, which would otherwise log the user out
         await signInManager.RefreshSignInAsync(user);
 
         return Results.Ok();

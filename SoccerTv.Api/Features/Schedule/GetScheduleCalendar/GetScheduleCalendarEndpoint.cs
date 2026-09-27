@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using SoccerTv.Api.Common.Calendar;
 using SoccerTv.Api.Common.Infrastructure;
 using SoccerTv.Api.Data;
 using SoccerTv.Api.Features.Fixtures;
@@ -26,7 +25,7 @@ public class GetScheduleCalendarEndpoint : IEndpoint
         string token,
         SoccerTvDbContext dbContext,
         TimeProvider timeProvider,
-        CancellationToken cancellationToken = default
+        CancellationToken cancellationToken
     )
     {
         var userId = await dbContext

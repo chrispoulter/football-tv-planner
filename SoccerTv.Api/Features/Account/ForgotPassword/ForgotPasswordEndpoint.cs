@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Identity;
-using SoccerTv.Api.Common.Authentication;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Options;
+using SoccerTv.Api.Common.Email;
 using SoccerTv.Api.Common.Infrastructure;
 using SoccerTv.Api.Common.Validation;
 using SoccerTv.Api.Data.Users;
@@ -23,17 +25,31 @@ public class ForgotPasswordEndpoint : IEndpoint
     private static async Task<IResult> HandleAsync(
         ForgotPasswordRequest request,
         UserManager<User> userManager,
-        AccountEmailSender emailSender
+        IEmailService emailService,
+        IOptions<EmailSettings> emailSettings,
+        CancellationToken cancellationToken
     )
     {
         var user = await userManager.FindByEmailAsync(request.Email);
 
         if (user is not null && await userManager.IsEmailConfirmedAsync(user))
         {
-            await emailSender.SendPasswordResetLinkAsync(user);
+            var code = await userManager.GeneratePasswordResetTokenAsync(user);
+
+            var link = QueryHelpers.AddQueryString(
+                $"{emailSettings.Value.SiteUrl}/account/reset-password",
+                new Dictionary<string, string?> { ["email"] = user.Email, ["code"] = code }
+            );
+
+            await emailService.SendTemplateEmailAsync(
+                toAddress: user.Email!,
+                subject: "Reset Your Password",
+                template: "SoccerTv.Api.Features.Emails.ResetPassword.html",
+                model: new { user.Name, link },
+                cancellationToken
+            );
         }
 
-        // Always succeed so the response doesn't reveal which emails have accounts
         return Results.Ok();
     }
 }

@@ -22,7 +22,6 @@ public class SetupTwoFactorEndpoint : IEndpoint
             );
     }
 
-    // Requiring a JSON body means a cross-site form post can't trigger this
     private static async Task<IResult> HandleAsync(
         [FromBody] object empty,
         CurrentUser currentUser,
@@ -30,21 +29,26 @@ public class SetupTwoFactorEndpoint : IEndpoint
         SignInManager<User> signInManager
     )
     {
-        var user = await userManager.FindByIdAsync(currentUser);
+        var user = await userManager.FindByIdAsync(currentUser.Id.ToString());
 
         if (user is null)
         {
-            return AccountProblems.UserNotFound();
+            return Results.Problem(
+                statusCode: StatusCodes.Status404NotFound,
+                title: "User not found."
+            );
         }
 
         if (user.TwoFactorEnabled)
         {
-            return AccountProblems.BadRequest("Two-factor authentication is already enabled.");
+            return Results.Problem(
+                statusCode: StatusCodes.Status400BadRequest,
+                title: "Two-factor authentication is already enabled."
+            );
         }
 
         var sharedKey = await userManager.GetAuthenticatorKeyAsync(user);
 
-        // Keep an existing key, so setup can be restarted without rescanning the QR code
         if (string.IsNullOrEmpty(sharedKey))
         {
             await userManager.ResetAuthenticatorKeyAsync(user);

@@ -27,23 +27,33 @@ public class SetPasswordEndpoint : IEndpoint
         SignInManager<User> signInManager
     )
     {
-        var user = await userManager.FindByIdAsync(currentUser);
+        var user = await userManager.FindByIdAsync(currentUser.Id.ToString());
 
         if (user is null)
         {
-            return AccountProblems.UserNotFound();
+            return Results.Problem(
+                statusCode: StatusCodes.Status404NotFound,
+                title: "User not found."
+            );
         }
 
         if (await userManager.HasPasswordAsync(user))
         {
-            return AccountProblems.BadRequest("Your account already has a password.");
+            return Results.Problem(
+                statusCode: StatusCodes.Status400BadRequest,
+                title: "Your account already has a password."
+            );
         }
 
         var result = await userManager.AddPasswordAsync(user, request.NewPassword);
 
         if (!result.Succeeded)
         {
-            return result.ToValidationProblem();
+            return Results.ValidationProblem(
+                result
+                    .Errors.GroupBy(e => e.Code)
+                    .ToDictionary(g => g.Key, g => g.Select(e => e.Description).ToArray())
+            );
         }
 
         await signInManager.RefreshSignInAsync(user);

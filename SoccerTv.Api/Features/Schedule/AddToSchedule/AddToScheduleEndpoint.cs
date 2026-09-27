@@ -23,7 +23,7 @@ public class AddToScheduleEndpoint : IEndpoint
         CurrentUser currentUser,
         SoccerTvDbContext dbContext,
         TimeProvider timeProvider,
-        CancellationToken cancellationToken = default
+        CancellationToken cancellationToken
     )
     {
         var fixtureExists = await dbContext.Fixtures.AnyAsync(

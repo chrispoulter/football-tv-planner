@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using SoccerTv.Api.Common.Authentication;
 using SoccerTv.Api.Common.Infrastructure;
-using SoccerTv.Api.Common.Validation;
 using SoccerTv.Api.Data.Users;
 
 namespace SoccerTv.Api.Features.Profile.LinkedAccounts.RemoveLinkedAccount;
@@ -26,11 +25,14 @@ public class RemoveLinkedAccountEndpoint : IEndpoint
         SignInManager<User> signInManager
     )
     {
-        var user = await userManager.FindByIdAsync(currentUser);
+        var user = await userManager.FindByIdAsync(currentUser.Id.ToString());
 
         if (user is null)
         {
-            return AccountProblems.UserNotFound();
+            return Results.Problem(
+                statusCode: StatusCodes.Status404NotFound,
+                title: "User not found."
+            );
         }
 
         var logins = await userManager.GetLoginsAsync(user);
@@ -39,15 +41,16 @@ public class RemoveLinkedAccountEndpoint : IEndpoint
         if (login is null)
         {
             return Results.Problem(
-                statusCode: StatusCodes.Status404NotFound,
+                statusCode: StatusCodes.Status400BadRequest,
                 title: "Linked account not found."
             );
         }
 
         if (logins.Count == 1 && !await userManager.HasPasswordAsync(user))
         {
-            return AccountProblems.BadRequest(
-                "Set a password before unlinking your only way to log in."
+            return Results.Problem(
+                statusCode: StatusCodes.Status400BadRequest,
+                title: "Cannot remove the only linked account without a password set."
             );
         }
 
@@ -59,7 +62,11 @@ public class RemoveLinkedAccountEndpoint : IEndpoint
 
         if (!result.Succeeded)
         {
-            return result.ToValidationProblem();
+            return Results.ValidationProblem(
+                result
+                    .Errors.GroupBy(e => e.Code)
+                    .ToDictionary(g => g.Key, g => g.Select(e => e.Description).ToArray())
+            );
         }
 
         await signInManager.RefreshSignInAsync(user);

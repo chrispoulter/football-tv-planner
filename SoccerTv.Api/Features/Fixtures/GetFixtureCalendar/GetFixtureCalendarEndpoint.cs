@@ -1,6 +1,5 @@
 using System.Text;
 using Microsoft.EntityFrameworkCore;
-using SoccerTv.Api.Common.Calendar;
 using SoccerTv.Api.Common.Infrastructure;
 using SoccerTv.Api.Data;
 

@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Identity;
-using SoccerTv.Api.Common.Authentication;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Options;
+using SoccerTv.Api.Common.Email;
 using SoccerTv.Api.Common.Infrastructure;
 using SoccerTv.Api.Common.Validation;
 using SoccerTv.Api.Data.Users;
@@ -24,33 +26,48 @@ public class RegisterEndpoint : IEndpoint
         RegisterRequest request,
         UserManager<User> userManager,
         SignInManager<User> signInManager,
-        AccountEmailSender emailSender
+        IEmailService emailService,
+        IOptions<EmailSettings> emailSettings,
+        CancellationToken cancellationToken
     )
     {
         var user = new User
         {
             UserName = request.Email,
             Email = request.Email,
-            Name = request.Name.Trim(),
+            Name = request.Name,
         };
 
         var result = await userManager.CreateAsync(user, request.Password);
 
         if (!result.Succeeded)
         {
-            // The user name is the email, so only report the duplicate email
-            return IdentityResult
-                .Failed([
-                    .. result.Errors.Where(e =>
-                        e.Code != nameof(IdentityErrorDescriber.DuplicateUserName)
-                    ),
-                ])
-                .ToValidationProblem();
+            var errors = result.Errors.Where(e =>
+                e.Code != nameof(IdentityErrorDescriber.DuplicateUserName)
+            );
+
+            return Results.ValidationProblem(
+                errors
+                    .GroupBy(e => e.Code)
+                    .ToDictionary(g => g.Key, g => g.Select(e => e.Description).ToArray())
+            );
         }
 
-        await emailSender.SendConfirmationLinkAsync(user);
+        var code = await userManager.GenerateEmailConfirmationTokenAsync(user);
 
-        // The email doesn't need confirming before logging in
+        var link = QueryHelpers.AddQueryString(
+            $"{emailSettings.Value.SiteUrl}/account/confirm-email",
+            new Dictionary<string, string?> { ["userId"] = user.Id.ToString(), ["code"] = code }
+        );
+
+        await emailService.SendTemplateEmailAsync(
+            toAddress: user.Email,
+            subject: "Verify your email address | Soccer TV",
+            template: "SoccerTv.Api.Features.Emails.ConfirmEmail.html",
+            model: new { name = user.Name, link },
+            cancellationToken
+        );
+
         await signInManager.SignInAsync(user, isPersistent: false);
 
         return Results.Ok();

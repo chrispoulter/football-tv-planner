@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Text;
 
-namespace SoccerTv.Api.Common.Calendar;
+namespace SoccerTv.Api.Features.Fixtures;
 
 public record CalendarFixture(
     Guid Id,

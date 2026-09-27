@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using SoccerTv.Api.Common.Authentication;
 using SoccerTv.Api.Common.Infrastructure;
 using SoccerTv.Api.Data.Users;
-using SoccerTv.Api.Features.Account.ExternalLogin;
+using SoccerTv.Api.Features.Account;
 
 namespace SoccerTv.Api.Features.Profile.LinkedAccounts.LinkAccount;
 
@@ -39,7 +39,6 @@ public class LinkAccountEndpoint : IEndpoint
             );
         }
 
-        // Clear any external login left over from an earlier attempt
         await httpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
         var callbackUrl = QueryHelpers.AddQueryString(
@@ -48,7 +47,6 @@ public class LinkAccountEndpoint : IEndpoint
             ExternalLoginRedirects.LocalOrRoot(returnUrl)
         );
 
-        // Including the user ID means the callback only accepts this user's login
         var properties = signInManager.ConfigureExternalAuthenticationProperties(
             provider,
             callbackUrl,

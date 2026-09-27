@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Options;
 using SoccerTv.Api.Common.Authentication;
+using SoccerTv.Api.Common.Email;
 using SoccerTv.Api.Common.Infrastructure;
 using SoccerTv.Api.Data.Users;
 
@@ -17,27 +19,46 @@ public class ResendConfirmationEmailEndpoint : IEndpoint
             .WithDescription("Send another email to confirm the current user's email address.");
     }
 
-    // Requiring a JSON body means a cross-site form post can't trigger this
     private static async Task<IResult> HandleAsync(
-        [FromBody] object empty,
         CurrentUser currentUser,
         UserManager<User> userManager,
-        AccountEmailSender emailSender
+        IEmailService emailService,
+        IOptions<EmailSettings> emailSettings,
+        CancellationToken cancellationToken
     )
     {
-        var user = await userManager.FindByIdAsync(currentUser);
+        var user = await userManager.FindByIdAsync(currentUser.Id.ToString());
 
         if (user is null)
         {
-            return AccountProblems.UserNotFound();
+            return Results.Problem(
+                statusCode: StatusCodes.Status404NotFound,
+                title: "User not found."
+            );
         }
 
         if (user.EmailConfirmed)
         {
-            return AccountProblems.BadRequest("Your email address has already been confirmed.");
+            return Results.Problem(
+                statusCode: StatusCodes.Status400BadRequest,
+                title: "Your email address has already been confirmed."
+            );
         }
 
-        await emailSender.SendConfirmationLinkAsync(user);
+        var code = await userManager.GenerateEmailConfirmationTokenAsync(user);
+
+        var link = QueryHelpers.AddQueryString(
+            $"{emailSettings.Value.SiteUrl}/account/confirm-email",
+            new Dictionary<string, string?> { ["userId"] = user.Id.ToString(), ["code"] = code }
+        );
+
+        await emailService.SendTemplateEmailAsync(
+            toAddress: user.Email!,
+            subject: "Verify your email address | Soccer TV",
+            template: "SoccerTv.Api.Features.Emails.ConfirmEmail.html",
+            model: new { name = user.Name, link },
+            cancellationToken
+        );
 
         return Results.Ok();
     }

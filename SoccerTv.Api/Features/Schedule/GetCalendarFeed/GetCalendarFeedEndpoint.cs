@@ -23,7 +23,7 @@ public class GetCalendarFeedEndpoint : IEndpoint
         CurrentUser currentUser,
         HttpRequest httpRequest,
         SoccerTvDbContext dbContext,
-        CancellationToken cancellationToken = default
+        CancellationToken cancellationToken
     )
     {
         var user = await dbContext.Users.FirstOrDefaultAsync(
