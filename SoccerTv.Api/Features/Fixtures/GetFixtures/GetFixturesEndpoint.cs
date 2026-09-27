@@ -63,8 +63,8 @@ public class GetFixturesEndpoint : IEndpoint
         }
 
         var fixtures = await query
-            .OrderBy(f => f.KickoffUtc)
-            .ThenBy(f => f.Competition)
+            .OrderBy(f => f.Competition)
+            .ThenBy(f => f.KickoffUtc)
             .Select(FixtureProjections.ToSummary(dbContext, currentUser?.Id))
             .ToListAsync(cancellationToken);
 
