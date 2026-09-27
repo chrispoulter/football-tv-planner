@@ -55,7 +55,7 @@ export function TwoFactorPage() {
 
     return (
         <AccountLayout
-            title="Two-factor authentication"
+            title="Two-Factor Authentication"
             description={
                 useRecoveryCode
                     ? 'Enter one of your backup recovery codes'
@@ -65,7 +65,7 @@ export function TwoFactorPage() {
                 <AccountLink to="/account/login">Back to sign in</AccountLink>
             }
         >
-            <Metadata title="Two-factor authentication" />
+            <Metadata title="Two-Factor Authentication" />
 
             {useRecoveryCode ? (
                 <RecoveryCodeForm
