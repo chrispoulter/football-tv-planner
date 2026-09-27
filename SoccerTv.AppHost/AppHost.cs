@@ -26,7 +26,8 @@ builder
     .AddProject<Projects.SoccerTv_FixtureSync>("fixture-sync")
     .WithReference(database)
     .WaitFor(database)
-    .WaitFor(api);
+    .WaitFor(api)
+    .WithExplicitStart();
 
 var web = builder
     .AddViteApp("web", "../SoccerTv.Web")
