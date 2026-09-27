@@ -29,7 +29,7 @@ public class ResendConfirmationEmailEndpoint : IEndpoint
         CancellationToken cancellationToken
     )
     {
-        var user = await userManager.FindByIdAsync(currentUser.Id.ToString());
+        var user = await userManager.GetUserAsync(currentUser);
 
         if (user is null)
         {

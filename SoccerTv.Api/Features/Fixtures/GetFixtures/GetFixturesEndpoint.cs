@@ -23,7 +23,7 @@ public class GetFixturesEndpoint : IEndpoint
 
     private static async Task<IResult> HandleAsync(
         [AsParameters] GetFixturesRequest request,
-        CurrentUser? currentUser,
+        CurrentUser currentUser,
         SoccerTvDbContext dbContext,
         CancellationToken cancellationToken = default
     )
@@ -65,7 +65,7 @@ public class GetFixturesEndpoint : IEndpoint
         var fixtures = await query
             .OrderBy(f => f.KickoffUtc)
             .ThenBy(f => f.Competition)
-            .Select(FixtureProjections.ToSummary(dbContext, currentUser?.Id))
+            .Select(FixtureProjections.ToSummary(dbContext, currentUser!.Id))
             .ToListAsync(cancellationToken);
 
         return Results.Ok(new GetFixturesResponse(fixtures));

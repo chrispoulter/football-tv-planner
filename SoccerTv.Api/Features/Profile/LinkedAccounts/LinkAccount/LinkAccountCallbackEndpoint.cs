@@ -26,7 +26,7 @@ public class LinkAccountCallbackEndpoint : IEndpoint
     {
         returnUrl = ExternalLoginRedirects.LocalOrRoot(returnUrl);
 
-        var user = await userManager.FindByIdAsync(currentUser.Id.ToString());
+        var user = await userManager.GetUserAsync(currentUser);
         var info = await signInManager.GetExternalLoginInfoAsync(currentUser.Id.ToString());
 
         if (user is null || info is null)

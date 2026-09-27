@@ -22,12 +22,12 @@ public class ConfirmEmailEndpoint : IEndpoint
 
     private static async Task<IResult> HandleAsync(
         ConfirmEmailRequest request,
-        CurrentUser? currentUser,
+        CurrentUser currentUser,
         UserManager<User> userManager,
         SignInManager<User> signInManager
     )
     {
-        var user = await userManager.FindByIdAsync(request.UserId.ToString());
+        var user = await userManager.GetUserAsync(currentUser);
 
         if (user is null)
         {
@@ -61,7 +61,7 @@ public class ConfirmEmailEndpoint : IEndpoint
             );
         }
 
-        if (currentUser?.Id == user.Id)
+        if (currentUser.Id == user.Id)
         {
             await signInManager.RefreshSignInAsync(user);
         }

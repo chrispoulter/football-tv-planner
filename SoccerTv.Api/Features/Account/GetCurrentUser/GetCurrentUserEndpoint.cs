@@ -22,7 +22,7 @@ public class GetCurrentUserEndpoint : IEndpoint
         UserManager<User> userManager
     )
     {
-        var user = await userManager.FindByIdAsync(currentUser.Id.ToString());
+        var user = await userManager.GetUserAsync(currentUser);
 
         if (user is null)
         {
