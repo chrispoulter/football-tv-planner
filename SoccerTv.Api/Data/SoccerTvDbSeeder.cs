@@ -31,8 +31,13 @@ public class SoccerTvDbSeeder(UserManager<User> userManager, IOptions<SeedSettin
                 continue;
             }
 
-            // Keep the seeded name and password in sync with configuration
+            user.UserName = seedUser.EmailAddress;
+            user.Email = seedUser.EmailAddress;
+            user.EmailConfirmed = true;
             user.Name = seedUser.Name;
+            user.LockoutEnd = null;
+            user.AccessFailedCount = 0;
+
             EnsureSucceeded(await userManager.UpdateAsync(user));
 
             if (await userManager.HasPasswordAsync(user))
@@ -41,7 +46,6 @@ public class SoccerTvDbSeeder(UserManager<User> userManager, IOptions<SeedSettin
             }
 
             EnsureSucceeded(await userManager.AddPasswordAsync(user, seedUser.Password));
-            EnsureSucceeded(await userManager.SetLockoutEndDateAsync(user, null));
         }
     }
 
