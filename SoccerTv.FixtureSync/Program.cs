@@ -16,7 +16,6 @@ builder.Services.AddScoped<FixtureSyncer>();
 
 using var host = builder.Build();
 
-// Starting the host brings up logging and telemetry exporters; stopping it flushes them.
 await host.StartAsync();
 
 var lifetime = host.Services.GetRequiredService<IHostApplicationLifetime>();

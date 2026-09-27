@@ -20,10 +20,9 @@ export default defineConfig(({ mode }) => {
             },
         },
         server: {
-            // Mirrors the nginx proxy in default.conf.template
             proxy: {
                 '/api': {
-                    target: env.API_PROXY_TARGET,
+                    target: env.API_URL,
                     changeOrigin: true,
                     secure: false,
                     rewrite: (path) => path.replace(/^\/api/, ''),

@@ -7,7 +7,6 @@ public class FixtureConfiguration : IEntityTypeConfiguration<Fixture>
 {
     public void Configure(EntityTypeBuilder<Fixture> builder)
     {
-        // The API's migrations create and own this table.
         builder.ToTable("fixtures", t => t.ExcludeFromMigrations());
 
         builder

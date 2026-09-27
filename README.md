@@ -89,7 +89,7 @@ The API sends email over SMTP using the `Mail` connection string, for example `E
 
 ### Authentication and the `/api` proxy
 
-The web app never calls the API directly. It proxies `/api/*` to the API: Vite does this in development (`API_PROXY_TARGET`) and nginx does it in the container (`API_UPSTREAM`). This keeps the Identity cookie first-party even when the API is hosted on a different domain.
+The web app never calls the API directly. It proxies `/api/*` to the API: Vite does this in development (`API_URL`) and nginx does it in the container (`API_UPSTREAM`). This keeps the Identity cookie first-party even when the API is hosted on a different domain.
 
 The proxy sends the public host, scheme and path prefix in `X-SoccerTv-*` headers. The API reads them in `ForwardedHeadersExtensions` so it can build correct external login redirect URIs. Custom header names are used so they can't clash with the `X-Forwarded-*` headers that the hosting provider sets.
 
