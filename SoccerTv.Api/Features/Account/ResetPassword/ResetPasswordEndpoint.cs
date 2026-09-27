@@ -36,11 +36,7 @@ public class ResetPasswordEndpoint : IEndpoint
 
         if (!result.Succeeded)
         {
-            var errorDictionary = result
-                .Errors.GroupBy(e => e.Code)
-                .ToDictionary(g => g.Key, g => g.Select(e => e.Description).ToArray());
-
-            return Results.ValidationProblem(errorDictionary);
+            return result.Errors.ToValidationProblem();
         }
 
         return Results.Ok();

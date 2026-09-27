@@ -49,11 +49,7 @@ public class SetPasswordEndpoint : IEndpoint
 
         if (!result.Succeeded)
         {
-            return Results.ValidationProblem(
-                result
-                    .Errors.GroupBy(e => e.Code)
-                    .ToDictionary(g => g.Key, g => g.Select(e => e.Description).ToArray())
-            );
+            return result.Errors.ToValidationProblem();
         }
 
         await signInManager.RefreshSignInAsync(user);

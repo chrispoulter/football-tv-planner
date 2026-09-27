@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SoccerTv.Api.Common.Authentication;
 using SoccerTv.Api.Common.Infrastructure;
+using SoccerTv.Api.Common.Validation;
 using SoccerTv.Api.Data.Users;
 
 namespace SoccerTv.Api.Features.Profile.TwoFactor.DisableTwoFactor;
@@ -38,11 +39,7 @@ public class DisableTwoFactorEndpoint : IEndpoint
 
         if (!result.Succeeded)
         {
-            return Results.ValidationProblem(
-                result
-                    .Errors.GroupBy(e => e.Code)
-                    .ToDictionary(g => g.Key, g => g.Select(e => e.Description).ToArray())
-            );
+            return result.Errors.ToValidationProblem();
         }
 
         await userManager.ResetAuthenticatorKeyAsync(user);

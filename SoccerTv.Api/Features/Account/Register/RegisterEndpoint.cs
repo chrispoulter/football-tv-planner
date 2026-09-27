@@ -46,11 +46,7 @@ public class RegisterEndpoint : IEndpoint
                 e.Code != nameof(IdentityErrorDescriber.DuplicateUserName)
             );
 
-            return Results.ValidationProblem(
-                errors
-                    .GroupBy(e => e.Code)
-                    .ToDictionary(g => g.Key, g => g.Select(e => e.Description).ToArray())
-            );
+            return errors.ToValidationProblem();
         }
 
         var code = await userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -64,11 +60,7 @@ public class RegisterEndpoint : IEndpoint
             toAddress: user.Email,
             subject: "Verify your email address | Soccer TV",
             template: "SoccerTv.Api.Features.Emails.ConfirmEmail.html",
-            model: new
-            {
-                user.Name,
-                Link = link,
-            },
+            model: new { user.Name, Link = link },
             cancellationToken
         );
 

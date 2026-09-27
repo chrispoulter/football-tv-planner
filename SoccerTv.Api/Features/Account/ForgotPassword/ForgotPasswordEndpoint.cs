@@ -45,11 +45,7 @@ public class ForgotPasswordEndpoint : IEndpoint
                 toAddress: user.Email!,
                 subject: "Reset Your Password",
                 template: "SoccerTv.Api.Features.Emails.ResetPassword.html",
-                model: new
-                {
-                    user.Name,
-                    Link = link,
-                },
+                model: new { user.Name, Link = link },
                 cancellationToken
             );
         }

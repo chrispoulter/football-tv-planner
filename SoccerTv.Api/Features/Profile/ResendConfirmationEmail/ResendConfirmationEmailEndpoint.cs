@@ -58,11 +58,7 @@ public class ResendConfirmationEmailEndpoint : IEndpoint
             toAddress: user.Email!,
             subject: "Verify your email address | Soccer TV",
             template: "SoccerTv.Api.Features.Emails.ConfirmEmail.html",
-            model: new
-            {
-                user.Name,
-                Link = link,
-            },
+            model: new { user.Name, Link = link },
             cancellationToken
         );
 

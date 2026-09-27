@@ -32,7 +32,6 @@ public class LoginTwoFactorEndpoint : IEndpoint
             );
         }
 
-
         var result = string.IsNullOrEmpty(request.RecoveryCode)
             ? await signInManager.TwoFactorAuthenticatorSignInAsync(
                 request.Code!.Replace(" ", string.Empty).Replace("-", string.Empty),

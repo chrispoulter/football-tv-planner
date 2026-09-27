@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using SoccerTv.Api.Common.Authentication;
 using SoccerTv.Api.Common.Infrastructure;
+using SoccerTv.Api.Common.Validation;
 using SoccerTv.Api.Data.Users;
 
 namespace SoccerTv.Api.Features.Account.DeleteAccount;
@@ -37,11 +38,7 @@ public class DeleteAccountEndpoint : IEndpoint
 
         if (!result.Succeeded)
         {
-            return Results.ValidationProblem(
-                result
-                    .Errors.GroupBy(e => e.Code)
-                    .ToDictionary(g => g.Key, g => g.Select(e => e.Description).ToArray())
-            );
+            return result.Errors.ToValidationProblem();
         }
 
         await signInManager.SignOutAsync();
