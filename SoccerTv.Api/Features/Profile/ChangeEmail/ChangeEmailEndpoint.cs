@@ -75,7 +75,7 @@ public class ChangeEmailEndpoint : IEndpoint
         await emailService.SendTemplateEmailAsync(
             toAddress: request.NewEmail,
             subject: "Verify your email address | Soccer TV",
-            template: "SoccerTv.Api.Features.Emails.ConfirmEmail.html",
+            template: "SoccerTv.Api.Features.Account.Emails.ConfirmEmail.html",
             model: new { user.Name, Link = link },
             cancellationToken
         );

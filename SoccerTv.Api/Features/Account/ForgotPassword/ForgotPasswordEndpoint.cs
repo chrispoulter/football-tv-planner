@@ -44,7 +44,7 @@ public class ForgotPasswordEndpoint : IEndpoint
             await emailService.SendTemplateEmailAsync(
                 toAddress: user.Email!,
                 subject: "Reset Your Password",
-                template: "SoccerTv.Api.Features.Emails.ResetPassword.html",
+                template: "SoccerTv.Api.Features.Account.Emails.ResetPassword.html",
                 model: new { user.Name, Link = link },
                 cancellationToken
             );
