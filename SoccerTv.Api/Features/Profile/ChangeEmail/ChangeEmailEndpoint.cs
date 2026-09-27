@@ -76,7 +76,7 @@ public class ChangeEmailEndpoint : IEndpoint
             toAddress: request.NewEmail,
             subject: "Verify your email address | Soccer TV",
             template: "SoccerTv.Api.Features.Emails.ConfirmEmail.html",
-            model: new { name = user.Name, link },
+            model: new { user.Name, Link = link },
             cancellationToken
         );
 

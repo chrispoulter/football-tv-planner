@@ -49,7 +49,7 @@ public class EnableTwoFactorEndpoint : IEndpoint
         var isValid = await userManager.VerifyTwoFactorTokenAsync(
             user,
             userManager.Options.Tokens.AuthenticatorTokenProvider,
-            request.Code
+            request.Code.Replace(" ", string.Empty).Replace("-", string.Empty)
         );
 
         if (!isValid)

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using SoccerTv.Api.Common.Authentication;
 using SoccerTv.Api.Common.Infrastructure;
 using SoccerTv.Api.Data.Users;
@@ -20,6 +21,7 @@ public class GenerateRecoveryCodesEndpoint : IEndpoint
     }
 
     private static async Task<IResult> HandleAsync(
+        [FromBody] object empty,
         CurrentUser currentUser,
         UserManager<User> userManager
     )

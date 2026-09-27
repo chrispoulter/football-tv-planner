@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 using SoccerTv.Api.Common.Authentication;
@@ -20,6 +21,7 @@ public class ResendConfirmationEmailEndpoint : IEndpoint
     }
 
     private static async Task<IResult> HandleAsync(
+        [FromBody] object empty,
         CurrentUser currentUser,
         UserManager<User> userManager,
         IEmailService emailService,
@@ -56,7 +58,11 @@ public class ResendConfirmationEmailEndpoint : IEndpoint
             toAddress: user.Email!,
             subject: "Verify your email address | Soccer TV",
             template: "SoccerTv.Api.Features.Emails.ConfirmEmail.html",
-            model: new { name = user.Name, link },
+            model: new
+            {
+                user.Name,
+                Link = link,
+            },
             cancellationToken
         );
 

@@ -34,6 +34,8 @@ public class UpdateProfileEndpoint : IEndpoint
             );
         }
 
+        user.Name = request.Name;
+
         var result = await userManager.UpdateAsync(user);
 
         if (!result.Succeeded)

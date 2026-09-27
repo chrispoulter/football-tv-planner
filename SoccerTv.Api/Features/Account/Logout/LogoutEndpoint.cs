@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using SoccerTv.Api.Common.Infrastructure;
 using SoccerTv.Api.Data.Users;
 
@@ -15,7 +16,10 @@ public class LogoutEndpoint : IEndpoint
             .WithDescription("Sign the current user out.");
     }
 
-    private static async Task<IResult> HandleAsync(SignInManager<User> signInManager)
+    private static async Task<IResult> HandleAsync(
+        [FromBody] object empty,
+        SignInManager<User> signInManager
+    )
     {
         await signInManager.SignOutAsync();
 

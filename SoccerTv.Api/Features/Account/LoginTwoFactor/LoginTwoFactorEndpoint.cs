@@ -32,13 +32,16 @@ public class LoginTwoFactorEndpoint : IEndpoint
             );
         }
 
+
         var result = string.IsNullOrEmpty(request.RecoveryCode)
             ? await signInManager.TwoFactorAuthenticatorSignInAsync(
-                request.Code!,
+                request.Code!.Replace(" ", string.Empty).Replace("-", string.Empty),
                 request.RememberMe,
                 request.RememberMachine
             )
-            : await signInManager.TwoFactorRecoveryCodeSignInAsync(request.RecoveryCode);
+            : await signInManager.TwoFactorRecoveryCodeSignInAsync(
+                request.RecoveryCode.Replace(" ", string.Empty)
+            );
 
         if (result.IsLockedOut)
         {
