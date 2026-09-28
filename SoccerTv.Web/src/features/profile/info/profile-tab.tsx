@@ -1,6 +1,6 @@
 import { toast } from 'sonner';
 import { useAuth } from '@/components/auth-provider';
-import { LoadingButton } from '@/components/loading-button';
+import { Button } from '@/components/ui/button';
 import { Metadata } from '@/components/metadata';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
@@ -72,15 +72,16 @@ export function ProfileTab() {
                                     Your email address hasn&apos;t been
                                     confirmed yet.
                                 </p>
-                                <LoadingButton
+                                <Button
                                     variant="outline"
                                     size="sm"
-                                    loading={isResending}
-                                    loadingText="Sending..."
                                     onClick={onResendConfirmation}
+                                    disabled={isResending}
                                 >
-                                    Resend Confirmation Email
-                                </LoadingButton>
+                                    {isResending
+                                        ? 'Sending...'
+                                        : 'Resend Confirmation Email'}
+                                </Button>
                             </AlertDescription>
                         </Alert>
                     )}

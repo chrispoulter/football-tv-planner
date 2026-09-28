@@ -2,8 +2,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from 'sonner';
-import { TextField } from '@/components/form/text-field';
-import { LoadingButton } from '@/components/loading-button';
+import { FormInputField } from '@/components/form/form-input-field';
+import { Button } from '@/components/ui/button';
 import { FieldGroup } from '@/components/ui/field';
 import { useChangePassword } from '../profile-queries';
 
@@ -54,7 +54,7 @@ export function ChangePasswordForm() {
     return (
         <form noValidate onSubmit={form.handleSubmit(onSubmit)}>
             <FieldGroup>
-                <TextField
+                <FormInputField
                     control={form.control}
                     name="currentPassword"
                     label="Current password"
@@ -65,7 +65,7 @@ export function ChangePasswordForm() {
                     required
                 />
 
-                <TextField
+                <FormInputField
                     control={form.control}
                     name="newPassword"
                     label="New password"
@@ -76,7 +76,7 @@ export function ChangePasswordForm() {
                     required
                 />
 
-                <TextField
+                <FormInputField
                     control={form.control}
                     name="confirmNewPassword"
                     label="Confirm new password"
@@ -88,13 +88,9 @@ export function ChangePasswordForm() {
                 />
 
                 <div className="flex flex-col-reverse gap-2 sm:flex-row">
-                    <LoadingButton
-                        type="submit"
-                        loading={isPending}
-                        loadingText="Changing..."
-                    >
-                        Change Password
-                    </LoadingButton>
+                    <Button type="submit" disabled={isPending}>
+                        {isPending ? 'Changing...' : 'Change Password'}
+                    </Button>
                 </div>
             </FieldGroup>
         </form>

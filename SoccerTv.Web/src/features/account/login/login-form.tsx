@@ -1,11 +1,11 @@
 import { Link } from 'react-router';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { TextField } from '@/components/form/text-field';
-import { LoadingButton } from '@/components/loading-button';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
+import { FormCheckboxField } from '@/components/form/form-checkbox-field';
+import { FormInputField } from '@/components/form/form-input-field';
+import { Button } from '@/components/ui/button';
+import { FieldGroup } from '@/components/ui/field';
 
 const schema = z.object({
     emailAddress: z.email('Invalid email address'),
@@ -33,7 +33,7 @@ export function LoginForm({ loading, onSubmit }: LoginFormProps) {
     return (
         <form noValidate onSubmit={form.handleSubmit(onSubmit)}>
             <FieldGroup>
-                <TextField
+                <FormInputField
                     control={form.control}
                     name="emailAddress"
                     label="Email"
@@ -44,7 +44,7 @@ export function LoginForm({ loading, onSubmit }: LoginFormProps) {
                     required
                 />
 
-                <TextField
+                <FormInputField
                     control={form.control}
                     name="password"
                     label="Password"
@@ -56,25 +56,10 @@ export function LoginForm({ loading, onSubmit }: LoginFormProps) {
                 />
 
                 <div className="flex items-center justify-between">
-                    <Controller
-                        name="rememberMe"
+                    <FormCheckboxField
                         control={form.control}
-                        render={({ field }) => (
-                            <Field orientation="horizontal">
-                                <Checkbox
-                                    id={field.name}
-                                    name={field.name}
-                                    checked={field.value}
-                                    onCheckedChange={field.onChange}
-                                />
-                                <FieldLabel
-                                    htmlFor={field.name}
-                                    className="font-normal"
-                                >
-                                    Remember me
-                                </FieldLabel>
-                            </Field>
-                        )}
+                        name="rememberMe"
+                        label="Remember me"
                     />
 
                     <Link
@@ -85,13 +70,9 @@ export function LoginForm({ loading, onSubmit }: LoginFormProps) {
                     </Link>
                 </div>
 
-                <LoadingButton
-                    type="submit"
-                    loading={loading}
-                    loadingText="Signing In..."
-                >
-                    Sign In
-                </LoadingButton>
+                <Button type="submit" disabled={loading}>
+                    {loading ? 'Signing In...' : 'Sign In'}
+                </Button>
             </FieldGroup>
         </form>
     );

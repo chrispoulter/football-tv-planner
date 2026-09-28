@@ -1,20 +1,9 @@
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { REGEXP_ONLY_DIGITS } from 'input-otp';
-import { LoadingButton } from '@/components/loading-button';
+import { FormOtpField } from '@/components/form/form-otp-field';
 import { Button } from '@/components/ui/button';
-import {
-    Field,
-    FieldError,
-    FieldGroup,
-    FieldLabel,
-} from '@/components/ui/field';
-import {
-    InputOTP,
-    InputOTPGroup,
-    InputOTPSlot,
-} from '@/components/ui/input-otp';
+import { FieldGroup } from '@/components/ui/field';
 
 const schema = z.object({
     code: z.string().length(6, 'Code must be 6 digits'),
@@ -45,50 +34,20 @@ export function TwoFactorVerifyForm({
     return (
         <form noValidate onSubmit={form.handleSubmit(onSubmit)}>
             <FieldGroup>
-                <Controller
-                    name="code"
+                <FormOtpField
                     control={form.control}
-                    render={({ field, fieldState }) => (
-                        <Field data-invalid={fieldState.invalid}>
-                            <FieldLabel htmlFor={field.name}>
-                                Enter the 6-digit code from your app
-                            </FieldLabel>
-                            <InputOTP
-                                id={field.name}
-                                maxLength={6}
-                                pattern={REGEXP_ONLY_DIGITS}
-                                autoComplete="one-time-code"
-                                autoFocus
-                                aria-invalid={fieldState.invalid}
-                                {...field}
-                            >
-                                <InputOTPGroup>
-                                    <InputOTPSlot index={0} />
-                                    <InputOTPSlot index={1} />
-                                    <InputOTPSlot index={2} />
-                                    <InputOTPSlot index={3} />
-                                    <InputOTPSlot index={4} />
-                                    <InputOTPSlot index={5} />
-                                </InputOTPGroup>
-                            </InputOTP>
-                            {fieldState.invalid && (
-                                <FieldError errors={[fieldState.error]} />
-                            )}
-                        </Field>
-                    )}
+                    name="code"
+                    label="Enter the 6-digit code from your app"
+                    autoFocus
                 />
 
                 <div className="flex flex-col-reverse gap-2 sm:flex-row">
                     <Button type="button" variant="outline" onClick={onBack}>
                         Back
                     </Button>
-                    <LoadingButton
-                        type="submit"
-                        loading={loading}
-                        loadingText="Verifying..."
-                    >
-                        Verify &amp; Enable
-                    </LoadingButton>
+                    <Button type="submit" disabled={loading}>
+                        {loading ? 'Verifying...' : 'Verify & Enable'}
+                    </Button>
                 </div>
             </FieldGroup>
         </form>

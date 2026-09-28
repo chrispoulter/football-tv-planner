@@ -1,8 +1,8 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { TextField } from '@/components/form/text-field';
-import { LoadingButton } from '@/components/loading-button';
+import { FormInputField } from '@/components/form/form-input-field';
+import { Button } from '@/components/ui/button';
 import { FieldGroup } from '@/components/ui/field';
 
 const schema = z.object({
@@ -30,7 +30,7 @@ export function ForgotPasswordForm({
     return (
         <form noValidate onSubmit={form.handleSubmit(onSubmit)}>
             <FieldGroup>
-                <TextField
+                <FormInputField
                     control={form.control}
                     name="emailAddress"
                     label="Email"
@@ -41,13 +41,9 @@ export function ForgotPasswordForm({
                     required
                 />
 
-                <LoadingButton
-                    type="submit"
-                    loading={loading}
-                    loadingText="Sending..."
-                >
-                    Send Reset Link
-                </LoadingButton>
+                <Button type="submit" disabled={loading}>
+                    {loading ? 'Sending...' : 'Send Reset Link'}
+                </Button>
             </FieldGroup>
         </form>
     );

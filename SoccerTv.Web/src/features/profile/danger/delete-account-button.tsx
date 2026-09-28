@@ -12,7 +12,7 @@ import {
     AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { useAuth } from '@/components/auth-provider';
-import { LoadingButton } from '@/components/loading-button';
+import { Button } from '@/components/ui/button';
 import { useDeleteAccount } from '../profile-queries';
 
 interface DeleteAccountButtonProps {
@@ -44,15 +44,13 @@ export function DeleteAccountButton({
     return (
         <AlertDialog>
             <AlertDialogTrigger asChild>
-                <LoadingButton
+                <Button
                     variant="destructive"
-                    loading={isDeleting}
-                    loadingText="Deleting..."
-                    disabled={disabled}
+                    disabled={disabled || isDeleting}
                     className={className}
                 >
-                    Delete Account
-                </LoadingButton>
+                    {isDeleting ? 'Deleting...' : 'Delete Account'}
+                </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>

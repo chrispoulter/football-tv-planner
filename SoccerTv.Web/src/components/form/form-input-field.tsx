@@ -1,40 +1,42 @@
+import { useId } from 'react';
 import {
     Controller,
     type Control,
     type FieldPath,
     type FieldValues,
 } from 'react-hook-form';
-import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 
-interface TextFieldProps<
-    T extends FieldValues,
-> extends React.ComponentProps<'input'> {
+type FormInputFieldProps<T extends FieldValues> = {
     control: Control<T>;
     name: FieldPath<T>;
-    label?: string;
-}
+    label: React.ReactNode;
+} & Omit<
+    React.ComponentProps<typeof Input>,
+    'name' | 'id' | 'value' | 'onChange' | 'onBlur' | 'ref'
+>;
 
-export function TextField<T extends FieldValues>({
+export function FormInputField<T extends FieldValues>({
     control,
     name,
     label,
-    ...props
-}: TextFieldProps<T>) {
+    ...inputProps
+}: FormInputFieldProps<T>) {
+    const id = useId();
+
     return (
         <Controller
-            name={name}
             control={control}
+            name={name}
             render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                    {label && (
-                        <FieldLabel htmlFor={field.name}>{label}</FieldLabel>
-                    )}
+                    <FieldLabel htmlFor={id}>{label}</FieldLabel>
                     <Input
-                        {...props}
-                        {...field}
-                        id={field.name}
+                        id={id}
                         aria-invalid={fieldState.invalid}
+                        {...inputProps}
+                        {...field}
                     />
                     {fieldState.invalid && (
                         <FieldError errors={[fieldState.error]} />

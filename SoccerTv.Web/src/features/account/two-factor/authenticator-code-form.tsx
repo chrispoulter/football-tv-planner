@@ -1,21 +1,10 @@
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { REGEXP_ONLY_DIGITS } from 'input-otp';
-import { LoadingButton } from '@/components/loading-button';
+import { FormCheckboxField } from '@/components/form/form-checkbox-field';
+import { FormOtpField } from '@/components/form/form-otp-field';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
-import {
-    Field,
-    FieldError,
-    FieldGroup,
-    FieldLabel,
-} from '@/components/ui/field';
-import {
-    InputOTP,
-    InputOTPGroup,
-    InputOTPSlot,
-} from '@/components/ui/input-otp';
+import { FieldGroup } from '@/components/ui/field';
 
 const schema = z.object({
     code: z.string().length(6, 'Code must be 6 digits'),
@@ -48,70 +37,23 @@ export function AuthenticatorCodeForm({
     return (
         <form noValidate onSubmit={form.handleSubmit(onSubmit)}>
             <FieldGroup>
-                <Controller
+                <FormOtpField
+                    control={form.control}
                     name="code"
-                    control={form.control}
-                    render={({ field, fieldState }) => (
-                        <Field
-                            data-invalid={fieldState.invalid}
-                            className="items-center *:w-auto"
-                        >
-                            <FieldLabel htmlFor={field.name}>
-                                Authentication code
-                            </FieldLabel>
-                            <InputOTP
-                                id={field.name}
-                                maxLength={6}
-                                pattern={REGEXP_ONLY_DIGITS}
-                                autoComplete="one-time-code"
-                                autoFocus
-                                aria-invalid={fieldState.invalid}
-                                {...field}
-                            >
-                                <InputOTPGroup>
-                                    <InputOTPSlot index={0} />
-                                    <InputOTPSlot index={1} />
-                                    <InputOTPSlot index={2} />
-                                    <InputOTPSlot index={3} />
-                                    <InputOTPSlot index={4} />
-                                    <InputOTPSlot index={5} />
-                                </InputOTPGroup>
-                            </InputOTP>
-                            {fieldState.invalid && (
-                                <FieldError errors={[fieldState.error]} />
-                            )}
-                        </Field>
-                    )}
+                    label="Authentication code"
+                    autoFocus
+                    className="items-center *:w-auto"
                 />
 
-                <Controller
+                <FormCheckboxField
+                    control={form.control}
                     name="rememberMachine"
-                    control={form.control}
-                    render={({ field }) => (
-                        <Field orientation="horizontal">
-                            <Checkbox
-                                id={field.name}
-                                name={field.name}
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                            />
-                            <FieldLabel
-                                htmlFor={field.name}
-                                className="font-normal"
-                            >
-                                Don&apos;t ask again on this browser
-                            </FieldLabel>
-                        </Field>
-                    )}
+                    label="Don't ask again on this browser"
                 />
 
-                <LoadingButton
-                    type="submit"
-                    loading={loading}
-                    loadingText="Verifying..."
-                >
-                    Verify
-                </LoadingButton>
+                <Button type="submit" disabled={loading}>
+                    {loading ? 'Verifying...' : 'Verify'}
+                </Button>
                 <Button
                     type="button"
                     variant="link"

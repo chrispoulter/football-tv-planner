@@ -23,7 +23,6 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
-import { LoadingButton } from '@/components/loading-button';
 import {
     googleSubscribeUrl,
     outlook365SubscribeUrl,
@@ -183,14 +182,13 @@ function CalendarFeedOptions({ feed }: CalendarFeedOptionsProps) {
 
             <AlertDialog>
                 <AlertDialogTrigger asChild>
-                    <LoadingButton
+                    <Button
                         variant="link"
-                        loading={isResetting}
-                        loadingText="Resetting..."
                         className="h-auto px-0"
+                        disabled={isResetting}
                     >
-                        Reset link
-                    </LoadingButton>
+                        {isResetting ? 'Resetting...' : 'Reset link'}
+                    </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                     <AlertDialogHeader>

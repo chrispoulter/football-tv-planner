@@ -3,8 +3,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from 'sonner';
-import { TextField } from '@/components/form/text-field';
-import { LoadingButton } from '@/components/loading-button';
+import { FormInputField } from '@/components/form/form-input-field';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { FieldGroup } from '@/components/ui/field';
@@ -70,7 +69,7 @@ export function UpdateEmailForm() {
     return (
         <form noValidate onSubmit={form.handleSubmit(onSubmit)}>
             <FieldGroup>
-                <TextField
+                <FormInputField
                     control={form.control}
                     name="newEmail"
                     label="New email address"
@@ -82,13 +81,9 @@ export function UpdateEmailForm() {
                 />
 
                 <div className="flex flex-col-reverse gap-2 sm:flex-row">
-                    <LoadingButton
-                        type="submit"
-                        loading={isPending}
-                        loadingText="Sending Verification..."
-                    >
-                        Update Email
-                    </LoadingButton>
+                    <Button type="submit" disabled={isPending}>
+                        {isPending ? 'Sending Verification...' : 'Update Email'}
+                    </Button>
                 </div>
             </FieldGroup>
         </form>

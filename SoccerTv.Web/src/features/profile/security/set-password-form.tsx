@@ -2,8 +2,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from 'sonner';
-import { TextField } from '@/components/form/text-field';
-import { LoadingButton } from '@/components/loading-button';
+import { FormInputField } from '@/components/form/form-input-field';
+import { Button } from '@/components/ui/button';
 import { FieldGroup } from '@/components/ui/field';
 import { useSetPassword } from '../profile-queries';
 
@@ -54,7 +54,7 @@ export function SetPasswordForm() {
                     to also sign in with your email address.
                 </p>
 
-                <TextField
+                <FormInputField
                     control={form.control}
                     name="newPassword"
                     label="Password"
@@ -65,7 +65,7 @@ export function SetPasswordForm() {
                     required
                 />
 
-                <TextField
+                <FormInputField
                     control={form.control}
                     name="confirmNewPassword"
                     label="Confirm password"
@@ -77,13 +77,9 @@ export function SetPasswordForm() {
                 />
 
                 <div className="flex flex-col-reverse gap-2 sm:flex-row">
-                    <LoadingButton
-                        type="submit"
-                        loading={isPending}
-                        loadingText="Setting..."
-                    >
-                        Set Password
-                    </LoadingButton>
+                    <Button type="submit" disabled={isPending}>
+                        {isPending ? 'Setting...' : 'Set Password'}
+                    </Button>
                 </div>
             </FieldGroup>
         </form>

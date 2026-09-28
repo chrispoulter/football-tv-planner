@@ -1,8 +1,8 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { TextField } from '@/components/form/text-field';
-import { LoadingButton } from '@/components/loading-button';
+import { FormInputField } from '@/components/form/form-input-field';
+import { Button } from '@/components/ui/button';
 import { FieldGroup } from '@/components/ui/field';
 
 const schema = z
@@ -40,7 +40,7 @@ export function ResetPasswordForm({
     return (
         <form noValidate onSubmit={form.handleSubmit(onSubmit)}>
             <FieldGroup>
-                <TextField
+                <FormInputField
                     control={form.control}
                     name="newPassword"
                     label="New password"
@@ -51,7 +51,7 @@ export function ResetPasswordForm({
                     required
                 />
 
-                <TextField
+                <FormInputField
                     control={form.control}
                     name="confirmNewPassword"
                     label="Confirm new password"
@@ -62,13 +62,9 @@ export function ResetPasswordForm({
                     required
                 />
 
-                <LoadingButton
-                    type="submit"
-                    loading={loading}
-                    loadingText="Resetting..."
-                >
-                    Reset Password
-                </LoadingButton>
+                <Button type="submit" disabled={loading}>
+                    {loading ? 'Resetting...' : 'Reset Password'}
+                </Button>
             </FieldGroup>
         </form>
     );

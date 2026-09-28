@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router';
 import { toast } from 'sonner';
-import { LoadingButton } from '@/components/loading-button';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -105,15 +104,14 @@ export function LinkedAccounts({ hasPassword }: LinkedAccountsProps) {
                     </div>
 
                     {account.isLinked ? (
-                        <LoadingButton
+                        <Button
                             variant="outline"
                             size="sm"
-                            loading={
-                                isRemoving &&
-                                removingProvider === account.provider
+                            disabled={
+                                !canUnlink ||
+                                (isRemoving &&
+                                    removingProvider === account.provider)
                             }
-                            loadingText="Disconnecting..."
-                            disabled={!canUnlink}
                             title={
                                 canUnlink
                                     ? undefined
@@ -123,8 +121,10 @@ export function LinkedAccounts({ hasPassword }: LinkedAccountsProps) {
                                 onUnlink(account.provider, account.displayName)
                             }
                         >
-                            Disconnect
-                        </LoadingButton>
+                            {isRemoving && removingProvider === account.provider
+                                ? 'Disconnecting...'
+                                : 'Disconnect'}
+                        </Button>
                     ) : (
                         <Button asChild variant="outline" size="sm">
                             <a

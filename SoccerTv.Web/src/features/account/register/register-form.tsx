@@ -1,8 +1,8 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { TextField } from '@/components/form/text-field';
-import { LoadingButton } from '@/components/loading-button';
+import { FormInputField } from '@/components/form/form-input-field';
+import { Button } from '@/components/ui/button';
 import { FieldGroup } from '@/components/ui/field';
 
 const schema = z
@@ -45,7 +45,7 @@ export function RegisterForm({ loading, onSubmit }: RegisterFormProps) {
     return (
         <form noValidate onSubmit={form.handleSubmit(onSubmit)}>
             <FieldGroup>
-                <TextField
+                <FormInputField
                     control={form.control}
                     name="name"
                     label="Name"
@@ -55,7 +55,7 @@ export function RegisterForm({ loading, onSubmit }: RegisterFormProps) {
                     required
                 />
 
-                <TextField
+                <FormInputField
                     control={form.control}
                     name="emailAddress"
                     label="Email"
@@ -66,7 +66,7 @@ export function RegisterForm({ loading, onSubmit }: RegisterFormProps) {
                     required
                 />
 
-                <TextField
+                <FormInputField
                     control={form.control}
                     name="password"
                     label="Password"
@@ -77,7 +77,7 @@ export function RegisterForm({ loading, onSubmit }: RegisterFormProps) {
                     required
                 />
 
-                <TextField
+                <FormInputField
                     control={form.control}
                     name="confirmPassword"
                     label="Confirm password"
@@ -88,13 +88,9 @@ export function RegisterForm({ loading, onSubmit }: RegisterFormProps) {
                     required
                 />
 
-                <LoadingButton
-                    type="submit"
-                    loading={loading}
-                    loadingText="Creating Account..."
-                >
-                    Create Account
-                </LoadingButton>
+                <Button type="submit" disabled={loading}>
+                    {loading ? 'Creating Account...' : 'Create Account'}
+                </Button>
             </FieldGroup>
         </form>
     );

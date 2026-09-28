@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { LoadingButton } from '@/components/loading-button';
 import { QueryError } from '@/components/query-error';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -170,14 +169,13 @@ export function TwoFactorSettings() {
 
     if (!status.isEnabled) {
         return (
-            <LoadingButton
-                loading={isSettingUp}
-                loadingText="Setting Up..."
+            <Button
                 onClick={onSetup}
                 className="w-full sm:w-auto"
+                disabled={isSettingUp}
             >
-                Enable 2FA
-            </LoadingButton>
+                {isSettingUp ? 'Setting Up...' : 'Enable 2FA'}
+            </Button>
         );
     }
 
@@ -201,14 +199,13 @@ export function TwoFactorSettings() {
                     Regenerate Recovery Codes
                 </Button>
                 {status.isMachineRemembered && (
-                    <LoadingButton
+                    <Button
                         variant="outline"
-                        loading={isForgetting}
-                        loadingText="Forgetting..."
                         onClick={onForgetMachine}
+                        disabled={isForgetting}
                     >
-                        Forget This Browser
-                    </LoadingButton>
+                        {isForgetting ? 'Forgetting...' : 'Forget This Browser'}
+                    </Button>
                 )}
             </div>
         </div>
