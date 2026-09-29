@@ -5,6 +5,10 @@ on:
     branches: ["main", "develop", "feature/**", "release/**", "hotfix/**"]
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   check:
     name: Build, Test and Lint
@@ -49,26 +53,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v5
-
-      - name: Determine Version
-        id: version_step
-        run: |
-          dotnet tool restore
-          dotnet gitversion /output buildserver /updateprojectfiles
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24
-
-      - name: Set web app version
-        working-directory: ./FootballTvPlanner.Web
-        run: npm version "${{ env.GitVersion_SemVer }}-${{ env.GitVersion_ShortSha }}" --no-git-tag-version
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
@@ -81,50 +65,78 @@ jobs:
           password: ${{ github.token }}
 
       - name: Lowercase the repo name
-        run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
+        run: echo "REPO=${GITHUB_REPOSITORY,,}" >> "$GITHUB_ENV"
+
+      - name: Docker metadata (api)
+        id: meta-api
+        uses: docker/metadata-action@v6
+        with:
+          images: ghcr.io/${{ env.REPO }}-api
+          tags: |
+            type=sha,prefix=,format=short
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+            type=ref,event=branch,enable=${{ github.ref != 'refs/heads/main' }}
 
       - name: Build and push container image to registry (api)
         uses: docker/build-push-action@v7
         with:
           file: ./FootballTvPlanner.Api/Dockerfile
-          tags: |
-            ghcr.io/${{ env.REPO }}-api:${{ env.GitVersion_SemVer }}
-            ghcr.io/${{ env.REPO }}-api:${{ env.GitVersion_SemVer }}-${{ env.GitVersion_ShortSha }}
-            ghcr.io/${{ env.REPO }}-api:${{ env.GitVersion_PreReleaseLabel || 'latest' }}
           context: .
+          tags: ${{ steps.meta-api.outputs.tags }}
+          labels: ${{ steps.meta-api.outputs.labels }}
+          build-args: GIT_COMMIT_SHA=${{ github.sha }}
           push: true
           provenance: false
+
+      - name: Docker metadata (fixture-sync)
+        id: meta-fixture-sync
+        uses: docker/metadata-action@v6
+        with:
+          images: ghcr.io/${{ env.REPO }}-fixture-sync
+          tags: |
+            type=sha,prefix=,format=short
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+            type=ref,event=branch,enable=${{ github.ref != 'refs/heads/main' }}
 
       - name: Build and push container image to registry (fixture-sync)
         uses: docker/build-push-action@v7
         with:
           file: ./FootballTvPlanner.FixtureSync/Dockerfile
-          tags: |
-            ghcr.io/${{ env.REPO }}-fixture-sync:${{ env.GitVersion_SemVer }}
-            ghcr.io/${{ env.REPO }}-fixture-sync:${{ env.GitVersion_SemVer }}-${{ env.GitVersion_ShortSha }}
-            ghcr.io/${{ env.REPO }}-fixture-sync:${{ env.GitVersion_PreReleaseLabel || 'latest' }}
           context: .
+          tags: ${{ steps.meta-fixture-sync.outputs.tags }}
+          labels: ${{ steps.meta-fixture-sync.outputs.labels }}
+          build-args: GIT_COMMIT_SHA=${{ github.sha }}
           push: true
           provenance: false
+
+      - name: Docker metadata (web)
+        id: meta-web
+        uses: docker/metadata-action@v6
+        with:
+          images: ghcr.io/${{ env.REPO }}-web
+          tags: |
+            type=sha,prefix=,format=short
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+            type=ref,event=branch,enable=${{ github.ref != 'refs/heads/main' }}
 
       - name: Build and push container image to registry (web)
         uses: docker/build-push-action@v7
         with:
           file: ./FootballTvPlanner.Web/Dockerfile
-          tags: |
-            ghcr.io/${{ env.REPO }}-web:${{ env.GitVersion_SemVer }}
-            ghcr.io/${{ env.REPO }}-web:${{ env.GitVersion_SemVer }}-${{ env.GitVersion_ShortSha }}
-            ghcr.io/${{ env.REPO }}-web:${{ env.GitVersion_PreReleaseLabel || 'latest' }}
           context: ./FootballTvPlanner.Web
+          tags: ${{ steps.meta-web.outputs.tags }}
+          labels: ${{ steps.meta-web.outputs.labels }}
+          build-args: GIT_COMMIT_SHA=${{ github.sha }}
           push: true
           provenance: false
 
       - name: Set outputs
         id: outputs
         run: |
-          echo "apiImage=ghcr.io/${REPO}-api:${GitVersion_SemVer}-${GitVersion_ShortSha}" >> "$GITHUB_OUTPUT"
-          echo "fixtureSyncImage=ghcr.io/${REPO}-fixture-sync:${GitVersion_SemVer}-${GitVersion_ShortSha}" >> "$GITHUB_OUTPUT"
-          echo "webImage=ghcr.io/${REPO}-web:${GitVersion_SemVer}-${GitVersion_ShortSha}" >> "$GITHUB_OUTPUT"
+          SHORT_SHA="${GITHUB_SHA::7}"
+          echo "apiImage=ghcr.io/${REPO}-api:${SHORT_SHA}" >> "$GITHUB_OUTPUT"
+          echo "fixtureSyncImage=ghcr.io/${REPO}-fixture-sync:${SHORT_SHA}" >> "$GITHUB_OUTPUT"
+          echo "webImage=ghcr.io/${REPO}-web:${SHORT_SHA}" >> "$GITHUB_OUTPUT"
 
   deploy:
     name: Deploy to Render
@@ -135,7 +147,6 @@ jobs:
       group: deploy-${{ github.ref_name == 'main' && 'production' || 'preview' }}
       cancel-in-progress: false
     steps:
-      # Each GitHub environment (production, preview) holds the deploy hooks for its Render services
       - name: Deploy to Render
         env:
           RENDER_DEPLOY_HOOK_API: ${{ secrets.RENDER_DEPLOY_HOOK_API }}

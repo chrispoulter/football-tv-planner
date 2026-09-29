@@ -9,6 +9,9 @@ RUN npm ci
 
 COPY . .
 
+ARG GIT_COMMIT_SHA
+ENV GIT_COMMIT_SHA=$GIT_COMMIT_SHA
+
 RUN npm run build
 
 FROM nginx:alpine AS final

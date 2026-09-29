@@ -137,7 +137,7 @@ npm run format
 
 ## Deployment
 
-On every push to `main`, `develop`, `feature/**`, `release/**` and `hotfix/**`, GitHub Actions builds and lints everything, versions it with GitVersion, and pushes three images to GitHub Container Registry: `-api`, `-fixture-sync` and `-web`.
+On every push to `main`, `develop`, `feature/**`, `release/**` and `hotfix/**`, GitHub Actions builds and lints everything and pushes three images to GitHub Container Registry: `-api`, `-fixture-sync` and `-web`.
 
 In production:
 
