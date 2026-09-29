@@ -40,7 +40,7 @@ Aspire starts PostgreSQL, Mailpit, the API, the fixture sync and the web app. Wh
 - API docs (Scalar): the API's link in the Aspire dashboard
 - Mailpit, which receives confirmation and password reset emails: http://localhost:8025
 
-When the API starts, it applies migrations and seeds the users listed under `Seed:Users`. The default is `system.administrator@example.com` with the password from `FootballTvPlanner.Api/appsettings.json`. The fixture sync runs once after the API starts. To pick up new fixtures, restart the `fixture-sync` resource from the dashboard.
+When the API starts, it applies migrations. The fixture sync runs once after the API starts. To pick up new fixtures, restart the `fixture-sync` resource from the dashboard.
 
 > PostgreSQL (5432) and Mailpit (1025 and 8025) use fixed host ports and persistent containers. Stop anything else that uses those ports, or change them in `FootballTvPlanner.AppHost/AppHost.cs`.
 
@@ -89,7 +89,7 @@ The API sends email over SMTP using the `Mail` connection string, for example `E
 
 ### Authentication and the `/api` proxy
 
-The web app never calls the API directly. It proxies `/api/*` to the API: Vite does this in development (`API_URL`) and nginx does it in the container (`API_UPSTREAM`). This keeps the Identity cookie first-party even when the API is hosted on a different domain.
+The web app never calls the API directly. It proxies `/api/*` to the API: Vite does this in development (`API_URL`) and nginx does it in the container (`API_URL`). This keeps the Identity cookie first-party even when the API is hosted on a different domain.
 
 The proxy sends the public host, scheme and path prefix in `X-FootballTvPlanner-*` headers. The API reads them in `ForwardedHeadersExtensions` so it can build correct external login redirect URIs. Custom header names are used so they can't clash with the `X-Forwarded-*` headers that the hosting provider sets.
 
@@ -137,12 +137,12 @@ npm run format
 
 ## Deployment
 
-On every push to `main`, `develop`, `feature/**`, `release/**` and `hotfix/**`, GitHub Actions builds and lints everything, versions it with GitVersion, and pushes three images to GitHub Container Registry: `-api`, `-fixture-sync` and `-web`.
+On every push to `main`, `develop`, `feature/**`, `release/**` and `hotfix/**`, GitHub Actions builds and lints everything and pushes three images to GitHub Container Registry: `-api`, `-fixture-sync` and `-web`.
 
 In production:
 
-- **API:** set `ConnectionStrings__Database`, `ConnectionStrings__Mail`, `Email__SiteUrl`, `Email__NoReplyAddress`, the `Seed__Users__*` values and, optionally, `Authentication__Google__*`.
-- **Web:** set `API_UPSTREAM` to the API's URL.
+- **API:** set `ConnectionStrings__Database`, `ConnectionStrings__Mail`, `Email__SiteUrl`, `Email__NoReplyAddress` and, optionally, `Authentication__Google__*`.
+- **Web:** set `API_URL` to the API's URL.
 - **Fixture sync:** set `ConnectionStrings__Database` and `FixtureSync__Provider`, and run it as a scheduled job, for example an Azure Container Apps job or a cron job.
 
 ## License

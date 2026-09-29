@@ -18,7 +18,8 @@ RUN dotnet build "./FootballTvPlanner.FixtureSync.csproj" -c $BUILD_CONFIGURATIO
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./FootballTvPlanner.FixtureSync.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+ARG GIT_COMMIT_SHA
+RUN dotnet publish "./FootballTvPlanner.FixtureSync.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false /p:SourceRevisionId=$GIT_COMMIT_SHA
 
 # Runs a single sync and exits; schedule it externally (cron, Container Apps Job, etc.).
 FROM base AS final
