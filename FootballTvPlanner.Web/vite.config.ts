@@ -32,8 +32,14 @@ export default defineConfig(({ mode }) => {
                                 'X-FootballTvPlanner-Host',
                                 req.headers.host ?? ''
                             );
-                            proxyReq.setHeader('X-FootballTvPlanner-Proto', 'http');
-                            proxyReq.setHeader('X-FootballTvPlanner-Prefix', '/api');
+                            proxyReq.setHeader(
+                                'X-FootballTvPlanner-Proto',
+                                'http'
+                            );
+                            proxyReq.setHeader(
+                                'X-FootballTvPlanner-Prefix',
+                                '/api'
+                            );
                         });
                     },
                 },
