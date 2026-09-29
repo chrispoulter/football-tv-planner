@@ -2,13 +2,13 @@
 
 namespace FootballTvPlanner.Api.Common.Database;
 
-public class MigrationBackgroundService<TDbContext>(
+public class MigrationHostedService<TDbContext>(
     IServiceProvider serviceProvider,
-    ILogger<MigrationBackgroundService<TDbContext>> logger
-) : BackgroundService
+    ILogger<MigrationHostedService<TDbContext>> logger
+) : IHostedService
     where TDbContext : DbContext
 {
-    protected override async Task ExecuteAsync(CancellationToken cancellationToken)
+    public async Task StartAsync(CancellationToken cancellationToken)
     {
         logger.LogInformation("Migrating database for {DbContext}", typeof(TDbContext).Name);
 
@@ -60,4 +60,6 @@ public class MigrationBackgroundService<TDbContext>(
             }
         }
     }
+
+    public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 }
