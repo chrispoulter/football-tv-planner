@@ -89,7 +89,7 @@ The API sends email over SMTP using the `Mail` connection string, for example `E
 
 ### Authentication and the `/api` proxy
 
-The web app never calls the API directly. It proxies `/api/*` to the API: Vite does this in development (`API_URL`) and nginx does it in the container (`API_UPSTREAM`). This keeps the Identity cookie first-party even when the API is hosted on a different domain.
+The web app never calls the API directly. It proxies `/api/*` to the API: Vite does this in development (`API_URL`) and nginx does it in the container (`API_URL`). This keeps the Identity cookie first-party even when the API is hosted on a different domain.
 
 The proxy sends the public host, scheme and path prefix in `X-FootballTvPlanner-*` headers. The API reads them in `ForwardedHeadersExtensions` so it can build correct external login redirect URIs. Custom header names are used so they can't clash with the `X-Forwarded-*` headers that the hosting provider sets.
 
@@ -142,7 +142,7 @@ On every push to `main`, `develop`, `feature/**`, `release/**` and `hotfix/**`, 
 In production:
 
 - **API:** set `ConnectionStrings__Database`, `ConnectionStrings__Mail`, `Email__SiteUrl`, `Email__NoReplyAddress`, the `Seed__Users__*` values and, optionally, `Authentication__Google__*`.
-- **Web:** set `API_UPSTREAM` to the API's URL.
+- **Web:** set `API_URL` to the API's URL.
 - **Fixture sync:** set `ConnectionStrings__Database` and `FixtureSync__Provider`, and run it as a scheduled job, for example an Azure Container Apps job or a cron job.
 
 ## License

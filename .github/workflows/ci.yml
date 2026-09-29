@@ -9,6 +9,9 @@ jobs:
   build-and-publish:
     runs-on: ubuntu-latest
     environment: ${{ github.ref_name == 'main' && 'production' || 'preview' }}
+    concurrency:
+      group: deploy-${{ github.ref_name == 'main' && 'production' || 'preview' }}
+      cancel-in-progress: false
     permissions:
       contents: read
       packages: write
@@ -95,3 +98,17 @@ jobs:
           context: ./FootballTvPlanner.Web
           push: true
           provenance: false
+
+      - name: Deploy to Render
+        env:
+          RENDER_DEPLOY_HOOK_API: ${{ secrets.RENDER_DEPLOY_HOOK_API }}
+          RENDER_DEPLOY_HOOK_WEB: ${{ secrets.RENDER_DEPLOY_HOOK_WEB }}
+          IMAGE_TAG: ${{ env.GitVersion_SemVer }}-${{ env.GitVersion_ShortSha }}
+        run: |
+          if [ -z "$RENDER_DEPLOY_HOOK_API" ] || [ -z "$RENDER_DEPLOY_HOOK_WEB" ]; then
+            echo "Render deploy hooks are not configured for this environment; skipping deploy."
+            exit 0
+          fi
+
+          curl -fsS -X POST -G "$RENDER_DEPLOY_HOOK_API" --data-urlencode "imgURL=ghcr.io/${REPO}-api:${IMAGE_TAG}"
+          curl -fsS -X POST -G "$RENDER_DEPLOY_HOOK_WEB" --data-urlencode "imgURL=ghcr.io/${REPO}-web:${IMAGE_TAG}"

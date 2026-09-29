@@ -88,6 +88,25 @@ namespace FootballTvPlanner.Api.Migrations
             );
 
             migrationBuilder.CreateTable(
+                name: "DataProtectionKeys",
+                columns: table => new
+                {
+                    Id = table
+                        .Column<int>(type: "integer", nullable: false)
+                        .Annotation(
+                            "Npgsql:ValueGenerationStrategy",
+                            NpgsqlValueGenerationStrategy.IdentityByDefaultColumn
+                        ),
+                    FriendlyName = table.Column<string>(type: "text", nullable: true),
+                    Xml = table.Column<string>(type: "text", nullable: true),
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DataProtectionKeys", x => x.Id);
+                }
+            );
+
+            migrationBuilder.CreateTable(
                 name: "fixtures",
                 columns: table => new
                 {
@@ -369,6 +388,8 @@ namespace FootballTvPlanner.Api.Migrations
             migrationBuilder.DropTable(name: "AspNetUserRoles");
 
             migrationBuilder.DropTable(name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(name: "DataProtectionKeys");
 
             migrationBuilder.DropTable(name: "user_fixtures");
 

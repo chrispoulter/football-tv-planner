@@ -25,6 +25,7 @@ builder.Services.AddProblemDetails();
 
 builder.ConfigureJsonOptions();
 builder.AddForwardedHeaders();
+builder.AddDataProtection();
 builder.AddAuthentication();
 builder.AddOpenApi(serviceVersion);
 
