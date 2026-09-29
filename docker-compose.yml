@@ -6,8 +6,7 @@ services:
       dockerfile: Dockerfile
     environment:
       API_UPSTREAM: http://football-tv-planner-api:8080
-      # VITE_RUNTIME_VALUE_1: DOCKER_RUNTIME_VALUE_1
-      # VITE_RUNTIME_VALUE_2: DOCKER_RUNTIME_VALUE_2
+      # VITE_FEATURE_X: ${VITE_FEATURE_X:-}
     ports:
       - 5173:80
 

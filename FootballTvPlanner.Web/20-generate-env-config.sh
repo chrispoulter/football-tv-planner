@@ -3,7 +3,6 @@ set -e
 
 {
   echo "window.__ENV__ ||= {"
-  [ -n "${VITE_RUNTIME_VALUE_1}" ] && echo "  VITE_RUNTIME_VALUE_1: \"${VITE_RUNTIME_VALUE_1}\","
-  [ -n "${VITE_RUNTIME_VALUE_2}" ] && echo "  VITE_RUNTIME_VALUE_2: \"${VITE_RUNTIME_VALUE_2}\","
+  [ -n "${VITE_FEATURE_X}" ] && echo "  VITE_FEATURE_X: \"${VITE_FEATURE_X}\","
   echo "};"
 } > /usr/share/nginx/html/env.js
