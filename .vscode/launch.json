@@ -8,19 +8,19 @@
       "program": "${workspaceFolder}"
     },
     {
-      "name": "C#: SoccerTv.AppHost Debug",
+      "name": "C#: FootballTvPlanner.AppHost Debug",
       "type": "dotnet",
       "request": "launch",
-      "projectPath": "${workspaceFolder}/SoccerTv.AppHost/SoccerTv.AppHost.csproj"
+      "projectPath": "${workspaceFolder}/FootballTvPlanner.AppHost/FootballTvPlanner.AppHost.csproj"
     },
     {
       "name": ".NET Core Launch (web)",
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "dotnet: build",
-      "program": "${workspaceFolder}/SoccerTv.AppHost/bin/Debug/net10.0/SoccerTv.AppHost.dll",
+      "program": "${workspaceFolder}/FootballTvPlanner.AppHost/bin/Debug/net10.0/FootballTvPlanner.AppHost.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/SoccerTv.AppHost",
+      "cwd": "${workspaceFolder}/FootballTvPlanner.AppHost",
       "stopAtEntry": false,
       "serverReadyAction": {
         "action": "openExternally",

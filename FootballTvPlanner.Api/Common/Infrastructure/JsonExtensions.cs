@@ -1,0 +1,18 @@
+﻿using System.Text.Json.Serialization;
+
+namespace FootballTvPlanner.Api.Common.Infrastructure;
+
+public static class JsonExtensions
+{
+    public static IHostApplicationBuilder ConfigureJsonOptions(this IHostApplicationBuilder builder)
+    {
+        builder.Services.ConfigureHttpJsonOptions(options =>
+        {
+            options.SerializerOptions.DefaultIgnoreCondition =
+                JsonIgnoreCondition.WhenWritingDefault;
+            options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        });
+
+        return builder;
+    }
+}

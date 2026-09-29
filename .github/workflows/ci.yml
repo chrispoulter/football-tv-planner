@@ -29,18 +29,18 @@ jobs:
 
       - name: Build and test (dotnet)
         run: |
-          dotnet build "SoccerTv.slnx"
-          dotnet test "SoccerTv.slnx"
+          dotnet build "FootballTvPlanner.slnx"
+          dotnet test "FootballTvPlanner.slnx"
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
           node-version: 24
           cache: "npm"
-          cache-dependency-path: ./SoccerTv.Web
+          cache-dependency-path: ./FootballTvPlanner.Web
 
       - name: Build and lint (npm)
-        working-directory: ./SoccerTv.Web
+        working-directory: ./FootballTvPlanner.Web
         run: |
           npm version "${{ env.GitVersion_SemVer }}-${{ env.GitVersion_ShortSha }}" --no-git-tag-version
           npm ci
@@ -63,7 +63,7 @@ jobs:
       - name: Build and push container image to registry (api)
         uses: docker/build-push-action@v7
         with:
-          file: ./SoccerTv.Api/Dockerfile
+          file: ./FootballTvPlanner.Api/Dockerfile
           tags: |
             ghcr.io/${{ env.REPO }}-api:${{ env.GitVersion_SemVer }}
             ghcr.io/${{ env.REPO }}-api:${{ env.GitVersion_SemVer }}-${{ env.GitVersion_ShortSha }}
@@ -75,7 +75,7 @@ jobs:
       - name: Build and push container image to registry (fixture-sync)
         uses: docker/build-push-action@v7
         with:
-          file: ./SoccerTv.FixtureSync/Dockerfile
+          file: ./FootballTvPlanner.FixtureSync/Dockerfile
           tags: |
             ghcr.io/${{ env.REPO }}-fixture-sync:${{ env.GitVersion_SemVer }}
             ghcr.io/${{ env.REPO }}-fixture-sync:${{ env.GitVersion_SemVer }}-${{ env.GitVersion_ShortSha }}
@@ -87,11 +87,11 @@ jobs:
       - name: Build and push container image to registry (web)
         uses: docker/build-push-action@v7
         with:
-          file: ./SoccerTv.Web/Dockerfile
+          file: ./FootballTvPlanner.Web/Dockerfile
           tags: |
             ghcr.io/${{ env.REPO }}-web:${{ env.GitVersion_SemVer }}
             ghcr.io/${{ env.REPO }}-web:${{ env.GitVersion_SemVer }}-${{ env.GitVersion_ShortSha }}
             ghcr.io/${{ env.REPO }}-web:${{ env.GitVersion_PreReleaseLabel || 'latest' }}
-          context: ./SoccerTv.Web
+          context: ./FootballTvPlanner.Web
           push: true
           provenance: false

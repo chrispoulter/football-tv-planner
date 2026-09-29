@@ -1,27 +1,27 @@
 services:
-  soccer-tv-schedule-web:
-    image: soccer-tv-schedule-web:latest
+  football-tv-planner-web:
+    image: football-tv-planner-web:latest
     build:
-      context: ./SoccerTv.Web
+      context: ./FootballTvPlanner.Web
       dockerfile: Dockerfile
     environment:
-      API_UPSTREAM: http://soccer-tv-schedule-api:8080
+      API_UPSTREAM: http://football-tv-planner-api:8080
       # VITE_RUNTIME_VALUE_1: DOCKER_RUNTIME_VALUE_1
       # VITE_RUNTIME_VALUE_2: DOCKER_RUNTIME_VALUE_2
     ports:
       - 5173:80
 
-  soccer-tv-schedule-api:
-    image: soccer-tv-schedule-api:latest
+  football-tv-planner-api:
+    image: football-tv-planner-api:latest
     build:
       context: .
-      dockerfile: ./SoccerTv.Api/Dockerfile
+      dockerfile: ./FootballTvPlanner.Api/Dockerfile
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: https://+:8081;http://+:8080
       ASPNETCORE_Kestrel__Certificates__Default__Path: /https/aspnetapp.pfx
       ASPNETCORE_Kestrel__Certificates__Default__Password: password
-      ConnectionStrings__Database: Host=host.docker.internal;Port=5432;Database=soccer_tv_schedule;Username=postgres;Password=password
+      ConnectionStrings__Database: Host=host.docker.internal;Port=5432;Database=football_tv_planner;Username=postgres;Password=password
       ConnectionStrings__Mail: Endpoint=smtp://host.docker.internal:1025
       Email__SiteUrl: http://localhost:5173
       Email__NoReplyAddress: noreply@example.com
@@ -39,24 +39,24 @@ services:
       aspire-dashboard:
         condition: service_started
 
-  soccer-tv-schedule-fixture-sync:
-    image: soccer-tv-schedule-fixture-sync:latest
+  football-tv-planner-fixture-sync:
+    image: football-tv-planner-fixture-sync:latest
     build:
       context: .
-      dockerfile: ./SoccerTv.FixtureSync/Dockerfile
+      dockerfile: ./FootballTvPlanner.FixtureSync/Dockerfile
     environment:
       DOTNET_ENVIRONMENT: Development
-      ConnectionStrings__Database: Host=host.docker.internal;Port=5432;Database=soccer_tv_schedule;Username=postgres;Password=password
+      ConnectionStrings__Database: Host=host.docker.internal;Port=5432;Database=football_tv_planner;Username=postgres;Password=password
     restart: "no"
     depends_on:
-      soccer-tv-schedule-api:
+      football-tv-planner-api:
         condition: service_started
 
   postgres:
     image: postgres:18.3
     user: postgres
     environment:
-      POSTGRES_DB: soccer_tv_schedule
+      POSTGRES_DB: football_tv_planner
       POSTGRES_PASSWORD: password
     ports:
       - 5432:5432

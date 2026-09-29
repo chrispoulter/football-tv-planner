@@ -1,0 +1,29 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Solution Items/">
+    <File Path=".config/dotnet-tools.json" />
+    <File Path=".csharpierrc" />
+    <File Path=".dockerignore" />
+    <File Path=".gitattributes" />
+    <File Path=".github/workflows/ci.yml" />
+    <File Path=".gitignore" />
+    <File Path="aspire.config.json" />
+    <File Path="azure.yaml" />
+    <File Path="docker-compose.yml" />
+    <File Path="global.json" />
+    <File Path="LICENSE" />
+    <File Path="README.md" />
+    <File Path="TODO.md" />
+  </Folder>
+  <Project Path="FootballTvPlanner.Api/FootballTvPlanner.Api.csproj" />
+  <Project Path="FootballTvPlanner.AppHost/FootballTvPlanner.AppHost.csproj" />
+  <Project Path="FootballTvPlanner.FixtureSync/FootballTvPlanner.FixtureSync.csproj" />
+  <Project Path="FootballTvPlanner.ServiceDefaults/FootballTvPlanner.ServiceDefaults.csproj" />
+  <Project Path="FootballTvPlanner.Web/FootballTvPlanner.Web.esproj">
+    <Platform Project="AnyCPU" />
+  </Project>
+</Solution>

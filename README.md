@@ -1,4 +1,4 @@
-# Soccer TV
+# Football TV Planner
 
 Shows the football on UK TV and streaming services, day by day. Signed-in users can star games to build their own schedule, then add games to their calendar or subscribe to a private feed that keeps up with the schedule.
 
@@ -14,11 +14,11 @@ Shows the football on UK TV and streaming services, day by day. Signed-in users 
 
 | Project                    | Description                                                                                                                                                                   |
 | -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `SoccerTv.Api`             | .NET 10 minimal API. ASP.NET Core Identity with cookie auth, EF Core with PostgreSQL, and Scalar API docs at `/`. Owns the database schema and applies migrations on startup. |
-| `SoccerTv.FixtureSync`     | Console job that pulls fixtures from a provider into the `fixtures` table, then exits. Run it on a schedule.                                                                  |
-| `SoccerTv.Web`             | React 19 app built with Vite, React Router, TanStack Query, shadcn/ui and Tailwind CSS.                                                                                       |
-| `SoccerTv.AppHost`         | Aspire app host for local development.                                                                                                                                        |
-| `SoccerTv.ServiceDefaults` | Shared Aspire setup: OpenTelemetry, health checks, service discovery and resilience.                                                                                          |
+| `FootballTvPlanner.Api`             | .NET 10 minimal API. ASP.NET Core Identity with cookie auth, EF Core with PostgreSQL, and Scalar API docs at `/`. Owns the database schema and applies migrations on startup. |
+| `FootballTvPlanner.FixtureSync`     | Console job that pulls fixtures from a provider into the `fixtures` table, then exits. Run it on a schedule.                                                                  |
+| `FootballTvPlanner.Web`             | React 19 app built with Vite, React Router, TanStack Query, shadcn/ui and Tailwind CSS.                                                                                       |
+| `FootballTvPlanner.AppHost`         | Aspire app host for local development.                                                                                                                                        |
+| `FootballTvPlanner.ServiceDefaults` | Shared Aspire setup: OpenTelemetry, health checks, service discovery and resilience.                                                                                          |
 
 ## Getting started
 
@@ -31,7 +31,7 @@ Shows the football on UK TV and streaming services, day by day. Signed-in users 
 ### Run the app
 
 ```
-dotnet run --project SoccerTv.AppHost
+dotnet run --project FootballTvPlanner.AppHost
 ```
 
 Aspire starts PostgreSQL, Mailpit, the API, the fixture sync and the web app. When they're up:
@@ -40,9 +40,9 @@ Aspire starts PostgreSQL, Mailpit, the API, the fixture sync and the web app. Wh
 - API docs (Scalar): the API's link in the Aspire dashboard
 - Mailpit, which receives confirmation and password reset emails: http://localhost:8025
 
-When the API starts, it applies migrations and seeds the users listed under `Seed:Users`. The default is `system.administrator@example.com` with the password from `SoccerTv.Api/appsettings.json`. The fixture sync runs once after the API starts. To pick up new fixtures, restart the `fixture-sync` resource from the dashboard.
+When the API starts, it applies migrations and seeds the users listed under `Seed:Users`. The default is `system.administrator@example.com` with the password from `FootballTvPlanner.Api/appsettings.json`. The fixture sync runs once after the API starts. To pick up new fixtures, restart the `fixture-sync` resource from the dashboard.
 
-> PostgreSQL (5432) and Mailpit (1025 and 8025) use fixed host ports and persistent containers. Stop anything else that uses those ports, or change them in `SoccerTv.AppHost/AppHost.cs`.
+> PostgreSQL (5432) and Mailpit (1025 and 8025) use fixed host ports and persistent containers. Stop anything else that uses those ports, or change them in `FootballTvPlanner.AppHost/AppHost.cs`.
 
 You can also run everything with `docker compose up`, which builds the three app images and uses the same ports.
 
@@ -58,7 +58,7 @@ Google sign-in is optional. It's turned on only when `Authentication:Google:Clie
 2. Add these authorised redirect URIs. The web app proxies `/api` to the API, so the callback goes through the web app's origin:
    - `http://localhost:5173/api/signin-google`
    - `https://<web app host>/api/signin-google`
-3. Put the credentials in `SoccerTv.Api/appsettings.Development.json`:
+3. Put the credentials in `FootballTvPlanner.Api/appsettings.Development.json`:
 
    ```json
    {
@@ -79,7 +79,7 @@ The fixture sync reads fixtures from the provider named in `FixtureSync:Provider
 | ---------------- | ---------------------------------------------------------------------------------------------------------------------- |
 | `Mock` (default) | Generates repeatable fake fixtures `FixtureSync:Mock:DaysAhead` days ahead. The same dates always give the same games. |
 
-Set `FixtureSync:Provider` in `SoccerTv.FixtureSync/appsettings.Development.json` to switch.
+Set `FixtureSync:Provider` in `FootballTvPlanner.FixtureSync/appsettings.Development.json` to switch.
 
 ### Email
 
@@ -91,7 +91,7 @@ The API sends email over SMTP using the `Mail` connection string, for example `E
 
 The web app never calls the API directly. It proxies `/api/*` to the API: Vite does this in development (`API_URL`) and nginx does it in the container (`API_UPSTREAM`). This keeps the Identity cookie first-party even when the API is hosted on a different domain.
 
-The proxy sends the public host, scheme and path prefix in `X-SoccerTv-*` headers. The API reads them in `ForwardedHeadersExtensions` so it can build correct external login redirect URIs. Custom header names are used so they can't clash with the `X-Forwarded-*` headers that the hosting provider sets.
+The proxy sends the public host, scheme and path prefix in `X-FootballTvPlanner-*` headers. The API reads them in `ForwardedHeadersExtensions` so it can build correct external login redirect URIs. Custom header names are used so they can't clash with the `X-Forwarded-*` headers that the hosting provider sets.
 
 ### Dates and times
 
@@ -107,7 +107,7 @@ Each run, `FixtureSyncer`:
 
 If a provider returns nothing, the run fails instead of deleting every upcoming fixture.
 
-The API owns the schema. `SoccerTv.FixtureSync/Data/Fixture.cs` maps the same table, so update it whenever the API's `Fixture` entity changes.
+The API owns the schema. `FootballTvPlanner.FixtureSync/Data/Fixture.cs` maps the same table, so update it whenever the API's `Fixture` entity changes.
 
 To add a provider:
 
@@ -118,11 +118,11 @@ To add a provider:
 
 ### Database migrations
 
-Migrations are in `SoccerTv.Api/Migrations`. To add one:
+Migrations are in `FootballTvPlanner.Api/Migrations`. To add one:
 
 ```
 dotnet tool restore
-dotnet ef migrations add <Name> --project SoccerTv.Api
+dotnet ef migrations add <Name> --project FootballTvPlanner.Api
 ```
 
 ### Formatting and linting
@@ -130,7 +130,7 @@ dotnet ef migrations add <Name> --project SoccerTv.Api
 ```
 dotnet csharpier format .
 
-cd SoccerTv.Web
+cd FootballTvPlanner.Web
 npm run lint
 npm run format
 ```

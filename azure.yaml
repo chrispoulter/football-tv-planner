@@ -1,8 +1,8 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
 
-name: soccertv-api
+name: footballtvplanner-api
 services:  
   app:
     language: dotnet
-    project: ./SoccerTv.AppHost/SoccerTv.AppHost.csproj
+    project: ./FootballTvPlanner.AppHost/FootballTvPlanner.AppHost.csproj
     host: containerapp
