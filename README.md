@@ -40,7 +40,7 @@ Aspire starts PostgreSQL, Mailpit, the API, the fixture sync and the web app. Wh
 - API docs (Scalar): the API's link in the Aspire dashboard
 - Mailpit, which receives confirmation and password reset emails: http://localhost:8025
 
-When the API starts, it applies migrations and seeds the users listed under `Seed:Users`. The default is `system.administrator@example.com` with the password from `FootballTvPlanner.Api/appsettings.json`. The fixture sync runs once after the API starts. To pick up new fixtures, restart the `fixture-sync` resource from the dashboard.
+When the API starts, it applies migrations. The fixture sync runs once after the API starts. To pick up new fixtures, restart the `fixture-sync` resource from the dashboard.
 
 > PostgreSQL (5432) and Mailpit (1025 and 8025) use fixed host ports and persistent containers. Stop anything else that uses those ports, or change them in `FootballTvPlanner.AppHost/AppHost.cs`.
 
@@ -141,7 +141,7 @@ On every push to `main`, `develop`, `feature/**`, `release/**` and `hotfix/**`, 
 
 In production:
 
-- **API:** set `ConnectionStrings__Database`, `ConnectionStrings__Mail`, `Email__SiteUrl`, `Email__NoReplyAddress`, the `Seed__Users__*` values and, optionally, `Authentication__Google__*`.
+- **API:** set `ConnectionStrings__Database`, `ConnectionStrings__Mail`, `Email__SiteUrl`, `Email__NoReplyAddress` and, optionally, `Authentication__Google__*`.
 - **Web:** set `API_URL` to the API's URL.
 - **Fixture sync:** set `ConnectionStrings__Database` and `FixtureSync__Provider`, and run it as a scheduled job, for example an Azure Container Apps job or a cron job.
 

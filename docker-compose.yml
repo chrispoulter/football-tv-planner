@@ -27,8 +27,6 @@ services:
       ConnectionStrings__Mail: Endpoint=smtp://host.docker.internal:1025
       Email__SiteUrl: http://localhost:5173
       Email__NoReplyAddress: noreply@example.com
-      Seed__Users__0__EmailAddress: system.administrator@example.com
-      Seed__Users__0__Password: super_secret_password_that_should_be_changed
     ports:
       - 5257:8080
       - 7257:8081

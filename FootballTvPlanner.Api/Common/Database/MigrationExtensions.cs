@@ -1,26 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace FootballTvPlanner.Api.Common.Database;
 
 public static class MigrationExtensions
 {
-    public static IServiceCollection AddMigration<TDbContext>(this IServiceCollection services)
+    public static async Task MigrateDatabaseAsync<TDbContext>(this IHost app)
         where TDbContext : DbContext
     {
-        services.AddHostedService<MigrationHostedService<TDbContext>>();
+        using var scope = app.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<TDbContext>();
 
-        return services;
-    }
-
-    public static IServiceCollection AddMigration<TDbContext, TDbSeeder>(
-        this IServiceCollection services
-    )
-        where TDbContext : DbContext
-        where TDbSeeder : class, IDbSeeder<TDbContext>
-    {
-        services.AddHostedService<MigrationHostedService<TDbContext>>();
-        services.AddScoped<IDbSeeder<TDbContext>, TDbSeeder>();
-
-        return services;
+        await dbContext.Database.MigrateAsync();
     }
 }

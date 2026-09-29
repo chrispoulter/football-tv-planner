@@ -16,10 +16,6 @@ builder.AddServiceDefaults(serviceVersion);
 builder.AddNpgsqlDbContext<FootballTvPlannerDbContext>(connectionName: "Database");
 builder.AddEmailServices(connectionName: "Mail");
 
-var seedConfig = builder.Configuration.GetSection(SeedSettings.SectionName);
-builder.Services.Configure<SeedSettings>(seedConfig);
-builder.Services.AddMigration<FootballTvPlannerDbContext, FootballTvPlannerDbSeeder>();
-
 builder.Services.AddValidatorsFromAssembly(assembly);
 builder.Services.AddProblemDetails();
 
@@ -30,6 +26,8 @@ builder.AddAuthentication();
 builder.AddOpenApi(serviceVersion);
 
 var app = builder.Build();
+
+await app.MigrateDatabaseAsync<FootballTvPlannerDbContext>();
 
 app.UseForwardedHeaders();
 app.UseExceptionHandler();
