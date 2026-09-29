@@ -30,7 +30,7 @@ A react web project template ðŸ‘· Built with a sense of peace and tranquillity ð
 ### Prerequisites
 
 - Football TV Planner API
-  [https://github.com/chrispoulter/soccer-tv-schedule](https://github.com/chrispoulter/soccer-tv-schedule)
+  [https://github.com/chrispoulter/football-tv-planner](https://github.com/chrispoulter/football-tv-planner)
 
 ### Install dependencies
 
