@@ -20,7 +20,7 @@ export function RecoveryCodes({ codes, onDone }: RecoveryCodesProps) {
         );
         const link = document.createElement('a');
         link.href = url;
-        link.download = 'footballtvplanner-recovery-codes.txt';
+        link.download = 'football-tv-planner-recovery-codes.txt';
         link.click();
         URL.revokeObjectURL(url);
     }
