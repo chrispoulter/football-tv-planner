@@ -7,9 +7,6 @@ public static class ExternalLoginRedirects
 {
     private const string XsrfKey = "XsrfId";
 
-    /// <summary>
-    /// Only allow redirects back to a path on the web app, never to another site.
-    /// </summary>
     public static string LocalOrRoot(string? returnUrl) =>
         returnUrl is ['/', not '/' and not '\\', ..] or "/" ? returnUrl : "/";
 
