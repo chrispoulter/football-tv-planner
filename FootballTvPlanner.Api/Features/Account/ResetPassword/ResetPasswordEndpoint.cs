@@ -39,18 +39,6 @@ public class ResetPasswordEndpoint : IEndpoint
             return result.Errors.ToValidationProblem();
         }
 
-        if (!user.EmailConfirmed)
-        {
-            user.EmailConfirmed = true;
-
-            var updateResult = await userManager.UpdateAsync(user);
-
-            if (!updateResult.Succeeded)
-            {
-                return updateResult.Errors.ToValidationProblem();
-            }
-        }
-
         return Results.Ok();
     }
 }
