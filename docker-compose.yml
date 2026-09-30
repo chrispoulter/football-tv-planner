@@ -27,6 +27,8 @@ services:
       ConnectionStrings__Mail: Endpoint=smtp://host.docker.internal:1025
       Email__SiteUrl: http://localhost:5173
       Email__NoReplyAddress: noreply@example.com
+      Logging__Console__FormatterName: json
+      Logging__LogLevel__Microsoft.EntityFrameworkCore: Warning
     ports:
       - 5257:8080
       - 7257:8081
