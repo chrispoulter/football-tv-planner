@@ -46,10 +46,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    outputs:
-      apiImage: ${{ steps.outputs.outputs.apiImage }}
-      fixtureSyncImage: ${{ steps.outputs.outputs.fixtureSyncImage }}
-      webImage: ${{ steps.outputs.outputs.webImage }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -129,35 +125,3 @@ jobs:
           build-args: GIT_COMMIT_SHA=${{ github.sha }}
           push: true
           provenance: false
-
-      - name: Set outputs
-        id: outputs
-        run: |
-          SHORT_SHA="${GITHUB_SHA::7}"
-          echo "apiImage=ghcr.io/${REPO}-api:${SHORT_SHA}" >> "$GITHUB_OUTPUT"
-          echo "fixtureSyncImage=ghcr.io/${REPO}-fixture-sync:${SHORT_SHA}" >> "$GITHUB_OUTPUT"
-          echo "webImage=ghcr.io/${REPO}-web:${SHORT_SHA}" >> "$GITHUB_OUTPUT"
-
-  deploy:
-    name: Deploy to Render
-    runs-on: ubuntu-latest
-    needs: docker
-    environment: ${{ github.ref_name == 'main' && 'production' || 'preview' }}
-    concurrency:
-      group: deploy-${{ github.ref_name == 'main' && 'production' || 'preview' }}
-      cancel-in-progress: false
-    steps:
-      - name: Deploy to Render
-        env:
-          RENDER_DEPLOY_HOOK_API: ${{ secrets.RENDER_DEPLOY_HOOK_API }}
-          RENDER_DEPLOY_HOOK_WEB: ${{ secrets.RENDER_DEPLOY_HOOK_WEB }}
-          API_IMAGE: ${{ needs.docker.outputs.apiImage }}
-          WEB_IMAGE: ${{ needs.docker.outputs.webImage }}
-        run: |
-          if [ -z "$RENDER_DEPLOY_HOOK_API" ] || [ -z "$RENDER_DEPLOY_HOOK_WEB" ]; then
-            echo "Render deploy hooks are not configured for this environment; skipping deploy."
-            exit 0
-          fi
-
-          curl -fsS -X POST -G "$RENDER_DEPLOY_HOOK_API" --data-urlencode "imgURL=${API_IMAGE}"
-          curl -fsS -X POST -G "$RENDER_DEPLOY_HOOK_WEB" --data-urlencode "imgURL=${WEB_IMAGE}"
