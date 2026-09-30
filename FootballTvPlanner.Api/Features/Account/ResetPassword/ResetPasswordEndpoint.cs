@@ -24,7 +24,7 @@ public class ResetPasswordEndpoint : IEndpoint
     {
         var user = await userManager.FindByEmailAsync(request.Email);
 
-        if (user is null || !await userManager.IsEmailConfirmedAsync(user))
+        if (user is null)
         {
             return Results.Problem(
                 statusCode: StatusCodes.Status400BadRequest,
@@ -37,6 +37,18 @@ public class ResetPasswordEndpoint : IEndpoint
         if (!result.Succeeded)
         {
             return result.Errors.ToValidationProblem();
+        }
+
+        if (!user.EmailConfirmed)
+        {
+            user.EmailConfirmed = true;
+
+            var updateResult = await userManager.UpdateAsync(user);
+
+            if (!updateResult.Succeeded)
+            {
+                return updateResult.Errors.ToValidationProblem();
+            }
         }
 
         return Results.Ok();

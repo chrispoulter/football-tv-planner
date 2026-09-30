@@ -17,9 +17,7 @@ public class ForgotPasswordEndpoint : IEndpoint
             .AddValidationFilter<ForgotPasswordRequest>()
             .WithTags(Tags.Account)
             .WithSummary("Forgot Password")
-            .WithDescription(
-                "Send a password reset link, if the email belongs to an account with a confirmed email address."
-            );
+            .WithDescription("Send a password reset link, if the email belongs to an account.");
     }
 
     private static async Task<IResult> HandleAsync(
@@ -32,7 +30,7 @@ public class ForgotPasswordEndpoint : IEndpoint
     {
         var user = await userManager.FindByEmailAsync(request.Email);
 
-        if (user is not null && await userManager.IsEmailConfirmedAsync(user))
+        if (user is not null)
         {
             var code = await userManager.GeneratePasswordResetTokenAsync(user);
 
