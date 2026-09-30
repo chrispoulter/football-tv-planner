@@ -6,9 +6,10 @@ export interface ProblemDetails {
     errors?: Record<string, string[]>;
 }
 
-// The API is proxied through this origin so the auth cookie is first-party
 export const apiClient = ky.create({
     prefix: '/api',
+    // Allow for the API cold starting
+    timeout: 30_000,
     hooks: {
         beforeError: [
             async ({ error }) => {
