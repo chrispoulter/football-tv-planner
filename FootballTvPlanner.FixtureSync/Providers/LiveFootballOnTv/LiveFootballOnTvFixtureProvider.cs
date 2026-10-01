@@ -6,11 +6,6 @@ using Microsoft.Extensions.Options;
 
 namespace FootballTvPlanner.FixtureSync.Providers.LiveFootballOnTv;
 
-/// <summary>
-/// Scrapes the UK televised football listings from live-footballontv.com. The home page
-/// lists every upcoming fixture with its UK kick-off time and channels, so one request
-/// returns everything available and all of it is synced.
-/// </summary>
 public partial class LiveFootballOnTvFixtureProvider(
     IHttpClientFactory httpClientFactory,
     IOptions<LiveFootballOnTvSettings> settings,
@@ -35,8 +30,6 @@ public partial class LiveFootballOnTvFixtureProvider(
         var fixtures = new List<ProviderFixture>();
         DateOnly? date = null;
 
-        // Dates and fixtures are siblings, so walk them in document order and carry the
-        // most recent date forward.
         foreach (var element in document.QuerySelectorAll(".fixture-date, .fixture"))
         {
             if (element.ClassList.Contains("fixture-date"))
@@ -92,7 +85,6 @@ public partial class LiveFootballOnTvFixtureProvider(
             return null;
         }
 
-        // Keep the channels in the order the page lists them.
         var channels = element
             .QuerySelectorAll(".channel-pill")
             .Select(pill => pill.TextContent.Trim())
@@ -112,7 +104,6 @@ public partial class LiveFootballOnTvFixtureProvider(
 
     private static DateOnly? ParseDate(string text)
     {
-        // "Friday 25th September 2026"
         var normalised = OrdinalSuffix().Replace(text.Trim(), "$1");
 
         return DateOnly.TryParseExact(

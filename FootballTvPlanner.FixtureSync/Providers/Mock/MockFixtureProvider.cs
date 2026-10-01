@@ -2,11 +2,6 @@ using Microsoft.Extensions.Options;
 
 namespace FootballTvPlanner.FixtureSync.Providers.Mock;
 
-/// <summary>
-/// Generates random televised fixtures from a fixed list of competitions so the app can be
-/// developed without a licensed data feed. Each date is seeded from its day number, so
-/// re-syncing the same range produces the same fixtures.
-/// </summary>
 public class MockFixtureProvider(IOptions<MockSettings> settings, TimeProvider timeProvider)
     : IFixtureProvider
 {

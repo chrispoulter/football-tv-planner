@@ -1,9 +1,5 @@
 namespace FootballTvPlanner.FixtureSync.Providers;
 
-/// <summary>
-/// UK broadcasters publish kick-off times in UK local time. Providers use this to convert
-/// them to UTC on the way in; everything stored and returned by the API is UTC.
-/// </summary>
 public static class UkTime
 {
     public static TimeZoneInfo TimeZone { get; } =
