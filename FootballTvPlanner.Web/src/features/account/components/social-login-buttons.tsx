@@ -10,7 +10,6 @@ interface SocialLoginButtonsProps {
 export function SocialLoginButtons({ returnUrl }: SocialLoginButtonsProps) {
     return (
         <>
-            {/* A full page navigation, as Google redirects back to the API */}
             <Button asChild variant="outline" className="w-full">
                 <a href={googleLoginUrl(returnUrl)}>
                     <GoogleIcon />

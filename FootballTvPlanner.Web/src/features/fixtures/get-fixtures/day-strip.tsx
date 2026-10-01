@@ -17,8 +17,6 @@ export function DayStrip({ date, onChange, disabled }: DayStripProps) {
 
     const today = todayLocal();
 
-    // Past days are never offered. The strip starts at today unless the selected day is
-    // further ahead than the strip reaches.
     const start = date > addDays(today, DAYS_SHOWN - 1) ? date : today;
 
     const isFirstDay = date <= today;

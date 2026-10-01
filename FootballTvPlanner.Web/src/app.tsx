@@ -1,4 +1,4 @@
-import { Navigate, Routes, Route } from 'react-router';
+import { Routes, Route } from 'react-router';
 import { RootLayout } from '@/components/root-layout';
 import { NotFoundPage } from '@/pages/not-found-page';
 
@@ -10,7 +10,6 @@ export default function App() {
     return (
         <Routes>
             <Route element={<RootLayout />}>
-                <Route index element={<Navigate to="/fixtures" replace />} />
                 {fixturesRoutes}
                 {accountRoutes}
                 {profileRoutes}

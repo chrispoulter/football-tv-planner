@@ -1,8 +1,5 @@
 import { Skeleton } from '@/components/ui/skeleton';
 
-/**
- * Matches the layout of a FixtureCard: kick-off time, teams, channels and actions.
- */
 export function FixtureCardSkeleton() {
     return (
         <div className="flex items-start gap-4 py-3">

@@ -11,26 +11,26 @@ const schema = z.object({
     rememberMachine: z.boolean(),
 });
 
-export type AuthenticatorCodeFormValues = z.infer<typeof schema>;
+export type TwoFactorFormValues = z.infer<typeof schema>;
 
-interface AuthenticatorCodeFormProps {
+interface TwoFactorFormProps {
     loading?: boolean;
-    onSubmit: (values: AuthenticatorCodeFormValues) => void;
+    onSubmit: (values: TwoFactorFormValues) => void;
     onUseRecoveryCode: () => void;
 }
 
-export function AuthenticatorCodeForm({
+export function TwoFactorForm({
     loading,
     onSubmit,
     onUseRecoveryCode,
-}: AuthenticatorCodeFormProps) {
-    const form = useForm<AuthenticatorCodeFormValues>({
+}: TwoFactorFormProps) {
+    const form = useForm<TwoFactorFormValues>({
         resolver: zodResolver(schema),
         defaultValues: {
             code: '',
             rememberMachine: false,
         },
-        // Focusing the invalid code input on submit stops its error showing
+        // HACK: prevent RHF from auto-focusing the first invalid field on submit, which breaks error state render
         shouldFocusError: false,
     });
 

@@ -38,7 +38,6 @@ export function SecurityTab() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    {/* Keyed so the form resets once a password has been set */}
                     {hasPassword ? (
                         <ChangePasswordForm key="change" />
                     ) : (

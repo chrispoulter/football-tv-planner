@@ -11,7 +11,6 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 
-// Only given the reset callback when rendered by an error boundary
 export function ErrorPage({
     resetErrorBoundary,
 }: Partial<Pick<FallbackProps, 'resetErrorBoundary'>>) {

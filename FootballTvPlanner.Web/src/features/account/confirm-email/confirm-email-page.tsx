@@ -23,7 +23,6 @@ export function ConfirmEmailPage() {
         changedEmail,
     });
 
-    // Pick up the confirmed or changed email address
     useEffect(() => {
         if (isSuccess) {
             queryClient.invalidateQueries({ queryKey: sessionKeys.all });

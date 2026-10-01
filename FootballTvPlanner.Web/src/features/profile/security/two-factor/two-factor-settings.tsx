@@ -11,7 +11,7 @@ import {
     useGetTwoFactor,
     useSetupTwoFactor,
 } from '../../profile-queries';
-import { RecoveryCodes } from './recovery-codes';
+import { TwoFactorRecoveryCodes } from './two-factor-recovery-codes';
 import { TwoFactorConfirm } from './two-factor-confirm';
 import { TwoFactorQRCode } from './two-factor-qr-code';
 import {
@@ -132,7 +132,7 @@ export function TwoFactorSettings() {
 
         case 'recovery-codes':
             return (
-                <RecoveryCodes
+                <TwoFactorRecoveryCodes
                     codes={recoveryCodes}
                     onDone={() => {
                         setRecoveryCodes([]);

@@ -11,15 +11,11 @@ import {
 interface AccountLayoutProps {
     title: React.ReactNode;
     description?: React.ReactNode;
-    // Shown below the card, e.g. a link to another account page
     footer?: React.ReactNode;
     className?: string;
     children: React.ReactNode;
 }
 
-/**
- * The centred card shared by the login, registration and password pages.
- */
 export function AccountLayout({
     title,
     description,
@@ -50,7 +46,6 @@ export function AccountLayout({
     );
 }
 
-// Styled for the muted text below the card
 export function AccountLink({
     className,
     ...props

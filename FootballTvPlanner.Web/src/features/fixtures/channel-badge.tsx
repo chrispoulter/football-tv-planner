@@ -5,9 +5,6 @@ interface ChannelColor {
     chroma?: number;
 }
 
-/**
- * Colours by the broadcaster (the first word of the name), so e.g. every "Sky Sports …"
- * channel shares a colour. The golden-angle step spreads similar names around the wheel.
  */
 function getChannelColor(channel: string): ChannelColor {
     const broadcaster = channel.split(' ')[0].toLowerCase();

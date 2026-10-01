@@ -6,7 +6,7 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { DeleteAccountButton } from './delete-account-button';
+import { DeleteAccountDialog } from './delete-account-dialog';
 
 export function DangerTab() {
     return (
@@ -22,7 +22,7 @@ export function DangerTab() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <DeleteAccountButton className="w-full sm:w-auto" />
+                    <DeleteAccountDialog className="w-full sm:w-auto" />
                 </CardContent>
             </Card>
         </>

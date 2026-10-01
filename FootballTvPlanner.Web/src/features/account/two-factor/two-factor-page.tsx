@@ -7,10 +7,7 @@ import {
     useLoginTwoFactor,
 } from '../account-queries';
 import { AccountLayout, AccountLink } from '../components/account-layout';
-import {
-    AuthenticatorCodeForm,
-    type AuthenticatorCodeFormValues,
-} from './authenticator-code-form';
+import { TwoFactorForm, type TwoFactorFormValues } from './two-factor-form';
 import {
     RecoveryCodeForm,
     type RecoveryCodeFormValues,
@@ -45,7 +42,7 @@ export function TwoFactorPage() {
         );
     }
 
-    function onAuthenticatorSubmit(values: AuthenticatorCodeFormValues) {
+    function onAuthenticatorSubmit(values: TwoFactorFormValues) {
         submit(values);
     }
 
@@ -74,7 +71,7 @@ export function TwoFactorPage() {
                     onUseAuthenticator={() => setUseRecoveryCode(false)}
                 />
             ) : (
-                <AuthenticatorCodeForm
+                <TwoFactorForm
                     loading={isPending}
                     onSubmit={onAuthenticatorSubmit}
                     onUseRecoveryCode={() => setUseRecoveryCode(true)}

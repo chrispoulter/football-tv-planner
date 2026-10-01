@@ -15,15 +15,15 @@ import { useAuth } from '@/components/auth-provider';
 import { Button } from '@/components/ui/button';
 import { useDeleteAccount } from '../profile-queries';
 
-interface DeleteAccountButtonProps {
+interface DeleteAccountDialogProps {
     disabled?: boolean;
     className?: string;
 }
 
-export function DeleteAccountButton({
+export function DeleteAccountDialog({
     disabled,
     className,
-}: DeleteAccountButtonProps) {
+}: DeleteAccountDialogProps) {
     const navigate = useNavigate();
 
     const { refreshAuth } = useAuth();

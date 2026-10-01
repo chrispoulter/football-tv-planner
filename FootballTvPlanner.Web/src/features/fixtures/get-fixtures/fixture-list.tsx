@@ -6,10 +6,6 @@ interface FixtureListProps {
     fixtures: FixtureSummary[];
 }
 
-/**
- * Groups a day's fixtures by competition, ordered by each competition's first kick-off.
- * Each competition is a card, stacked in a single column at every screen size.
- */
 export function FixtureList({ fixtures }: FixtureListProps) {
     const groups = new Map<string, FixtureSummary[]>();
 

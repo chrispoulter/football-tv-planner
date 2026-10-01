@@ -3,6 +3,6 @@ import { FixturesPage } from './get-fixtures/fixtures-page';
 
 export const fixturesRoutes = (
     <Route path="fixtures">
-        <Route index element={<FixturesPage />} />
+        <Route path="/" element={<FixturesPage />} />
     </Route>
 );

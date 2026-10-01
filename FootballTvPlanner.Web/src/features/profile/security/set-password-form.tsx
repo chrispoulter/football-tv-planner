@@ -22,9 +22,6 @@ const schema = z
 
 type SetPasswordFormValues = z.infer<typeof schema>;
 
-/**
- * For accounts created with Google, so they can also sign in with their email.
- */
 export function SetPasswordForm() {
     const { mutate: setPassword, isPending } = useSetPassword();
 

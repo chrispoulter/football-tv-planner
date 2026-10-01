@@ -1,12 +1,12 @@
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 
-interface RecoveryCodesProps {
+interface TwoFactorRecoveryCodesProps {
     codes: string[];
     onDone: () => void;
 }
 
-export function RecoveryCodes({ codes, onDone }: RecoveryCodesProps) {
+export function TwoFactorRecoveryCodes({ codes, onDone }: TwoFactorRecoveryCodesProps) {
     const text = codes.join('\n');
 
     async function onCopy() {
