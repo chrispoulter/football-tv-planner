@@ -6,7 +6,7 @@ import {
     type LoginTwoFactorRequest,
     useLoginTwoFactor,
 } from '../account-queries';
-import { AccountLayout, AccountLink } from '../components/account-layout';
+import { AccountLayout, AccountLink } from '../account-layout';
 import { TwoFactorForm, type TwoFactorFormValues } from './two-factor-form';
 import {
     RecoveryCodeForm,

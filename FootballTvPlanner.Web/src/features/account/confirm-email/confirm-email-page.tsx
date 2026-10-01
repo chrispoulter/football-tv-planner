@@ -6,7 +6,7 @@ import { Metadata } from '@/components/metadata';
 import { PageLoading } from '@/components/page-loading';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useConfirmEmail } from '../account-queries';
-import { AccountLayout, AccountLink } from '../components/account-layout';
+import { AccountLayout, AccountLink } from '../account-layout';
 
 export function ConfirmEmailPage() {
     const [searchParams] = useSearchParams();

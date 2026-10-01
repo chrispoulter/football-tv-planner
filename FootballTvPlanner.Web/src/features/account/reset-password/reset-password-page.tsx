@@ -3,7 +3,7 @@ import { toast } from 'sonner';
 import { Metadata } from '@/components/metadata';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useResetPassword } from '../account-queries';
-import { AccountLayout, AccountLink } from '../components/account-layout';
+import { AccountLayout, AccountLink } from '../account-layout';
 import {
     ResetPasswordForm,
     type ResetPasswordFormValues,

@@ -1,8 +1,5 @@
 import { Spinner } from '@/components/ui/spinner';
 
-/**
- * Shown while the session loads, before deciding whether a page is allowed.
- */
 export function PageLoading() {
     return (
         <div className="flex flex-1 items-center justify-center">

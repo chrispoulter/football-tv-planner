@@ -2,10 +2,11 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router';
 import { toast } from 'sonner';
 import { Metadata } from '@/components/metadata';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Separator } from '@/components/ui/separator';
 import { returnUrl } from '@/lib/return-url';
 import { useLogin } from '../account-queries';
-import { AccountLayout, AccountLink } from '../components/account-layout';
-import { SocialLoginButtons } from '../components/social-login-buttons';
+import { AccountLayout, AccountLink } from '../account-layout';
+import { SocialLoginButtons } from '../social-login-buttons';
 import type { TwoFactorState } from '../two-factor/two-factor-state';
 import { LoginForm, type LoginFormValues } from './login-form';
 
@@ -70,6 +71,13 @@ export function LoginPage() {
             )}
 
             <SocialLoginButtons returnUrl={from} />
+
+            <div className="relative">
+                <Separator />
+                <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-2 text-xs text-muted-foreground">
+                    or
+                </span>
+            </div>
 
             <LoginForm loading={isPending} onSubmit={onSubmit} />
         </AccountLayout>

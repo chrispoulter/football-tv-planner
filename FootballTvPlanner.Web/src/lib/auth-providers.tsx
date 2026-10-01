@@ -1,10 +1,10 @@
-export interface AuthProvider {
+export interface AuthProviderConfig {
     id: string;
     label: string;
     icon: React.ReactNode;
 }
 
-export const authProviders: AuthProvider[] = [
+export const authProviders: AuthProviderConfig[] = [
     {
         id: 'Google',
         label: 'Google',
