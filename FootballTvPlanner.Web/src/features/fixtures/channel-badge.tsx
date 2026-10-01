@@ -5,7 +5,6 @@ interface ChannelColor {
     chroma?: number;
 }
 
- */
 function getChannelColor(channel: string): ChannelColor {
     const broadcaster = channel.split(' ')[0].toLowerCase();
 

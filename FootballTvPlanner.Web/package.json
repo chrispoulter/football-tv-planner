@@ -7,8 +7,10 @@
         "dev": "vite",
         "build": "tsc -b && vite build",
         "lint": "eslint --cache .",
+        "lint:fix": "eslint --fix .",
         "preview": "vite preview",
-        "format": "prettier . --write"
+        "format": "prettier --write .",
+        "format:check": "prettier --check ."
     },
     "dependencies": {
         "@fontsource-variable/inter": "^5.2.8",

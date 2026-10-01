@@ -6,7 +6,10 @@ interface TwoFactorRecoveryCodesProps {
     onDone: () => void;
 }
 
-export function TwoFactorRecoveryCodes({ codes, onDone }: TwoFactorRecoveryCodesProps) {
+export function TwoFactorRecoveryCodes({
+    codes,
+    onDone,
+}: TwoFactorRecoveryCodesProps) {
     const text = codes.join('\n');
 
     async function onCopy() {
