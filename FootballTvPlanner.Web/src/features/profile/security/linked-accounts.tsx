@@ -5,18 +5,13 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { QueryError } from '@/components/query-error';
-import { GoogleIcon } from '@/features/account/components/google-icon';
+import { authProviders } from '@/lib/auth-providers';
 import {
     linkAccountUrl,
     useGetLinkedAccounts,
     useRemoveLinkedAccount,
 } from '../profile-queries';
 
-const providerIcons: Record<string, React.ReactNode> = {
-    Google: <GoogleIcon />,
-};
-
-// Set by the API when linking fails
 const linkErrors: Record<string, string> = {
     link: 'Unable to link the account, please try again.',
     linked: 'That account is already linked to a different user.',
@@ -37,7 +32,6 @@ export function LinkedAccounts({ hasPassword }: LinkedAccountsProps) {
         variables: removingProvider,
     } = useRemoveLinkedAccount();
 
-    // Report a failed link once, then drop it from the URL
     useEffect(() => {
         const linkError = searchParams.get('error');
 
@@ -90,7 +84,10 @@ export function LinkedAccounts({ hasPassword }: LinkedAccountsProps) {
                     className="flex items-center justify-between gap-4"
                 >
                     <div className="flex items-center gap-3">
-                        {providerIcons[account.provider]}
+                        {
+                            authProviders.find((p) => p.id === account.provider)
+                                ?.icon
+                        }
                         <div>
                             <p className="text-sm font-medium">
                                 {account.displayName}

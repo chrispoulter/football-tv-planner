@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { googleLoginUrl } from '../account-queries';
-import { GoogleIcon } from './google-icon';
+import { authProviders } from '@/lib/auth-providers';
+import { externalLoginUrl } from '../account-queries';
 
 interface SocialLoginButtonsProps {
     returnUrl?: string;
@@ -10,12 +10,19 @@ interface SocialLoginButtonsProps {
 export function SocialLoginButtons({ returnUrl }: SocialLoginButtonsProps) {
     return (
         <>
-            <Button asChild variant="outline" className="w-full">
-                <a href={googleLoginUrl(returnUrl)}>
-                    <GoogleIcon />
-                    Continue with Google
-                </a>
-            </Button>
+            {authProviders.map((provider) => (
+                <Button
+                    key={provider.id}
+                    asChild
+                    variant="outline"
+                    className="w-full"
+                >
+                    <a href={externalLoginUrl(provider.id, returnUrl)}>
+                        {provider.icon}
+                        Continue with {provider.label}
+                    </a>
+                </Button>
+            ))}
 
             <div className="relative">
                 <Separator />

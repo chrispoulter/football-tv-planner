@@ -123,8 +123,8 @@ export const useResetPassword = () =>
                 .then(() => undefined),
     });
 
-export function googleLoginUrl(returnUrl = '/') {
-    const searchParams = new URLSearchParams({ provider: 'Google', returnUrl });
+export function externalLoginUrl(provider: string, returnUrl = '/') {
+    const searchParams = new URLSearchParams({ provider, returnUrl });
 
     return `/api/account/external-login?${searchParams}`;
 }

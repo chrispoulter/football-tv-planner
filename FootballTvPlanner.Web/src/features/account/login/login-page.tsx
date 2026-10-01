@@ -10,7 +10,7 @@ import type { TwoFactorState } from '../two-factor/two-factor-state';
 import { LoginForm, type LoginFormValues } from './login-form';
 
 const externalLoginErrors: Record<string, string> = {
-    external: 'Unable to sign in with Google, please try again.',
+    external: 'Unable to sign in, please try again.',
     locked: 'This account has been locked out, please try again later.',
 };
 
