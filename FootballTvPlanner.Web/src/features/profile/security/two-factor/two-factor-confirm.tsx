@@ -10,9 +10,6 @@ interface TwoFactorConfirmProps {
     onCancel: () => void;
 }
 
-/**
- * Asks before a change that can't be undone, such as disabling 2FA.
- */
 export function TwoFactorConfirm({
     message,
     confirmLabel,

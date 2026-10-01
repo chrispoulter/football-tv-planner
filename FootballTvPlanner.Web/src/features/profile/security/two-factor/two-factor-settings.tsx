@@ -121,7 +121,7 @@ export function TwoFactorSettings() {
         case 'recovery-codes':
             return (
                 <TwoFactorRecoveryCodes
-                    codes={recoveryCodes}
+                    recoveryCodes={recoveryCodes}
                     onDone={() => {
                         setRecoveryCodes([]);
                         setStep('idle');

@@ -2,56 +2,42 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 
 interface TwoFactorRecoveryCodesProps {
-    codes: string[];
+    recoveryCodes: string[];
     onDone: () => void;
 }
 
 export function TwoFactorRecoveryCodes({
-    codes,
+    recoveryCodes,
     onDone,
 }: TwoFactorRecoveryCodesProps) {
-    const text = codes.join('\n');
-
-    async function onCopy() {
-        await navigator.clipboard.writeText(text);
+    const handleCopyAllCodes = () => {
+        navigator.clipboard.writeText(recoveryCodes.join('\n'));
         toast.success('Recovery codes copied to clipboard');
-    }
-
-    function onDownload() {
-        const url = URL.createObjectURL(
-            new Blob([text], { type: 'text/plain' })
-        );
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = 'football-tv-planner-recovery-codes.txt';
-        link.click();
-        URL.revokeObjectURL(url);
-    }
+    };
 
     return (
         <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">
-                Save these recovery codes somewhere safe. Each one can be used
-                once to sign in if you lose access to your authenticator app.
-                They won&apos;t be shown again.
+            <p className="text-sm font-medium">
+                Save your recovery codes. Each code can only be used once.
             </p>
-
-            <ul className="grid grid-cols-2 gap-2 rounded-md border p-4 font-mono text-sm">
-                {codes.map((code) => (
-                    <li key={code} className="select-all">
+            <div className="grid grid-cols-2 gap-2 rounded-md border p-4">
+                {recoveryCodes.map((code) => (
+                    <code key={code} className="font-mono text-sm select-all">
                         {code}
-                    </li>
+                    </code>
                 ))}
-            </ul>
-
+            </div>
             <div className="flex flex-col-reverse gap-2 sm:flex-row">
-                <Button variant="outline" onClick={onCopy}>
-                    Copy
+                <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleCopyAllCodes}
+                >
+                    Copy all
                 </Button>
-                <Button variant="outline" onClick={onDownload}>
-                    Download
+                <Button type="button" onClick={onDone}>
+                    Done
                 </Button>
-                <Button onClick={onDone}>Done</Button>
             </div>
         </div>
     );
