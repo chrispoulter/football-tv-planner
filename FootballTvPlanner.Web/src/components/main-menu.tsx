@@ -2,7 +2,7 @@ import { NavLink } from 'react-router';
 import { Tv } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-const navItems = [{ to: '/fixtures', label: 'Fixtures', icon: Tv }];
+const navItems = [{ to: '/', label: 'Fixtures', icon: Tv }];
 
 export function MainMenu() {
     return (
