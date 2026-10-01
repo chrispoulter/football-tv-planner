@@ -78,15 +78,7 @@ public class ExternalLoginCallbackEndpoint : IEndpoint
                 return Results.Redirect(ExternalLoginRedirects.LoginError("locked"));
             }
 
-            if (!user.EmailConfirmed)
-            {
-                if (await userManager.HasPasswordAsync(user))
-                {
-                    await userManager.RemovePasswordAsync(user);
-                }
-
-                user.EmailConfirmed = true;
-            }
+            user.EmailConfirmed = true;
 
             if (string.IsNullOrEmpty(user.Name))
             {
