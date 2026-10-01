@@ -25,7 +25,6 @@ export function TwoFactorPage() {
 
     const { mutate: loginTwoFactor, isPending } = useLoginTwoFactor();
 
-    // Only reachable from the login page, once the password has been accepted
     if (!state) {
         return <Navigate to="/login" replace />;
     }
