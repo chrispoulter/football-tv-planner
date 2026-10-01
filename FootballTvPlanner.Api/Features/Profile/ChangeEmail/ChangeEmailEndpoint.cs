@@ -52,12 +52,10 @@ public class ChangeEmailEndpoint : IEndpoint
             );
         }
 
+        // Don't reveal that the address belongs to another account
         if (existingUser is not null)
         {
-            return Results.Problem(
-                statusCode: StatusCodes.Status400BadRequest,
-                title: "This email address is already in use."
-            );
+            return Results.Ok();
         }
 
         var code = await userManager.GenerateChangeEmailTokenAsync(user, request.NewEmail);
