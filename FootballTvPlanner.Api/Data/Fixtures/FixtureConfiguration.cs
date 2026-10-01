@@ -7,8 +7,6 @@ public class FixtureConfiguration : IEntityTypeConfiguration<Fixture>
 {
     public void Configure(EntityTypeBuilder<Fixture> builder)
     {
-        builder.ToTable("fixtures");
-
         builder.Property(f => f.Id).HasDefaultValueSql("gen_random_uuid()").ValueGeneratedOnAdd();
 
         builder.Property(f => f.Source).IsRequired();

@@ -107,7 +107,7 @@ namespace FootballTvPlanner.Api.Migrations
             );
 
             migrationBuilder.CreateTable(
-                name: "fixtures",
+                name: "Fixtures",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(
@@ -128,7 +128,7 @@ namespace FootballTvPlanner.Api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_fixtures", x => x.Id);
+                    table.PrimaryKey("PK_Fixtures", x => x.Id);
                 }
             );
 
@@ -269,7 +269,7 @@ namespace FootballTvPlanner.Api.Migrations
             );
 
             migrationBuilder.CreateTable(
-                name: "user_fixtures",
+                name: "UserFixtures",
                 columns: table => new
                 {
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -281,18 +281,18 @@ namespace FootballTvPlanner.Api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_user_fixtures", x => new { x.UserId, x.FixtureId });
+                    table.PrimaryKey("PK_UserFixtures", x => new { x.UserId, x.FixtureId });
                     table.ForeignKey(
-                        name: "fk_user_fixtures_fixtures_fixture_id",
-                        column: x => x.FixtureId,
-                        principalTable: "fixtures",
+                        name: "FK_UserFixtures_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade
                     );
                     table.ForeignKey(
-                        name: "fk_user_fixtures_users_user_id",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
+                        name: "FK_UserFixtures_Fixtures_FixtureId",
+                        column: x => x.FixtureId,
+                        principalTable: "Fixtures",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade
                     );
@@ -351,27 +351,27 @@ namespace FootballTvPlanner.Api.Migrations
             );
 
             migrationBuilder.CreateIndex(
-                name: "IX_fixtures_Competition",
-                table: "fixtures",
+                name: "IX_Fixtures_Competition",
+                table: "Fixtures",
                 column: "Competition"
             );
 
             migrationBuilder.CreateIndex(
-                name: "IX_fixtures_KickoffUtc",
-                table: "fixtures",
+                name: "IX_Fixtures_KickoffUtc",
+                table: "Fixtures",
                 column: "KickoffUtc"
             );
 
             migrationBuilder.CreateIndex(
-                name: "IX_fixtures_Source_ExternalId",
-                table: "fixtures",
+                name: "IX_Fixtures_Source_ExternalId",
+                table: "Fixtures",
                 columns: new[] { "Source", "ExternalId" },
                 unique: true
             );
 
             migrationBuilder.CreateIndex(
-                name: "IX_user_fixtures_FixtureId",
-                table: "user_fixtures",
+                name: "IX_UserFixtures_FixtureId",
+                table: "UserFixtures",
                 column: "FixtureId"
             );
         }
@@ -391,13 +391,13 @@ namespace FootballTvPlanner.Api.Migrations
 
             migrationBuilder.DropTable(name: "DataProtectionKeys");
 
-            migrationBuilder.DropTable(name: "user_fixtures");
+            migrationBuilder.DropTable(name: "UserFixtures");
 
             migrationBuilder.DropTable(name: "AspNetRoles");
 
-            migrationBuilder.DropTable(name: "fixtures");
-
             migrationBuilder.DropTable(name: "AspNetUsers");
+
+            migrationBuilder.DropTable(name: "Fixtures");
         }
     }
 }

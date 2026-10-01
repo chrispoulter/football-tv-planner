@@ -7,8 +7,6 @@ public class UserFixtureConfiguration : IEntityTypeConfiguration<UserFixture>
 {
     public void Configure(EntityTypeBuilder<UserFixture> builder)
     {
-        builder.ToTable("user_fixtures");
-
         builder.Property(uf => uf.UserId);
         builder.Property(uf => uf.FixtureId);
         builder.Property(uf => uf.CreatedAt);
@@ -19,14 +17,12 @@ public class UserFixtureConfiguration : IEntityTypeConfiguration<UserFixture>
             .HasOne(uf => uf.User)
             .WithMany()
             .HasForeignKey(uf => uf.UserId)
-            .HasConstraintName("fk_user_fixtures_users_user_id")
             .OnDelete(DeleteBehavior.Cascade);
 
         builder
             .HasOne(uf => uf.Fixture)
             .WithMany()
             .HasForeignKey(uf => uf.FixtureId)
-            .HasConstraintName("fk_user_fixtures_fixtures_fixture_id")
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FootballTvPlanner.Api.Migrations
 {
     [DbContext(typeof(FootballTvPlannerDbContext))]
-    [Migration("20261001143603_InitialCreate")]
+    [Migration("20261001144958_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -69,7 +69,7 @@ namespace FootballTvPlanner.Api.Migrations
                     b.HasIndex("Source", "ExternalId")
                         .IsUnique();
 
-                    b.ToTable("fixtures", (string)null);
+                    b.ToTable("Fixtures");
                 });
 
             modelBuilder.Entity("FootballTvPlanner.Api.Data.Schedule.UserFixture", b =>
@@ -87,7 +87,7 @@ namespace FootballTvPlanner.Api.Migrations
 
                     b.HasIndex("FixtureId");
 
-                    b.ToTable("user_fixtures", (string)null);
+                    b.ToTable("UserFixtures");
                 });
 
             modelBuilder.Entity("FootballTvPlanner.Api.Data.Users.User", b =>
@@ -320,15 +320,13 @@ namespace FootballTvPlanner.Api.Migrations
                         .WithMany()
                         .HasForeignKey("FixtureId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_user_fixtures_fixtures_fixture_id");
+                        .IsRequired();
 
                     b.HasOne("FootballTvPlanner.Api.Data.Users.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_user_fixtures_users_user_id");
+                        .IsRequired();
 
                     b.Navigation("Fixture");
 
