@@ -38,7 +38,7 @@ export function LoginPage() {
                             from,
                         };
 
-                        navigate('/account/two-factor', { state });
+                        navigate('/two-factor', { state });
                         return;
                     }
 
@@ -57,7 +57,7 @@ export function LoginPage() {
             footer={
                 <>
                     Don&apos;t have an account?{' '}
-                    <AccountLink to="/account/register">Sign up</AccountLink>
+                    <AccountLink to="/register">Sign up</AccountLink>
                 </>
             }
         >

@@ -63,7 +63,7 @@ export function LoginForm({ loading, onSubmit }: LoginFormProps) {
                     />
 
                     <Link
-                        to="/account/forgot-password"
+                        to="/forgot-password"
                         className="text-sm whitespace-nowrap text-muted-foreground underline-offset-4 hover:underline"
                     >
                         Forgot password?

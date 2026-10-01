@@ -61,7 +61,7 @@ public class ChangeEmailEndpoint : IEndpoint
         var code = await userManager.GenerateChangeEmailTokenAsync(user, request.NewEmail);
 
         var link = QueryHelpers.AddQueryString(
-            $"{emailSettings.Value.SiteUrl}/account/confirm-email",
+            $"{emailSettings.Value.SiteUrl}/confirm-email",
             new Dictionary<string, string?>
             {
                 ["userId"] = user.Id.ToString(),

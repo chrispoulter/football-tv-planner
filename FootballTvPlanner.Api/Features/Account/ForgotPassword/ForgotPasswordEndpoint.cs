@@ -35,7 +35,7 @@ public class ForgotPasswordEndpoint : IEndpoint
             var code = await userManager.GeneratePasswordResetTokenAsync(user);
 
             var link = QueryHelpers.AddQueryString(
-                $"{emailSettings.Value.SiteUrl}/account/reset-password",
+                $"{emailSettings.Value.SiteUrl}/reset-password",
                 new Dictionary<string, string?> { ["email"] = user.Email, ["code"] = code }
             );
 

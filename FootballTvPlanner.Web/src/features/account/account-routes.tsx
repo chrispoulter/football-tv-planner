@@ -8,7 +8,7 @@ import { ResetPasswordPage } from './reset-password/reset-password-page';
 import { TwoFactorPage } from './two-factor/two-factor-page';
 
 export const accountRoutes = (
-    <Route path="account">
+    <>
         <Route element={<RequireGuest />}>
             <Route path="login" element={<LoginPage />} />
             <Route path="two-factor" element={<TwoFactorPage />} />
@@ -19,5 +19,5 @@ export const accountRoutes = (
 
         {/* Also used while signed in to confirm a change of email */}
         <Route path="confirm-email" element={<ConfirmEmailPage />} />
-    </Route>
+    </>
 );

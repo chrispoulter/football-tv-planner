@@ -35,7 +35,7 @@ export function DeleteAccountDialog({
             onSuccess: () => {
                 toast.success('Account deleted');
                 refreshAuth();
-                navigate('/');
+                navigate('/login');
             },
             onError: (error) => toast.error(error.message),
         });

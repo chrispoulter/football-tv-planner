@@ -29,7 +29,7 @@ export function BookmarkButton({ fixture }: BookmarkButtonProps) {
     function onClick() {
         if (!user) {
             toast.info('Sign in to build your own schedule');
-            navigate('/account/login', { state: { from: location } });
+            navigate('/login', { state: { from: location } });
             return;
         }
 

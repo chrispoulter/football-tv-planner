@@ -9,5 +9,5 @@ export function LogoutRedirect() {
         clearAuth();
     }, [clearAuth]);
 
-    return <Navigate to="/account/login" />;
+    return <Navigate to="/login" />;
 }

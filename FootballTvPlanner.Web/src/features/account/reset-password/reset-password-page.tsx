@@ -32,7 +32,7 @@ export function ResetPasswordPage() {
                     toast.success(
                         'Password reset successfully. Please sign in.'
                     );
-                    navigate('/account/login');
+                    navigate('/login');
                 },
                 onError: (error) => toast.error(error.message),
             }
@@ -43,9 +43,7 @@ export function ResetPasswordPage() {
         <AccountLayout
             title="Reset your password"
             description="Enter your new password below"
-            footer={
-                <AccountLink to="/account/login">Back to sign in</AccountLink>
-            }
+            footer={<AccountLink to="/login">Back to sign in</AccountLink>}
         >
             <Metadata title="Reset Password" />
 
@@ -55,7 +53,7 @@ export function ResetPasswordPage() {
                 <Alert variant="destructive">
                     <AlertDescription>
                         This link is invalid or has expired. Please{' '}
-                        <AccountLink to="/account/forgot-password">
+                        <AccountLink to="/forgot-password">
                             request a new one
                         </AccountLink>
                         .

@@ -33,7 +33,7 @@ export function RegisterPage() {
             footer={
                 <>
                     Already have an account?{' '}
-                    <AccountLink to="/account/login">Sign in</AccountLink>
+                    <AccountLink to="/login">Sign in</AccountLink>
                 </>
             }
         >

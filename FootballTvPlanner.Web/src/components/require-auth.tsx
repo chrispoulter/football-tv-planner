@@ -13,9 +13,7 @@ export function RequireAuth() {
 
     if (!user) {
         // Return here after signing in
-        return (
-            <Navigate to="/account/login" state={{ from: location }} replace />
-        );
+        return <Navigate to="/login" state={{ from: location }} replace />;
     }
 
     return <Outlet />;

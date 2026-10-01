@@ -10,7 +10,7 @@ public static class ExternalLoginRedirects
     public static string LocalOrRoot(string? returnUrl) =>
         returnUrl is ['/', not '/' and not '\\', ..] or "/" ? returnUrl : "/";
 
-    public static string LoginError(string error) => WithError("/account/login", error);
+    public static string LoginError(string error) => WithError("/login", error);
 
     public static string WithError(string returnUrl, string error) =>
         QueryHelpers.AddQueryString(returnUrl, "error", error);

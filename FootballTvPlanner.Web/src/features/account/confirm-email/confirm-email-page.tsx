@@ -48,7 +48,7 @@ export function ConfirmEmailPage() {
             title={title}
             footer={
                 !isPending && (
-                    <AccountLink to={user ? '/profile' : '/account/login'}>
+                    <AccountLink to={user ? '/profile' : '/login'}>
                         {user ? 'Back to profile' : 'Sign in'}
                     </AccountLink>
                 )

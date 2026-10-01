@@ -25,7 +25,7 @@ export function UserMenu() {
     if (!user) {
         return (
             <Button asChild variant="secondary">
-                <Link to="/account/login">Sign In</Link>
+                <Link to="/login">Sign In</Link>
             </Button>
         );
     }

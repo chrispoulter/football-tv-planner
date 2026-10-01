@@ -27,7 +27,7 @@ export function TwoFactorPage() {
 
     // Only reachable from the login page, once the password has been accepted
     if (!state) {
-        return <Navigate to="/account/login" replace />;
+        return <Navigate to="/login" replace />;
     }
 
     const { rememberMe, from } = state;
@@ -58,9 +58,7 @@ export function TwoFactorPage() {
                     ? 'Enter one of your backup recovery codes'
                     : 'Enter the 6-digit code from your authenticator app'
             }
-            footer={
-                <AccountLink to="/account/login">Back to sign in</AccountLink>
-            }
+            footer={<AccountLink to="/login">Back to sign in</AccountLink>}
         >
             <Metadata title="Two-Factor Authentication" />
 
