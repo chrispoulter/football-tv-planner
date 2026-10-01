@@ -16,7 +16,6 @@ export function ResetPasswordPage() {
 
     const { mutate: resetPassword, isPending } = useResetPassword();
 
-    // From the link in the password reset email
     const email = searchParams.get('email');
     const code = searchParams.get('code');
 
