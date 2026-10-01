@@ -11,7 +11,8 @@ import {
     useSetupTwoFactor,
 } from '../../profile-queries';
 import { TwoFactorRecoveryCodes } from './two-factor-recovery-codes';
-import { TwoFactorConfirm } from './two-factor-confirm';
+import { TwoFactorConfirmDisable } from './two-factor-confirm-disable';
+import { TwoFactorConfirmRecoveryCodes } from './two-factor-confirm-recovery-codes';
 import { TwoFactorQRCode } from './two-factor-qr-code';
 import {
     TwoFactorVerifyForm,
@@ -131,11 +132,7 @@ export function TwoFactorSettings() {
 
         case 'confirm-disable':
             return (
-                <TwoFactorConfirm
-                    message="You'll no longer need a code from your authenticator app to sign in. Your authenticator app entry and recovery codes will stop working."
-                    confirmLabel="Disable 2FA"
-                    loadingLabel="Disabling..."
-                    destructive
+                <TwoFactorConfirmDisable
                     loading={isDisabling}
                     onConfirm={onDisable}
                     onCancel={() => setStep('idle')}
@@ -144,10 +141,7 @@ export function TwoFactorSettings() {
 
         case 'confirm-regenerate':
             return (
-                <TwoFactorConfirm
-                    message="Your existing recovery codes will stop working and be replaced with new ones."
-                    confirmLabel="Regenerate Codes"
-                    loadingLabel="Regenerating..."
+                <TwoFactorConfirmRecoveryCodes
                     loading={isGenerating}
                     onConfirm={onRegenerate}
                     onCancel={() => setStep('idle')}
