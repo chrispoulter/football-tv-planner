@@ -1,5 +1,3 @@
 namespace FootballTvPlanner.Api.Features.Profile.LinkedAccounts.GetLinkedAccounts;
 
-public record LinkedAccountsResponse(IEnumerable<LinkedAccount> Accounts);
-
-public record LinkedAccount(string Provider, string DisplayName, bool IsLinked);
+public record LinkedAccountsResponse(IEnumerable<string> Providers);

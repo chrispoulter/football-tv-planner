@@ -55,44 +55,32 @@ export function LinkedAccounts({ hasPassword }: LinkedAccountsProps) {
         return <QueryError error={error} />;
     }
 
-    if (data.accounts.length === 0) {
-        return (
-            <p className="text-sm text-muted-foreground">
-                No external sign-in providers are available.
-            </p>
-        );
-    }
+    const isLinked = (providerId: string) =>
+        data.providers.includes(providerId);
 
-    const linkedCount = data.accounts.filter((a) => a.isLinked).length;
+    const canUnlink = hasPassword || data.providers.length > 1;
 
-    // Keep at least one way to sign in
-    const canUnlink = hasPassword || linkedCount > 1;
-
-    function onUnlink(provider: string, displayName: string) {
-        removeLinkedAccount(provider, {
-            onSuccess: () =>
-                toast.success(`${displayName} account disconnected`),
+    function onUnlink(providerId: string, label: string) {
+        removeLinkedAccount(providerId, {
+            onSuccess: () => toast.success(`${label} account disconnected`),
             onError: (error) => toast.error(error.message),
         });
     }
 
     return (
         <div className="space-y-4">
-            {data.accounts.map((account) => (
+            {authProviders.map((provider) => (
                 <div
-                    key={account.provider}
+                    key={provider.id}
                     className="flex items-center justify-between gap-4"
                 >
                     <div className="flex items-center gap-3">
-                        {
-                            authProviders.find((p) => p.id === account.provider)
-                                ?.icon
-                        }
+                        {provider.icon}
                         <div>
                             <p className="text-sm font-medium">
-                                {account.displayName}
+                                {provider.label}
                             </p>
-                            {account.isLinked ? (
+                            {isLinked(provider.id) ? (
                                 <Badge variant="secondary">Connected</Badge>
                             ) : (
                                 <Badge variant="outline">Not connected</Badge>
@@ -100,25 +88,19 @@ export function LinkedAccounts({ hasPassword }: LinkedAccountsProps) {
                         </div>
                     </div>
 
-                    {account.isLinked ? (
+                    {isLinked(provider.id) ? (
                         <Button
                             variant="outline"
                             size="sm"
                             disabled={
                                 !canUnlink ||
-                                (isRemoving &&
-                                    removingProvider === account.provider)
-                            }
-                            title={
-                                canUnlink
-                                    ? undefined
-                                    : 'Set a password before disconnecting your only way to sign in'
+                                (isRemoving && removingProvider === provider.id)
                             }
                             onClick={() =>
-                                onUnlink(account.provider, account.displayName)
+                                onUnlink(provider.id, provider.label)
                             }
                         >
-                            {isRemoving && removingProvider === account.provider
+                            {isRemoving && removingProvider === provider.id
                                 ? 'Disconnecting...'
                                 : 'Disconnect'}
                         </Button>
@@ -126,7 +108,7 @@ export function LinkedAccounts({ hasPassword }: LinkedAccountsProps) {
                         <Button asChild variant="outline" size="sm">
                             <a
                                 href={linkAccountUrl(
-                                    account.provider,
+                                    provider.id,
                                     '/profile/security'
                                 )}
                             >
@@ -136,13 +118,6 @@ export function LinkedAccounts({ hasPassword }: LinkedAccountsProps) {
                     )}
                 </div>
             ))}
-
-            {!canUnlink && (
-                <p className="text-xs text-muted-foreground">
-                    Set a password before disconnecting your only way to sign
-                    in.
-                </p>
-            )}
         </div>
     );
 }

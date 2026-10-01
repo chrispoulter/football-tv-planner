@@ -15,14 +15,13 @@ public class GetLinkedAccountsEndpoint : IEndpoint
             .WithTags(Tags.Profile)
             .WithSummary("Get Linked Accounts")
             .WithDescription(
-                "List the external login providers, such as Google, and whether the current user has linked each one."
+                "List the external login providers, such as Google, that the current user has linked."
             );
     }
 
     private static async Task<IResult> HandleAsync(
         CurrentUser currentUser,
-        UserManager<User> userManager,
-        SignInManager<User> signInManager
+        UserManager<User> userManager
     )
     {
         var user = await userManager.GetUserAsync(currentUser);
@@ -36,14 +35,7 @@ public class GetLinkedAccountsEndpoint : IEndpoint
         }
 
         var logins = await userManager.GetLoginsAsync(user);
-        var schemes = await signInManager.GetExternalAuthenticationSchemesAsync();
 
-        var accounts = schemes.Select(s => new LinkedAccount(
-            s.Name,
-            s.DisplayName ?? s.Name,
-            logins.Any(l => l.LoginProvider == s.Name)
-        ));
-
-        return Results.Ok(new LinkedAccountsResponse(accounts));
+        return Results.Ok(new LinkedAccountsResponse(logins.Select(l => l.LoginProvider)));
     }
 }

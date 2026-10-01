@@ -156,15 +156,8 @@ export const useGenerateRecoveryCodes = () => {
     });
 };
 
-// The API leaves out false values
-export interface LinkedAccount {
-    provider: string;
-    displayName: string;
-    isLinked?: boolean;
-}
-
 interface LinkedAccountsResponse {
-    accounts: LinkedAccount[];
+    providers: string[];
 }
 
 export const useGetLinkedAccounts = () =>
