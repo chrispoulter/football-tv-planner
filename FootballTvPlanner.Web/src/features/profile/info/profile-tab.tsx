@@ -1,8 +1,5 @@
-import { toast } from 'sonner';
 import { useAuth } from '@/components/auth-provider';
-import { Button } from '@/components/ui/button';
 import { Metadata } from '@/components/metadata';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
     Card,
     CardContent,
@@ -10,23 +7,11 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { useResendConfirmationEmail } from '../profile-queries';
 import { UpdateEmailForm } from './update-email-form';
 import { UpdateProfileForm } from './update-profile-form';
 
 export function ProfileTab() {
     const { user } = useAuth();
-
-    const { mutate: resendConfirmation, isPending: isResending } =
-        useResendConfirmationEmail();
-
-    function onResendConfirmation() {
-        resendConfirmation(undefined, {
-            onSuccess: () =>
-                toast.success(`Confirmation email sent to ${user?.email}`),
-            onError: (error) => toast.error(error.message),
-        });
-    }
 
     // RequireAuth only renders this once the user has loaded
     if (!user) {
@@ -64,27 +49,6 @@ export function ProfileTab() {
                             {user.email}
                         </span>
                     </p>
-
-                    {!user.isEmailConfirmed && (
-                        <Alert>
-                            <AlertDescription className="space-y-3">
-                                <p>
-                                    Your email address hasn&apos;t been
-                                    confirmed yet.
-                                </p>
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={onResendConfirmation}
-                                    disabled={isResending}
-                                >
-                                    {isResending
-                                        ? 'Sending...'
-                                        : 'Resend Confirmation Email'}
-                                </Button>
-                            </AlertDescription>
-                        </Alert>
-                    )}
 
                     <UpdateEmailForm />
                 </CardContent>
