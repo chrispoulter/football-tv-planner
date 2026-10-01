@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FootballTvPlanner.Api.Migrations
 {
     [DbContext(typeof(FootballTvPlannerDbContext))]
-    [Migration("20260929140114_InitialCreate")]
+    [Migration("20261001143603_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -31,51 +31,42 @@ namespace FootballTvPlanner.Api.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
-                        .HasColumnName("id")
                         .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<string>("AwayTeam")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("away_team");
+                        .HasColumnType("text");
 
                     b.PrimitiveCollection<List<string>>("Channels")
                         .IsRequired()
-                        .HasColumnType("text[]")
-                        .HasColumnName("channels");
+                        .HasColumnType("text[]");
 
                     b.Property<string>("Competition")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("competition");
+                        .HasColumnType("text");
 
                     b.Property<string>("ExternalId")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("external_id");
+                        .HasColumnType("text");
 
                     b.Property<string>("HomeTeam")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("home_team");
+                        .HasColumnType("text");
 
                     b.Property<DateTimeOffset>("KickoffUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("kickoff_utc");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Source")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("source");
+                        .HasColumnType("text");
 
-                    b.HasKey("Id")
-                        .HasName("pk_fixtures");
+                    b.HasKey("Id");
 
-                    b.HasIndex(new[] { "Competition" }, "ix_fixtures_competition");
+                    b.HasIndex("Competition");
 
-                    b.HasIndex(new[] { "KickoffUtc" }, "ix_fixtures_kickoff_utc");
+                    b.HasIndex("KickoffUtc");
 
-                    b.HasIndex(new[] { "Source", "ExternalId" }, "ix_fixtures_source_external_id")
+                    b.HasIndex("Source", "ExternalId")
                         .IsUnique();
 
                     b.ToTable("fixtures", (string)null);
@@ -84,19 +75,15 @@ namespace FootballTvPlanner.Api.Migrations
             modelBuilder.Entity("FootballTvPlanner.Api.Data.Schedule.UserFixture", b =>
                 {
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("user_id");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("FixtureId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("fixture_id");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
+                        .HasColumnType("timestamp with time zone");
 
-                    b.HasKey("UserId", "FixtureId")
-                        .HasName("pk_user_fixtures");
+                    b.HasKey("UserId", "FixtureId");
 
                     b.HasIndex("FixtureId");
 

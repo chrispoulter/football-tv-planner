@@ -110,25 +110,25 @@ namespace FootballTvPlanner.Api.Migrations
                 name: "fixtures",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(
+                    Id = table.Column<Guid>(
                         type: "uuid",
                         nullable: false,
                         defaultValueSql: "gen_random_uuid()"
                     ),
-                    source = table.Column<string>(type: "text", nullable: false),
-                    external_id = table.Column<string>(type: "text", nullable: false),
-                    competition = table.Column<string>(type: "text", nullable: false),
-                    home_team = table.Column<string>(type: "text", nullable: false),
-                    away_team = table.Column<string>(type: "text", nullable: false),
-                    kickoff_utc = table.Column<DateTimeOffset>(
+                    Source = table.Column<string>(type: "text", nullable: false),
+                    ExternalId = table.Column<string>(type: "text", nullable: false),
+                    Competition = table.Column<string>(type: "text", nullable: false),
+                    HomeTeam = table.Column<string>(type: "text", nullable: false),
+                    AwayTeam = table.Column<string>(type: "text", nullable: false),
+                    KickoffUtc = table.Column<DateTimeOffset>(
                         type: "timestamp with time zone",
                         nullable: false
                     ),
-                    channels = table.Column<List<string>>(type: "text[]", nullable: false),
+                    Channels = table.Column<List<string>>(type: "text[]", nullable: false),
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_fixtures", x => x.id);
+                    table.PrimaryKey("PK_fixtures", x => x.Id);
                 }
             );
 
@@ -272,26 +272,26 @@ namespace FootballTvPlanner.Api.Migrations
                 name: "user_fixtures",
                 columns: table => new
                 {
-                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    fixture_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    created_at = table.Column<DateTimeOffset>(
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    FixtureId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(
                         type: "timestamp with time zone",
                         nullable: false
                     ),
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_user_fixtures", x => new { x.user_id, x.fixture_id });
+                    table.PrimaryKey("PK_user_fixtures", x => new { x.UserId, x.FixtureId });
                     table.ForeignKey(
                         name: "fk_user_fixtures_fixtures_fixture_id",
-                        column: x => x.fixture_id,
+                        column: x => x.FixtureId,
                         principalTable: "fixtures",
-                        principalColumn: "id",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade
                     );
                     table.ForeignKey(
                         name: "fk_user_fixtures_users_user_id",
-                        column: x => x.user_id,
+                        column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade
@@ -351,28 +351,28 @@ namespace FootballTvPlanner.Api.Migrations
             );
 
             migrationBuilder.CreateIndex(
-                name: "ix_fixtures_competition",
+                name: "IX_fixtures_Competition",
                 table: "fixtures",
-                column: "competition"
+                column: "Competition"
             );
 
             migrationBuilder.CreateIndex(
-                name: "ix_fixtures_kickoff_utc",
+                name: "IX_fixtures_KickoffUtc",
                 table: "fixtures",
-                column: "kickoff_utc"
+                column: "KickoffUtc"
             );
 
             migrationBuilder.CreateIndex(
-                name: "ix_fixtures_source_external_id",
+                name: "IX_fixtures_Source_ExternalId",
                 table: "fixtures",
-                columns: new[] { "source", "external_id" },
+                columns: new[] { "Source", "ExternalId" },
                 unique: true
             );
 
             migrationBuilder.CreateIndex(
-                name: "IX_user_fixtures_fixture_id",
+                name: "IX_user_fixtures_FixtureId",
                 table: "user_fixtures",
-                column: "fixture_id"
+                column: "FixtureId"
             );
         }
 

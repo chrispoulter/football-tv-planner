@@ -9,11 +9,11 @@ public class UserFixtureConfiguration : IEntityTypeConfiguration<UserFixture>
     {
         builder.ToTable("user_fixtures");
 
-        builder.Property(uf => uf.UserId).HasColumnName("user_id");
-        builder.Property(uf => uf.FixtureId).HasColumnName("fixture_id");
-        builder.Property(uf => uf.CreatedAt).HasColumnName("created_at");
+        builder.Property(uf => uf.UserId);
+        builder.Property(uf => uf.FixtureId);
+        builder.Property(uf => uf.CreatedAt);
 
-        builder.HasKey(uf => new { uf.UserId, uf.FixtureId }).HasName("pk_user_fixtures");
+        builder.HasKey(uf => new { uf.UserId, uf.FixtureId });
 
         builder
             .HasOne(uf => uf.User)
