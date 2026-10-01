@@ -2,12 +2,7 @@ using FluentValidation;
 
 namespace FootballTvPlanner.Api.Features.Account.LoginTwoFactor;
 
-public record LoginTwoFactorRequest(
-    string? Code,
-    string? RecoveryCode,
-    bool RememberMe,
-    bool RememberMachine
-);
+public record LoginTwoFactorRequest(string? Code, string? RecoveryCode, bool RememberMe);
 
 public class LoginTwoFactorRequestValidator : AbstractValidator<LoginTwoFactorRequest>
 {

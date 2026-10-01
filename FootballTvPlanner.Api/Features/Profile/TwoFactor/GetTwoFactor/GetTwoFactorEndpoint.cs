@@ -19,8 +19,7 @@ public class GetTwoFactorEndpoint : IEndpoint
 
     private static async Task<IResult> HandleAsync(
         CurrentUser currentUser,
-        UserManager<User> userManager,
-        SignInManager<User> signInManager
+        UserManager<User> userManager
     )
     {
         var user = await userManager.GetUserAsync(currentUser);
@@ -36,8 +35,7 @@ public class GetTwoFactorEndpoint : IEndpoint
         return Results.Ok(
             new TwoFactorResponse(
                 user.TwoFactorEnabled,
-                await userManager.CountRecoveryCodesAsync(user),
-                await signInManager.IsTwoFactorClientRememberedAsync(user)
+                await userManager.CountRecoveryCodesAsync(user)
             )
         );
     }

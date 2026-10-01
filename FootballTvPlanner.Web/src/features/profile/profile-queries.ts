@@ -76,7 +76,6 @@ export const useSetPassword = () => {
 export interface TwoFactorResponse {
     isEnabled?: boolean;
     recoveryCodesLeft?: number;
-    isMachineRemembered?: boolean;
 }
 
 export const useGetTwoFactor = () =>
@@ -153,18 +152,6 @@ export const useGenerateRecoveryCodes = () => {
             apiClient
                 .post('profile/two-factor/recovery-codes', { json: {} })
                 .json<RecoveryCodesResponse>(),
-        onSuccess: invalidate,
-    });
-};
-
-export const useForgetTwoFactorMachine = () => {
-    const invalidate = useInvalidateTwoFactor();
-
-    return useMutation({
-        mutationFn: () =>
-            apiClient
-                .post('profile/two-factor/forget-machine', { json: {} })
-                .then(() => undefined),
         onSuccess: invalidate,
     });
 };

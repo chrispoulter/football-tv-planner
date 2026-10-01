@@ -6,7 +6,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import {
     useDisableTwoFactor,
     useEnableTwoFactor,
-    useForgetTwoFactorMachine,
     useGenerateRecoveryCodes,
     useGetTwoFactor,
     useSetupTwoFactor,
@@ -46,9 +45,6 @@ export function TwoFactorSettings() {
 
     const { mutate: generateRecoveryCodes, isPending: isGenerating } =
         useGenerateRecoveryCodes();
-
-    const { mutate: forgetMachine, isPending: isForgetting } =
-        useForgetTwoFactorMachine();
 
     if (isPending) {
         return <Skeleton className="h-9 w-full sm:w-32" />;
@@ -96,14 +92,6 @@ export function TwoFactorSettings() {
                 setRecoveryCodes(response.recoveryCodes);
                 setStep('recovery-codes');
             },
-            onError: (error) => toast.error(error.message),
-        });
-    }
-
-    function onForgetMachine() {
-        forgetMachine(undefined, {
-            onSuccess: () =>
-                toast.success('This browser will ask for a code next time'),
             onError: (error) => toast.error(error.message),
         });
     }
@@ -198,15 +186,6 @@ export function TwoFactorSettings() {
                 >
                     Regenerate Recovery Codes
                 </Button>
-                {status.isMachineRemembered && (
-                    <Button
-                        variant="outline"
-                        onClick={onForgetMachine}
-                        disabled={isForgetting}
-                    >
-                        {isForgetting ? 'Forgetting...' : 'Forget This Browser'}
-                    </Button>
-                )}
             </div>
         </div>
     );

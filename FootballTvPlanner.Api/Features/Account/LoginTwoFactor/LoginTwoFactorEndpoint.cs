@@ -36,7 +36,7 @@ public class LoginTwoFactorEndpoint : IEndpoint
             ? await signInManager.TwoFactorAuthenticatorSignInAsync(
                 request.Code!.Replace(" ", string.Empty).Replace("-", string.Empty),
                 request.RememberMe,
-                request.RememberMachine
+                rememberClient: false
             )
             : await signInManager.TwoFactorRecoveryCodeSignInAsync(
                 request.RecoveryCode.Replace(" ", string.Empty)

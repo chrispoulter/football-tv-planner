@@ -1,14 +1,12 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { FormCheckboxField } from '@/components/form/form-checkbox-field';
 import { FormOtpField } from '@/components/form/form-otp-field';
 import { Button } from '@/components/ui/button';
 import { FieldGroup } from '@/components/ui/field';
 
 const schema = z.object({
     code: z.string().length(6, 'Code must be 6 digits'),
-    rememberMachine: z.boolean(),
 });
 
 export type TwoFactorFormValues = z.infer<typeof schema>;
@@ -28,7 +26,6 @@ export function TwoFactorForm({
         resolver: zodResolver(schema),
         defaultValues: {
             code: '',
-            rememberMachine: false,
         },
         // HACK: prevent RHF from auto-focusing the first invalid field on submit, which breaks error state render
         shouldFocusError: false,
@@ -43,12 +40,6 @@ export function TwoFactorForm({
                     label="Authentication code"
                     autoFocus
                     className="items-center *:w-auto"
-                />
-
-                <FormCheckboxField
-                    control={form.control}
-                    name="rememberMachine"
-                    label="Don't ask again on this browser"
                 />
 
                 <Button type="submit" disabled={loading}>

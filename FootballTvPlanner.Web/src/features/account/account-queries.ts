@@ -35,8 +35,6 @@ export interface LoginTwoFactorRequest {
     code?: string;
     recoveryCode?: string;
     rememberMe: boolean;
-    // Skip the code on this browser next time
-    rememberMachine?: boolean;
 }
 
 export const useLoginTwoFactor = () => {
