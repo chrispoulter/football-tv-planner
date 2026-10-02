@@ -9,11 +9,16 @@
 - Cold starts?   
 - Fixture sync - exclude channels and filters
 - Remember filter settings
-- League multi select
-- Channel multi select
 - Need to add loading states to session, channels and leagues
 - Handle cold starts
 - Remove account link
+- github actions build matrix
+
+
+- League multi select
+- Channel multi select
+
+
 
 ## Bugfixes
 
