@@ -8,18 +8,23 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useLogout } from '@/features/account/account-queries';
 import { useAuth } from './auth-provider';
 
 export function UserMenu() {
     const navigate = useNavigate();
 
-    const { user } = useAuth();
+    const { user, isLoading } = useAuth();
 
     const { mutate: logout, isPending } = useLogout();
 
     function onLogout() {
         logout(undefined, { onSettled: () => navigate('/') });
+    }
+
+    if (isLoading) {
+        return <Skeleton className="size-9 rounded-full" />;
     }
 
     if (!user) {
