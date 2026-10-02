@@ -99,7 +99,7 @@ export function FixturesPage() {
                 {toLongDayLabel(request.date)}
             </h2>
 
-            {isPending ? (
+            {isPending || (isPlaceholderData && !data.items.length) ? (
                 <FixturesLoading />
             ) : !isSuccess ? (
                 <QueryError error={error} />
