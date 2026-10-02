@@ -50,7 +50,7 @@ public class GetScheduleCalendarEndpoint : IEndpoint
             .Where(uf => uf.UserId == userId && uf.Fixture.KickoffUtc >= cutoff)
             .Select(uf => uf.Fixture)
             .OrderBy(f => f.KickoffUtc)
-            .Select(FixtureProjections.ToCalendarFixture())
+            .Select(CalendarFixture.FromFixture())
             .ToListAsync(cancellationToken);
 
         var calendar = CalendarBuilder.Build(fixtures, now, calendarName: "My Football on TV");

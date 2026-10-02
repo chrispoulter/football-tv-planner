@@ -18,11 +18,21 @@ export interface FixtureSummary {
     isBookmarked?: boolean;
 }
 
+export interface CompetitionResponse {
+    id: string;
+    name: string;
+}
+
+export interface ChannelResponse {
+    id: string;
+    name: string;
+}
+
 interface GetFixturesRequest {
     from: string;
     to: string;
-    competition?: string;
-    channel?: string;
+    competitionId?: string;
+    channelId?: string;
     bookmarked?: boolean;
 }
 
@@ -56,7 +66,9 @@ export const useGetCompetitions = () =>
     useQuery({
         queryKey: fixtureKeys.competitions,
         queryFn: ({ signal }) =>
-            apiClient.get('competitions', { signal }).json<string[]>(),
+            apiClient
+                .get('competitions', { signal })
+                .json<CompetitionResponse[]>(),
         staleTime: 1000 * 60 * 60,
     });
 
@@ -64,6 +76,6 @@ export const useGetChannels = () =>
     useQuery({
         queryKey: fixtureKeys.channels,
         queryFn: ({ signal }) =>
-            apiClient.get('channels', { signal }).json<string[]>(),
+            apiClient.get('channels', { signal }).json<ChannelResponse[]>(),
         staleTime: 1000 * 60 * 60,
     });

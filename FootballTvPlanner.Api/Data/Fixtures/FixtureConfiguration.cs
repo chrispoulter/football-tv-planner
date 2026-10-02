@@ -11,16 +11,19 @@ public class FixtureConfiguration : IEntityTypeConfiguration<Fixture>
 
         builder.Property(f => f.Source).IsRequired();
         builder.Property(f => f.ExternalId).IsRequired();
-        builder.Property(f => f.Competition).IsRequired();
+        builder.Property(f => f.CompetitionId);
         builder.Property(f => f.HomeTeam).IsRequired();
         builder.Property(f => f.AwayTeam).IsRequired();
         builder.Property(f => f.KickoffUtc);
 
-        builder.Property(f => f.Channels).IsRequired();
-
         builder.HasKey(f => f.Id);
         builder.HasIndex(f => new { f.Source, f.ExternalId }).IsUnique();
         builder.HasIndex(f => f.KickoffUtc);
-        builder.HasIndex(f => f.Competition);
+
+        builder
+            .HasOne(f => f.Competition)
+            .WithMany()
+            .HasForeignKey(f => f.CompetitionId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

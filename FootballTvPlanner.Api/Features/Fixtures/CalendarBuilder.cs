@@ -3,15 +3,6 @@ using System.Text;
 
 namespace FootballTvPlanner.Api.Features.Fixtures;
 
-public record CalendarFixture(
-    Guid Id,
-    DateTimeOffset KickoffUtc,
-    string HomeTeam,
-    string AwayTeam,
-    string Competition,
-    IReadOnlyList<string> Channels
-);
-
 /// <summary>
 /// Writes RFC 5545 iCalendar documents for fixtures. All times are written in UTC so no
 /// VTIMEZONE block is needed; calendar clients convert to the viewer's local time.

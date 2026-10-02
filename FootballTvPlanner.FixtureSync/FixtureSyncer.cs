@@ -22,12 +22,21 @@ public class FixtureSyncer(
             throw new InvalidOperationException($"{fixtureProvider.Source} returned no fixtures.");
         }
 
+        var competitionIds = await GetOrAddCompetitionsAsync(
+            items.Select(i => i.Competition),
+            cancellationToken
+        );
+
+        var channelIds = await GetOrAddChannelsAsync(
+            items.SelectMany(i => i.Channels),
+            cancellationToken
+        );
+
         var externalIds = items.Select(i => i.ExternalId).ToList();
 
         var fixtures = await dbContext
-            .Fixtures.Where(f =>
-                f.Source == fixtureProvider.Source && externalIds.Contains(f.ExternalId)
-            )
+            .Fixtures.Include(f => f.FixtureChannels)
+            .Where(f => f.Source == fixtureProvider.Source && externalIds.Contains(f.ExternalId))
             .ToDictionaryAsync(f => f.ExternalId, cancellationToken);
 
         foreach (var item in items)
@@ -43,14 +52,12 @@ public class FixtureSyncer(
                 fixtures.Add(item.ExternalId, fixture);
             }
 
-            fixture.Competition = item.Competition;
+            fixture.CompetitionId = competitionIds[item.Competition];
             fixture.HomeTeam = item.HomeTeam;
             fixture.AwayTeam = item.AwayTeam;
             fixture.KickoffUtc = item.KickoffUtc;
-            fixture.Channels =
-            [
-                .. item.Channels.OrderBy(c => c.SortOrder).ThenBy(c => c.Name).Select(c => c.Name),
-            ];
+
+            SyncChannels(fixture, item.Channels, channelIds);
         }
 
         await dbContext.SaveChangesAsync(cancellationToken);
@@ -70,5 +77,73 @@ public class FixtureSyncer(
             items.Count,
             removed
         );
+    }
+
+    /// <summary>
+    /// Updates the fixture's channel links in place. Removing and re-adding a link with the same
+    /// key in one save makes EF Core throw, so only the differences are applied.
+    /// </summary>
+    private static void SyncChannels(
+        Fixture fixture,
+        IReadOnlyList<string> channels,
+        Dictionary<string, Guid> channelIds
+    )
+    {
+        var wanted = channels.Select(c => channelIds[c]).ToHashSet();
+
+        fixture.FixtureChannels.RemoveAll(fc => !wanted.Contains(fc.ChannelId));
+
+        var existing = fixture.FixtureChannels.Select(fc => fc.ChannelId).ToHashSet();
+
+        foreach (var channelId in wanted.Where(id => !existing.Contains(id)))
+        {
+            fixture.FixtureChannels.Add(new FixtureChannel { ChannelId = channelId });
+        }
+    }
+
+    private async Task<Dictionary<string, Guid>> GetOrAddCompetitionsAsync(
+        IEnumerable<string> names,
+        CancellationToken cancellationToken
+    )
+    {
+        var ids = await dbContext.Competitions.ToDictionaryAsync(
+            c => c.Name,
+            c => c.Id,
+            cancellationToken
+        );
+
+        foreach (var name in names.Distinct().Where(n => !ids.ContainsKey(n)))
+        {
+            var competition = new Competition { Id = Guid.CreateVersion7(), Name = name };
+            dbContext.Competitions.Add(competition);
+            ids.Add(name, competition.Id);
+
+            logger.LogWarning("New competition discovered: {Name}", name);
+        }
+
+        return ids;
+    }
+
+    private async Task<Dictionary<string, Guid>> GetOrAddChannelsAsync(
+        IEnumerable<string> names,
+        CancellationToken cancellationToken
+    )
+    {
+        var ids = await dbContext.Channels.ToDictionaryAsync(
+            c => c.Name,
+            c => c.Id,
+            cancellationToken
+        );
+
+        foreach (var name in names.Distinct().Where(n => !ids.ContainsKey(n)))
+        {
+            var channel = new Channel { Id = Guid.CreateVersion7(), Name = name };
+            dbContext.Channels.Add(channel);
+            ids.Add(name, channel.Id);
+
+            logger.LogWarning("New channel discovered: {Name}", name);
+        }
+
+        return ids;
     }
 }

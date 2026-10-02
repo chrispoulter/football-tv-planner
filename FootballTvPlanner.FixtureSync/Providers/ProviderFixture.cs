@@ -6,7 +6,5 @@ public record ProviderFixture(
     string HomeTeam,
     string AwayTeam,
     DateTimeOffset KickoffUtc,
-    IReadOnlyList<ProviderChannel> Channels
+    IReadOnlyList<string> Channels
 );
-
-public record ProviderChannel(string Name, int SortOrder);

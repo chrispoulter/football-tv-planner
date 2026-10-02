@@ -8,7 +8,7 @@ public class Fixture
 
     public string ExternalId { get; set; } = null!;
 
-    public string Competition { get; set; } = null!;
+    public Guid CompetitionId { get; set; }
 
     public string HomeTeam { get; set; } = null!;
 
@@ -16,5 +16,5 @@ public class Fixture
 
     public DateTimeOffset KickoffUtc { get; set; }
 
-    public List<string> Channels { get; set; } = [];
+    public List<FixtureChannel> FixtureChannels { get; set; } = [];
 }

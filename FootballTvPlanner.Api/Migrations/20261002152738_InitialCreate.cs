@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -88,6 +87,64 @@ namespace FootballTvPlanner.Api.Migrations
             );
 
             migrationBuilder.CreateTable(
+                name: "Channels",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(
+                        type: "uuid",
+                        nullable: false,
+                        defaultValueSql: "gen_random_uuid()"
+                    ),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    DisplayName = table.Column<string>(type: "text", nullable: true),
+                    IsExcluded = table.Column<bool>(
+                        type: "boolean",
+                        nullable: false,
+                        defaultValue: false
+                    ),
+                    SortOrder = table.Column<int>(type: "integer", nullable: true),
+                    CreatedAt = table.Column<DateTimeOffset>(
+                        type: "timestamp with time zone",
+                        nullable: false,
+                        defaultValueSql: "now()"
+                    ),
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Channels", x => x.Id);
+                }
+            );
+
+            migrationBuilder.CreateTable(
+                name: "Competitions",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(
+                        type: "uuid",
+                        nullable: false,
+                        defaultValueSql: "gen_random_uuid()"
+                    ),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    DisplayName = table.Column<string>(type: "text", nullable: true),
+                    IsExcluded = table.Column<bool>(
+                        type: "boolean",
+                        nullable: false,
+                        defaultValue: false
+                    ),
+                    SortOrder = table.Column<int>(type: "integer", nullable: true),
+                    CreatedAt = table.Column<DateTimeOffset>(
+                        type: "timestamp with time zone",
+                        nullable: false,
+                        defaultValueSql: "now()"
+                    ),
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Competitions", x => x.Id);
+                }
+            );
+
+            migrationBuilder.CreateTable(
                 name: "DataProtectionKeys",
                 columns: table => new
                 {
@@ -103,32 +160,6 @@ namespace FootballTvPlanner.Api.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_DataProtectionKeys", x => x.Id);
-                }
-            );
-
-            migrationBuilder.CreateTable(
-                name: "Fixtures",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(
-                        type: "uuid",
-                        nullable: false,
-                        defaultValueSql: "gen_random_uuid()"
-                    ),
-                    Source = table.Column<string>(type: "text", nullable: false),
-                    ExternalId = table.Column<string>(type: "text", nullable: false),
-                    Competition = table.Column<string>(type: "text", nullable: false),
-                    HomeTeam = table.Column<string>(type: "text", nullable: false),
-                    AwayTeam = table.Column<string>(type: "text", nullable: false),
-                    KickoffUtc = table.Column<DateTimeOffset>(
-                        type: "timestamp with time zone",
-                        nullable: false
-                    ),
-                    Channels = table.Column<List<string>>(type: "text[]", nullable: false),
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Fixtures", x => x.Id);
                 }
             );
 
@@ -269,6 +300,65 @@ namespace FootballTvPlanner.Api.Migrations
             );
 
             migrationBuilder.CreateTable(
+                name: "Fixtures",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(
+                        type: "uuid",
+                        nullable: false,
+                        defaultValueSql: "gen_random_uuid()"
+                    ),
+                    Source = table.Column<string>(type: "text", nullable: false),
+                    ExternalId = table.Column<string>(type: "text", nullable: false),
+                    CompetitionId = table.Column<Guid>(type: "uuid", nullable: false),
+                    HomeTeam = table.Column<string>(type: "text", nullable: false),
+                    AwayTeam = table.Column<string>(type: "text", nullable: false),
+                    KickoffUtc = table.Column<DateTimeOffset>(
+                        type: "timestamp with time zone",
+                        nullable: false
+                    ),
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Fixtures", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Fixtures_Competitions_CompetitionId",
+                        column: x => x.CompetitionId,
+                        principalTable: "Competitions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict
+                    );
+                }
+            );
+
+            migrationBuilder.CreateTable(
+                name: "FixtureChannels",
+                columns: table => new
+                {
+                    FixtureId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ChannelId = table.Column<Guid>(type: "uuid", nullable: false),
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FixtureChannels", x => new { x.FixtureId, x.ChannelId });
+                    table.ForeignKey(
+                        name: "FK_FixtureChannels_Channels_ChannelId",
+                        column: x => x.ChannelId,
+                        principalTable: "Channels",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict
+                    );
+                    table.ForeignKey(
+                        name: "FK_FixtureChannels_Fixtures_FixtureId",
+                        column: x => x.FixtureId,
+                        principalTable: "Fixtures",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade
+                    );
+                }
+            );
+
+            migrationBuilder.CreateTable(
                 name: "UserFixtures",
                 columns: table => new
                 {
@@ -351,9 +441,29 @@ namespace FootballTvPlanner.Api.Migrations
             );
 
             migrationBuilder.CreateIndex(
-                name: "IX_Fixtures_Competition",
+                name: "IX_Channels_Name",
+                table: "Channels",
+                column: "Name",
+                unique: true
+            );
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Competitions_Name",
+                table: "Competitions",
+                column: "Name",
+                unique: true
+            );
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FixtureChannels_ChannelId",
+                table: "FixtureChannels",
+                column: "ChannelId"
+            );
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Fixtures_CompetitionId",
                 table: "Fixtures",
-                column: "Competition"
+                column: "CompetitionId"
             );
 
             migrationBuilder.CreateIndex(
@@ -391,13 +501,19 @@ namespace FootballTvPlanner.Api.Migrations
 
             migrationBuilder.DropTable(name: "DataProtectionKeys");
 
+            migrationBuilder.DropTable(name: "FixtureChannels");
+
             migrationBuilder.DropTable(name: "UserFixtures");
 
             migrationBuilder.DropTable(name: "AspNetRoles");
 
+            migrationBuilder.DropTable(name: "Channels");
+
             migrationBuilder.DropTable(name: "AspNetUsers");
 
             migrationBuilder.DropTable(name: "Fixtures");
+
+            migrationBuilder.DropTable(name: "Competitions");
         }
     }
 }

@@ -89,7 +89,6 @@ public partial class LiveFootballOnTvFixtureProvider(
             .QuerySelectorAll(".channel-pill")
             .Select(pill => pill.TextContent.Trim())
             .Distinct()
-            .Select((name, index) => new ProviderChannel(name, index))
             .ToList();
 
         return new ProviderFixture(

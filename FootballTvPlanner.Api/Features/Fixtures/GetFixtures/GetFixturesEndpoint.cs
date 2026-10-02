@@ -2,6 +2,7 @@ using FootballTvPlanner.Api.Common.Authentication;
 using FootballTvPlanner.Api.Common.Infrastructure;
 using FootballTvPlanner.Api.Common.Validation;
 using FootballTvPlanner.Api.Data;
+using FootballTvPlanner.Api.Data.Fixtures;
 using Microsoft.EntityFrameworkCore;
 
 namespace FootballTvPlanner.Api.Features.Fixtures.GetFixtures;
@@ -41,16 +42,19 @@ public class GetFixturesEndpoint : IEndpoint
 
         var query = dbContext
             .Fixtures.AsNoTracking()
+            .Visible()
             .Where(f => f.KickoffUtc >= start && f.KickoffUtc < end);
 
-        if (!string.IsNullOrEmpty(request.Competition))
+        if (request.CompetitionId is { } competitionId)
         {
-            query = query.Where(f => f.Competition == request.Competition);
+            query = query.Where(f => f.CompetitionId == competitionId);
         }
 
-        if (!string.IsNullOrEmpty(request.Channel))
+        if (request.ChannelId is { } channelId)
         {
-            query = query.Where(f => f.Channels.Contains(request.Channel));
+            query = query.Where(f =>
+                f.FixtureChannels.Any(fc => fc.ChannelId == channelId && !fc.Channel.IsExcluded)
+            );
         }
 
         if (request.Bookmarked == true && currentUser is not null)
@@ -63,9 +67,8 @@ public class GetFixturesEndpoint : IEndpoint
         }
 
         var fixtures = await query
-            .OrderBy(f => f.Competition)
-            .ThenBy(f => f.KickoffUtc)
-            .Select(FixtureProjections.ToSummary(dbContext, currentUser?.Id))
+            .InDisplayOrder()
+            .Select(FixtureSummary.FromFixture(dbContext, currentUser?.Id))
             .ToListAsync(cancellationToken);
 
         return Results.Ok(new GetFixturesResponse(fixtures));

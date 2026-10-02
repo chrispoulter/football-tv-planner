@@ -1,6 +1,7 @@
 using System.Text;
 using FootballTvPlanner.Api.Common.Infrastructure;
 using FootballTvPlanner.Api.Data;
+using FootballTvPlanner.Api.Data.Fixtures;
 using Microsoft.EntityFrameworkCore;
 
 namespace FootballTvPlanner.Api.Features.Fixtures.GetFixtureCalendar;
@@ -28,8 +29,9 @@ public class GetFixtureCalendarEndpoint : IEndpoint
     {
         var fixture = await dbContext
             .Fixtures.AsNoTracking()
+            .Visible()
             .Where(f => f.Id == id)
-            .Select(FixtureProjections.ToCalendarFixture())
+            .Select(CalendarFixture.FromFixture())
             .FirstOrDefaultAsync(cancellationToken);
 
         if (fixture is null)

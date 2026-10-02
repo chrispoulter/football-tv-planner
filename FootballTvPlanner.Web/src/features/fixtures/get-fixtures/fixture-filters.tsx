@@ -15,21 +15,21 @@ import { useGetChannels, useGetCompetitions } from '../fixtures-queries';
 const ALL = 'all';
 
 interface FixtureFiltersProps {
-    competition?: string;
-    channel?: string;
+    competitionId?: string;
+    channelId?: string;
     mine?: boolean;
-    onCompetitionChange: (competition?: string) => void;
-    onChannelChange: (channel?: string) => void;
+    onCompetitionIdChange: (competitionId?: string) => void;
+    onChannelIdChange: (channelId?: string) => void;
     onMineChange: (mine: boolean) => void;
     disabled?: boolean;
 }
 
 export function FixtureFilters({
-    competition,
-    channel,
+    competitionId,
+    channelId,
     mine,
-    onCompetitionChange,
-    onChannelChange,
+    onCompetitionIdChange,
+    onChannelIdChange,
     onMineChange,
     disabled,
 }: FixtureFiltersProps) {
@@ -44,9 +44,9 @@ export function FixtureFilters({
     return (
         <div className="flex flex-col gap-2 sm:flex-row">
             <Select
-                value={competition ?? ALL}
+                value={competitionId ?? ALL}
                 onValueChange={(value) =>
-                    onCompetitionChange(value === ALL ? undefined : value)
+                    onCompetitionIdChange(value === ALL ? undefined : value)
                 }
                 disabled={disabled || isCompetitionsPending}
             >
@@ -58,8 +58,8 @@ export function FixtureFilters({
                 </SelectTrigger>
                 <SelectContent position="popper" align="start">
                     <SelectItem value={ALL}>All competitions</SelectItem>
-                    {competitions?.map((name) => (
-                        <SelectItem key={name} value={name}>
+                    {competitions?.map(({ id, name }) => (
+                        <SelectItem key={id} value={id}>
                             {name}
                         </SelectItem>
                     ))}
@@ -67,9 +67,9 @@ export function FixtureFilters({
             </Select>
 
             <Select
-                value={channel ?? ALL}
+                value={channelId ?? ALL}
                 onValueChange={(value) =>
-                    onChannelChange(value === ALL ? undefined : value)
+                    onChannelIdChange(value === ALL ? undefined : value)
                 }
                 disabled={disabled || isChannelsPending}
             >
@@ -78,8 +78,8 @@ export function FixtureFilters({
                 </SelectTrigger>
                 <SelectContent position="popper" align="start">
                     <SelectItem value={ALL}>All channels</SelectItem>
-                    {channels.map((name) => (
-                        <SelectItem key={name} value={name}>
+                    {channels.map(({ id, name }) => (
+                        <SelectItem key={id} value={id}>
                             {name}
                         </SelectItem>
                     ))}

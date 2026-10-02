@@ -1,4 +1,6 @@
 using System.Reflection;
+using FootballTvPlanner.Api.Data.Channels;
+using FootballTvPlanner.Api.Data.Competitions;
 using FootballTvPlanner.Api.Data.Fixtures;
 using FootballTvPlanner.Api.Data.Schedule;
 using FootballTvPlanner.Api.Data.Users;
@@ -15,7 +17,13 @@ public class FootballTvPlannerDbContext(DbContextOptions<FootballTvPlannerDbCont
 {
     public virtual DbSet<DataProtectionKey> DataProtectionKeys { get; set; }
 
+    public virtual DbSet<Competition> Competitions { get; set; }
+
+    public virtual DbSet<Channel> Channels { get; set; }
+
     public virtual DbSet<Fixture> Fixtures { get; set; }
+
+    public virtual DbSet<FixtureChannel> FixtureChannels { get; set; }
 
     public virtual DbSet<UserFixture> UserFixtures { get; set; }
 

@@ -101,13 +101,34 @@ Every time is stored and returned in UTC: `timestamptz` in Postgres, ISO 8601 st
 
 Each run, `FixtureSyncer`:
 
+- adds any competition or channel name it hasn't seen before to the `Competitions` or `Channels` table, logging a `New competition discovered` or `New channel discovered` warning
 - upserts fixtures by `(Source, ExternalId)`
-- replaces each fixture's channel list
+- updates each fixture's channel links (`FixtureChannels`)
 - deletes upcoming fixtures from the same source that the provider no longer lists, because a moved game comes back under a new ID
 
 If a provider returns nothing, the run fails instead of deleting every upcoming fixture.
 
-The API owns the schema. `FootballTvPlanner.FixtureSync/Data/Fixture.cs` maps the same table, so update it whenever the API's `Fixture` entity changes.
+The API owns the schema. `FootballTvPlanner.FixtureSync/Data` maps the same tables, so update it whenever the API's fixture entities change.
+
+### Competitions and channels
+
+`Competitions` and `Channels` each hold one row per scraped `Name`. The sync only inserts rows and never changes these columns, so you can edit them in SQL:
+
+| Column        | Effect                                                                                                    |
+| ------------- | --------------------------------------------------------------------------------------------------------- |
+| `DisplayName` | Shown instead of `Name` when set.                                                                         |
+| `IsExcluded`  | Hidden from the filters and fixture lists. A fixture is hidden if its competition is excluded, or if every channel showing it is excluded. Starred fixtures stay in users' calendar feeds. |
+| `SortOrder`   | Lower values come first. Rows without one come after, sorted by name. Applies to the filters, competition groups and channel badges. |
+
+```sql
+UPDATE "Channels" SET "IsExcluded" = true WHERE "Name" IN ('FreeSports', 'LaLigaTV');
+UPDATE "Competitions" SET "DisplayName" = 'Premier League' WHERE "Name" = 'English Premier League';
+UPDATE "Competitions" SET "SortOrder" = 1 WHERE "Name" = 'English Premier League';
+UPDATE "Channels" SET "SortOrder" = 1 WHERE "Name" = 'BBC One';
+
+-- recently discovered
+SELECT * FROM "Channels" WHERE "CreatedAt" > now() - interval '7 days';
+```
 
 To add a provider:
 
