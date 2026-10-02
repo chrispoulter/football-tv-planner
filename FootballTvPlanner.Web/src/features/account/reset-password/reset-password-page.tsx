@@ -1,9 +1,9 @@
-import { useNavigate, useSearchParams } from 'react-router';
+import { useNavigate, useSearchParams, Link } from 'react-router';
 import { toast } from 'sonner';
 import { Metadata } from '@/components/metadata';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useResetPassword } from '../account-queries';
-import { AccountLayout, AccountLink } from '../account-layout';
+import { AccountLayout } from '../account-layout';
 import {
     ResetPasswordForm,
     type ResetPasswordFormValues,
@@ -42,7 +42,14 @@ export function ResetPasswordPage() {
         <AccountLayout
             title="Reset your password"
             description="Enter your new password below"
-            footer={<AccountLink to="/login">Back to sign in</AccountLink>}
+            footer={
+                <Link
+                    className="underline underline-offset-4 hover:text-foreground"
+                    to="/login"
+                >
+                    Back to sign in
+                </Link>
+            }
         >
             <Metadata title="Reset Password" />
 
@@ -52,9 +59,12 @@ export function ResetPasswordPage() {
                 <Alert variant="destructive">
                     <AlertDescription>
                         This link is invalid or has expired. Please{' '}
-                        <AccountLink to="/forgot-password">
+                        <Link
+                            className="underline underline-offset-4 hover:text-foreground"
+                            to="/forgot-password"
+                        >
                             request a new one
-                        </AccountLink>
+                        </Link>
                         .
                     </AlertDescription>
                 </Alert>

@@ -1,12 +1,12 @@
 import { useEffect } from 'react';
-import { useSearchParams } from 'react-router';
+import { useSearchParams, Link } from 'react-router';
 import { useQueryClient } from '@tanstack/react-query';
 import { sessionKeys, useAuth } from '@/components/auth-provider';
 import { Metadata } from '@/components/metadata';
 import { PageLoading } from '@/components/page-loading';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useConfirmEmail } from '../account-queries';
-import { AccountLayout, AccountLink } from '../account-layout';
+import { AccountLayout } from '../account-layout';
 
 export function ConfirmEmailPage() {
     const [searchParams] = useSearchParams();
@@ -48,9 +48,12 @@ export function ConfirmEmailPage() {
             title={title}
             footer={
                 !isPending && (
-                    <AccountLink to={user ? '/profile' : '/login'}>
+                    <Link
+                        className="underline underline-offset-4 hover:text-foreground"
+                        to={user ? '/profile' : '/login'}
+                    >
                         {user ? 'Back to profile' : 'Sign in'}
-                    </AccountLink>
+                    </Link>
                 )
             }
         >

@@ -1,11 +1,11 @@
-import { useLocation, useNavigate, useSearchParams } from 'react-router';
+import { useLocation, useNavigate, useSearchParams, Link } from 'react-router';
 import { toast } from 'sonner';
 import { Metadata } from '@/components/metadata';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
 import { returnUrl } from '@/lib/return-url';
 import { useLogin } from '../account-queries';
-import { AccountLayout, AccountLink } from '../account-layout';
+import { AccountLayout } from '../account-layout';
 import { SocialLoginButtons } from '../social-login-buttons';
 import type { TwoFactorState } from '../two-factor/two-factor-state';
 import { LoginForm, type LoginFormValues } from './login-form';
@@ -58,7 +58,12 @@ export function LoginPage() {
             footer={
                 <>
                     Don&apos;t have an account?{' '}
-                    <AccountLink to="/register">Sign up</AccountLink>
+                    <Link
+                        className="underline underline-offset-4 hover:text-foreground"
+                        to="/register"
+                    >
+                        Sign up
+                    </Link>
                 </>
             }
         >

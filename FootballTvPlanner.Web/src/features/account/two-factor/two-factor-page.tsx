@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { Navigate, useLocation, useNavigate } from 'react-router';
+import { Navigate, useLocation, useNavigate, Link } from 'react-router';
 import { toast } from 'sonner';
 import { Metadata } from '@/components/metadata';
 import {
     type LoginTwoFactorRequest,
     useLoginTwoFactor,
 } from '../account-queries';
-import { AccountLayout, AccountLink } from '../account-layout';
+import { AccountLayout } from '../account-layout';
 import { TwoFactorForm, type TwoFactorFormValues } from './two-factor-form';
 import {
     RecoveryCodeForm,
@@ -57,7 +57,14 @@ export function TwoFactorPage() {
                     ? 'Enter one of your backup recovery codes'
                     : 'Enter the 6-digit code from your authenticator app'
             }
-            footer={<AccountLink to="/login">Back to sign in</AccountLink>}
+            footer={
+                <Link
+                    className="underline underline-offset-4 hover:text-foreground"
+                    to="/login"
+                >
+                    Back to sign in
+                </Link>
+            }
         >
             <Metadata title="Two-Factor Authentication" />
 

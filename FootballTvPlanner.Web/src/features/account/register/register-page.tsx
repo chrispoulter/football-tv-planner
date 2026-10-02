@@ -1,9 +1,9 @@
-import { useNavigate } from 'react-router';
+import { useNavigate, Link } from 'react-router';
 import { toast } from 'sonner';
 import { Metadata } from '@/components/metadata';
 import { Separator } from '@/components/ui/separator';
 import { useRegister } from '../account-queries';
-import { AccountLayout, AccountLink } from '../account-layout';
+import { AccountLayout } from '../account-layout';
 import { SocialLoginButtons } from '../social-login-buttons';
 import { RegisterForm, type RegisterFormValues } from './register-form';
 
@@ -12,7 +12,6 @@ export function RegisterPage() {
 
     const { mutate: register, isPending } = useRegister();
 
-    // Logs straight in, as the email doesn't need confirming first
     function onSubmit({ name, emailAddress, password }: RegisterFormValues) {
         register(
             { name, email: emailAddress, password },
@@ -34,7 +33,12 @@ export function RegisterPage() {
             footer={
                 <>
                     Already have an account?{' '}
-                    <AccountLink to="/login">Sign in</AccountLink>
+                    <Link
+                        className="underline underline-offset-4 hover:text-foreground"
+                        to="/login"
+                    >
+                        Sign in
+                    </Link>
                 </>
             }
         >
