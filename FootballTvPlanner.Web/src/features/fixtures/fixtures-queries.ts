@@ -1,4 +1,4 @@
-import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api-client';
 
 export const fixtureKeys = {
@@ -67,20 +67,3 @@ export const useGetChannels = () =>
             apiClient.get('channels', { signal }).json<string[]>(),
         staleTime: 1000 * 60 * 60,
     });
-
-export const useDownloadFixtureCalendar = () => {
-    return useMutation({
-        mutationFn: async (fixture: FixtureSummary) => {
-            const blob = await apiClient
-                .get(`fixtures/${fixture.id}/calendar.ics`, {})
-                .blob();
-
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `${fixture.homeTeam} v ${fixture.awayTeam}.ics`;
-            link.click();
-            URL.revokeObjectURL(url);
-        },
-    });
-};

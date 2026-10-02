@@ -1,5 +1,4 @@
 import { CalendarPlus } from 'lucide-react';
-import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
@@ -10,18 +9,13 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { googleCalendarUrl, outlookComUrl } from '@/lib/calendar-links';
-import {
-    useDownloadFixtureCalendar,
-    type FixtureSummary,
-} from './fixtures-queries';
+import type { FixtureSummary } from './fixtures-queries';
 
 interface AddToCalendarMenuProps {
     fixture: FixtureSummary;
 }
 
 export function AddToCalendarMenu({ fixture }: AddToCalendarMenuProps) {
-    const { mutate: downloadCalendar } = useDownloadFixtureCalendar();
-
     const channels = fixture.channels.join(', ');
 
     const event = {
@@ -31,12 +25,6 @@ export function AddToCalendarMenu({ fixture }: AddToCalendarMenuProps) {
         start: fixture.kickoffUtc,
         durationMinutes: 120,
     };
-
-    function onDownload() {
-        downloadCalendar(fixture, {
-            onError: (error) => toast.error(error.message),
-        });
-    }
 
     return (
         <DropdownMenu>
@@ -68,8 +56,10 @@ export function AddToCalendarMenu({ fixture }: AddToCalendarMenuProps) {
                     </a>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={onDownload}>
-                    Apple / other
+                <DropdownMenuItem asChild>
+                    <a href={`/api/fixtures/${fixture.id}/calendar.ics`}>
+                        Apple / other
+                    </a>
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
