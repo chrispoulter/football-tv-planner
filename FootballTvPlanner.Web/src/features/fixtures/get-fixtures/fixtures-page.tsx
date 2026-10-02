@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useSearchParams } from 'react-router';
 import { z } from 'zod';
 import { Star, Tv } from 'lucide-react';
@@ -30,8 +31,6 @@ const searchParamsSchema = z.object({
         .string()
         .refine(isDateString)
         .catch(() => todayLocal()),
-    competition: z.string().optional().catch(undefined),
-    channel: z.string().optional().catch(undefined),
     mine: z
         .string()
         .optional()
@@ -46,14 +45,17 @@ export function FixturesPage() {
 
     const request = searchParamsSchema.parse(Object.fromEntries(searchParams));
 
+    const [competition, setCompetition] = useState<string>();
+    const [channel, setChannel] = useState<string>();
+
     const mine = request.mine && !!user;
 
     const { data, isPending, isPlaceholderData, isSuccess, error } =
         useGetFixtures(
             {
                 ...toUtcDayRange(request.date),
-                competition: request.competition,
-                channel: request.channel,
+                competition,
+                channel,
                 bookmarked: mine,
             },
             { enabled: !(request.mine && isAuthLoading) }
@@ -83,10 +85,10 @@ export function FixturesPage() {
             />
 
             <FixtureFilters
-                competition={request.competition}
-                channel={request.channel}
-                onCompetitionChange={(value) => setParam('competition', value)}
-                onChannelChange={(value) => setParam('channel', value)}
+                competition={competition}
+                channel={channel}
+                onCompetitionChange={setCompetition}
+                onChannelChange={setChannel}
                 mine={mine}
                 onMineChange={(value) =>
                     setParam('mine', value ? 'true' : undefined)
