@@ -42,19 +42,22 @@ const searchParamsSchema = z.object({
 export function FixturesPage() {
     const [searchParams, setSearchParams] = useSearchParams();
 
-    const { user } = useAuth();
+    const { user, isLoading: isAuthLoading } = useAuth();
 
     const request = searchParamsSchema.parse(Object.fromEntries(searchParams));
 
     const mine = request.mine && !!user;
 
     const { data, isPending, isPlaceholderData, isSuccess, error } =
-        useGetFixtures({
-            ...toUtcDayRange(request.date),
-            competition: request.competition,
-            channel: request.channel,
-            bookmarked: mine,
-        });
+        useGetFixtures(
+            {
+                ...toUtcDayRange(request.date),
+                competition: request.competition,
+                channel: request.channel,
+                bookmarked: mine,
+            },
+            { enabled: !(request.mine && isAuthLoading) }
+        );
 
     function setParam(name: string, value?: string) {
         setSearchParams((prev) => {

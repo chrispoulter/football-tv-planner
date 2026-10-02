@@ -8,6 +8,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { Skeleton } from '@/components/ui/skeleton';
 import { CalendarFeedDialog } from '@/features/schedule/calendar-feed-dialog';
 import { useGetChannels, useGetCompetitions } from '../fixtures-queries';
 
@@ -32,10 +33,12 @@ export function FixtureFilters({
     onMineChange,
     disabled,
 }: FixtureFiltersProps) {
-    const { user } = useAuth();
+    const { user, isLoading: isAuthLoading } = useAuth();
 
-    const { data: competitions } = useGetCompetitions();
-    const { data: channels = [] } = useGetChannels();
+    const { data: competitions, isPending: isCompetitionsPending } =
+        useGetCompetitions();
+    const { data: channels = [], isPending: isChannelsPending } =
+        useGetChannels();
 
     return (
         <div className="flex flex-col gap-2 sm:flex-row">
@@ -44,7 +47,7 @@ export function FixtureFilters({
                 onValueChange={(value) =>
                     onCompetitionChange(value === ALL ? undefined : value)
                 }
-                disabled={disabled}
+                disabled={disabled || isCompetitionsPending}
             >
                 <SelectTrigger
                     className="w-full sm:w-56"
@@ -67,7 +70,7 @@ export function FixtureFilters({
                 onValueChange={(value) =>
                     onChannelChange(value === ALL ? undefined : value)
                 }
-                disabled={disabled}
+                disabled={disabled || isChannelsPending}
             >
                 <SelectTrigger className="w-full sm:w-56" aria-label="Channel">
                     <SelectValue />
@@ -81,6 +84,8 @@ export function FixtureFilters({
                     ))}
                 </SelectContent>
             </Select>
+
+            {isAuthLoading && <Skeleton className="h-9 w-full sm:w-36" />}
 
             {user && (
                 <div className="flex gap-2">

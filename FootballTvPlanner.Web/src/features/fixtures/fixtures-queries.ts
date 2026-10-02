@@ -30,12 +30,16 @@ export interface GetFixturesResponse {
     items: FixtureSummary[];
 }
 
-export const useGetFixtures = (request: GetFixturesRequest) => {
+export const useGetFixtures = (
+    request: GetFixturesRequest,
+    { enabled }: { enabled?: boolean } = {}
+) => {
     const searchParams = Object.fromEntries(
         Object.entries(request).filter(([, value]) => !!value)
     );
 
     return useQuery({
+        enabled,
         queryKey: fixtureKeys.list(request),
         queryFn: ({ signal }) =>
             apiClient
