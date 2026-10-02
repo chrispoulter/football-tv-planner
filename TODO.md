@@ -6,14 +6,11 @@
 - Are errors handled   
 - Calendar options - are they all needed, do they all work?   
 - Swipe left and right to change days   
-- Cold starts?   
 - Fixture sync - exclude channels and filters
 - Remember filter settings
 
 - Handle cold starts
 - github actions build matrix
-
-- Need to add loading states to session, channels and leagues
 
 ## Bugfixes
 

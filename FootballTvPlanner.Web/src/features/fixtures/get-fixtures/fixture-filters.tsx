@@ -53,7 +53,9 @@ export function FixtureFilters({
                     className="w-full sm:w-56"
                     aria-label="Competition"
                 >
-                    <SelectValue />
+                    <SelectValue>
+                        {competition ?? 'All competitions'}
+                    </SelectValue>
                 </SelectTrigger>
                 <SelectContent position="popper" align="start">
                     <SelectItem value={ALL}>All competitions</SelectItem>
@@ -73,7 +75,7 @@ export function FixtureFilters({
                 disabled={disabled || isChannelsPending}
             >
                 <SelectTrigger className="w-full sm:w-56" aria-label="Channel">
-                    <SelectValue />
+                    <SelectValue>{channel ?? 'All channels'}</SelectValue>
                 </SelectTrigger>
                 <SelectContent position="popper" align="start">
                     <SelectItem value={ALL}>All channels</SelectItem>
