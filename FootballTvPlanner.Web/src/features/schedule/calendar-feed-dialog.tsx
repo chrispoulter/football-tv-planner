@@ -25,7 +25,6 @@ import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
     googleSubscribeUrl,
-    outlook365SubscribeUrl,
     outlookComSubscribeUrl,
 } from '@/lib/calendar-links';
 import {
@@ -83,8 +82,8 @@ function CalendarFeedOptionsSkeleton() {
                 <Skeleton className="size-9" />
             </div>
 
-            <div className="grid gap-2 sm:grid-cols-2">
-                {Array.from({ length: 4 }, (_, i) => (
+            <div className="grid gap-2 sm:grid-cols-3">
+                {Array.from({ length: 3 }, (_, i) => (
                     <Skeleton key={i} className="h-9" />
                 ))}
             </div>
@@ -135,7 +134,7 @@ function CalendarFeedOptions({ feed }: CalendarFeedOptionsProps) {
                 </Button>
             </div>
 
-            <div className="grid gap-2 sm:grid-cols-2">
+            <div className="grid gap-2 sm:grid-cols-3">
                 <Button asChild variant="secondary">
                     <a
                         href={googleSubscribeUrl(feed.webcalUrl)}
@@ -155,18 +154,6 @@ function CalendarFeedOptions({ feed }: CalendarFeedOptionsProps) {
                         rel="noreferrer"
                     >
                         Outlook.com
-                    </a>
-                </Button>
-                <Button asChild variant="secondary">
-                    <a
-                        href={outlook365SubscribeUrl(
-                            feed.httpsUrl,
-                            CALENDAR_NAME
-                        )}
-                        target="_blank"
-                        rel="noreferrer"
-                    >
-                        Outlook (Microsoft 365)
                     </a>
                 </Button>
                 <Button asChild variant="secondary">

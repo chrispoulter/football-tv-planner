@@ -19,10 +19,6 @@ interface ScheduleItemResponse {
     fixtureId: string;
 }
 
-/**
- * Flips the bookmark flag on every cached fixture list so the star responds instantly,
- * returning a function that restores the previous state.
- */
 async function setBookmarked(
     queryClient: QueryClient,
     fixtureId: string,

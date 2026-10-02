@@ -9,11 +9,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-    googleCalendarUrl,
-    outlook365Url,
-    outlookComUrl,
-} from '@/lib/calendar-links';
+import { googleCalendarUrl, outlookComUrl } from '@/lib/calendar-links';
 import {
     useDownloadFixtureCalendar,
     type FixtureSummary,
@@ -71,18 +67,9 @@ export function AddToCalendarMenu({ fixture }: AddToCalendarMenuProps) {
                         Outlook.com
                     </a>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                    <a
-                        href={outlook365Url(event)}
-                        target="_blank"
-                        rel="noreferrer"
-                    >
-                        Outlook (Microsoft 365)
-                    </a>
-                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={onDownload}>
-                    Download .ics (Apple, Outlook desktop)
+                    Apple / other
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
