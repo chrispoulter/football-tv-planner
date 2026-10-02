@@ -37,6 +37,7 @@ export function FixtureFilters({
 
     const { data: competitions, isPending: isCompetitionsPending } =
         useGetCompetitions();
+
     const { data: channels = [], isPending: isChannelsPending } =
         useGetChannels();
 
