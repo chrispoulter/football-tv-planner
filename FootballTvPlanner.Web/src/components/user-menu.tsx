@@ -44,7 +44,7 @@ export function UserMenu() {
                             {(user.name || user.email)[0].toUpperCase()}
                         </AvatarFallback>
                     </Avatar>
-                    <span className="sr-only">Toggle profile menu</span>
+                    <span className="sr-only">Account menu</span>
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">

@@ -27,7 +27,9 @@ export function AccountLayout({
             <div className={cn('w-full max-w-sm space-y-6', className)}>
                 <Card>
                     <CardHeader>
-                        <CardTitle className="text-2xl">{title}</CardTitle>
+                        <CardTitle className="text-2xl">
+                            <h1>{title}</h1>
+                        </CardTitle>
                         {description && (
                             <CardDescription>{description}</CardDescription>
                         )}

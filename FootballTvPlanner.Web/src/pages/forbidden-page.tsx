@@ -18,7 +18,7 @@ export function ForbiddenPage() {
                     <Card>
                         <CardHeader>
                             <CardTitle className="text-2xl">
-                                Access denied
+                                <h1>Access denied</h1>
                             </CardTitle>
                             <CardDescription>
                                 You don&apos;t have permission to view this

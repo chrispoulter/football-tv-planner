@@ -25,6 +25,8 @@ export function FormInputField<T extends FieldValues>({
 }: FormInputFieldProps<T>) {
     const id = useId();
 
+    const errorId = `${id}-error`;
+
     return (
         <Controller
             control={control}
@@ -35,11 +37,14 @@ export function FormInputField<T extends FieldValues>({
                     <Input
                         id={id}
                         aria-invalid={fieldState.invalid}
+                        aria-describedby={
+                            fieldState.invalid ? errorId : undefined
+                        }
                         {...inputProps}
                         {...field}
                     />
                     {fieldState.invalid && (
-                        <FieldError errors={[fieldState.error]} />
+                        <FieldError id={errorId} errors={[fieldState.error]} />
                     )}
                 </Field>
             )}

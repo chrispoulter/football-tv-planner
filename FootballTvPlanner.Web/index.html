@@ -1,28 +1,36 @@
 <!doctype html>
 <html lang="en">
     <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
         <title>Football TV Planner</title>
         <meta
             name="description"
-            content="Televised football on UK TV and streaming services, day by day."
+            content="Plan and track football TV schedules. Search for matches, build your watchlist, and manage your account — all in one place."
         />
-        <meta
-            name="keywords"
-            content="vite, react, typescript, react-router, react-query, zod, react-hook-form, shadcn, docker, eslint, prettier"
-        />
+        <meta name="theme-color" content="#2b2d3a" />
 
-        <meta httpEquiv="content-type" content="text/html; charset=utf-8" />
+        <!-- Open Graph -->
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Football TV Planner" />
         <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1, shrink-to-fit=no"
+            property="og:description"
+            content="Plan and track football TV schedules. Search for matches, build your watchlist, and manage your account."
         />
-        <meta name="format-detection" content="telephone=no" />
+        <meta property="og:image" content="/android-chrome-512x512.png" />
 
-        <link
-            rel="apple-touch-icon"
-            sizes="180x180"
-            href="/apple-touch-icon.png"
+        <!-- Twitter Card -->
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="Football TV Planner" />
+        <meta
+            name="twitter:description"
+            content="Plan and track football TV schedules."
         />
+        <meta name="twitter:image" content="/android-chrome-512x512.png" />
+
+        <!-- Favicons -->
+        <link rel="icon" type="image/svg+xml" href="/icon.svg" />
         <link
             rel="icon"
             type="image/png"
@@ -35,15 +43,15 @@
             sizes="16x16"
             href="/favicon-16x16.png"
         />
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link
+            rel="apple-touch-icon"
+            sizes="180x180"
+            href="/apple-touch-icon.png"
+        />
         <link rel="manifest" href="/site.webmanifest" />
-        <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#64c8e8" />
-        <meta name="apple-mobile-web-app-title" content="Football TV Planner" />
-        <meta name="application-name" content="Football TV Planner" />
-        <meta name="msapplication-TileColor" content="#2b2d3a" />
-        <meta name="theme-color" content="#2b2d3a" />
     </head>
-    <body class="antialiased">
+    <body>
         <div id="root"></div>
         <script src="/env.js?v=%VITE_APP_VERSION%"></script>
         <script type="module" src="/src/main.tsx"></script>

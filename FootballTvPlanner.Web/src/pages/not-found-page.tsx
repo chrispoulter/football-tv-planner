@@ -18,7 +18,7 @@ export function NotFoundPage() {
                     <Card>
                         <CardHeader>
                             <CardTitle className="text-2xl">
-                                Page not found
+                                <h1>Page not found</h1>
                             </CardTitle>
                             <CardDescription>
                                 The page you&apos;re looking for doesn&apos;t

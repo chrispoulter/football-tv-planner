@@ -20,7 +20,9 @@ export function FixtureList({ fixtures }: FixtureListProps) {
             {Array.from(groups.values()).map((group) => (
                 <Card key={group[0].competition} className="gap-2">
                     <CardHeader>
-                        <CardTitle>{group[0].competition}</CardTitle>
+                        <CardTitle>
+                            <h3>{group[0].competition}</h3>
+                        </CardTitle>
                     </CardHeader>
                     <CardContent className="divide-y">
                         {group.map((fixture) => (

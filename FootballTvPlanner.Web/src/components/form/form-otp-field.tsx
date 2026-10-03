@@ -32,6 +32,8 @@ export function FormOtpField<T extends FieldValues>({
 }: FormOtpFieldProps<T>) {
     const id = useId();
 
+    const errorId = `${id}-error`;
+
     return (
         <Controller
             control={control}
@@ -46,6 +48,9 @@ export function FormOtpField<T extends FieldValues>({
                         autoComplete="one-time-code"
                         autoFocus={autoFocus}
                         aria-invalid={fieldState.invalid}
+                        aria-describedby={
+                            fieldState.invalid ? errorId : undefined
+                        }
                         {...field}
                     >
                         <InputOTPGroup>
@@ -55,7 +60,7 @@ export function FormOtpField<T extends FieldValues>({
                         </InputOTPGroup>
                     </InputOTP>
                     {fieldState.invalid && (
-                        <FieldError errors={[fieldState.error]} />
+                        <FieldError id={errorId} errors={[fieldState.error]} />
                     )}
                 </Field>
             )}

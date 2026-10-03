@@ -11,9 +11,12 @@ interface FixtureCardProps {
 export function FixtureCard({ fixture }: FixtureCardProps) {
     return (
         <div className="flex items-start gap-4 py-3">
-            <div className="w-12 shrink-0 pt-0.5 text-lg font-semibold tabular-nums">
+            <time
+                dateTime={fixture.kickoffUtc}
+                className="w-12 shrink-0 pt-0.5 text-lg font-semibold tabular-nums"
+            >
                 {toLocalTime(fixture.kickoffUtc)}
-            </div>
+            </time>
 
             <div className="min-w-0 flex-1 space-y-2">
                 <div className="space-y-0.5">

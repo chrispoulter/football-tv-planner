@@ -21,6 +21,8 @@ export function FormCheckboxField<T extends FieldValues>({
 }: FormCheckboxFieldProps<T>) {
     const id = useId();
 
+    const errorId = `${id}-error`;
+
     return (
         <Controller
             control={control}
@@ -38,12 +40,15 @@ export function FormCheckboxField<T extends FieldValues>({
                         onBlur={field.onBlur}
                         ref={field.ref}
                         aria-invalid={fieldState.invalid}
+                        aria-describedby={
+                            fieldState.invalid ? errorId : undefined
+                        }
                     />
                     <FieldLabel htmlFor={id} className="font-normal">
                         {label}
                     </FieldLabel>
                     {fieldState.invalid && (
-                        <FieldError errors={[fieldState.error]} />
+                        <FieldError id={errorId} errors={[fieldState.error]} />
                     )}
                 </Field>
             )}

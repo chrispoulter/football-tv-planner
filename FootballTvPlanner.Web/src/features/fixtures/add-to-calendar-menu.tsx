@@ -31,7 +31,9 @@ export function AddToCalendarMenu({ fixture }: AddToCalendarMenuProps) {
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" title="Add to calendar">
                     <CalendarPlus />
-                    <span className="sr-only">Add to calendar</span>
+                    <span className="sr-only">
+                        Add {event.title} to calendar
+                    </span>
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">

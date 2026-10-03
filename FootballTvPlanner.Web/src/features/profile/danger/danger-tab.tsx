@@ -15,7 +15,9 @@ export function DangerTab() {
 
             <Card>
                 <CardHeader>
-                    <CardTitle>Delete Account</CardTitle>
+                    <CardTitle>
+                        <h2>Delete Account</h2>
+                    </CardTitle>
                     <CardDescription>
                         Permanently delete your account and all associated data.
                         This cannot be undone.
