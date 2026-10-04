@@ -9,13 +9,10 @@ public static class ForwardedHeadersExtensions
         builder.Services.Configure<ForwardedHeadersOptions>(options =>
         {
             options.ForwardedHeaders =
-                ForwardedHeaders.XForwardedHost
-                | ForwardedHeaders.XForwardedProto
-                | ForwardedHeaders.XForwardedPrefix;
+                ForwardedHeaders.XForwardedHost | ForwardedHeaders.XForwardedProto;
 
             options.ForwardedHostHeaderName = "X-FootballTvPlanner-Host";
             options.ForwardedProtoHeaderName = "X-FootballTvPlanner-Proto";
-            options.ForwardedPrefixHeaderName = "X-FootballTvPlanner-Prefix";
 
             options.KnownIPNetworks.Clear();
             options.KnownProxies.Clear();

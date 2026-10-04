@@ -41,7 +41,7 @@ public class LinkAccountEndpoint : IEndpoint
         await httpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
         var callbackUrl = QueryHelpers.AddQueryString(
-            $"{httpContext.Request.PathBase}/profile/linked-accounts/link/callback",
+            $"{httpContext.Request.PathBase}/api/profile/linked-accounts/link/callback",
             "returnUrl",
             ExternalLoginRedirects.LocalOrRoot(returnUrl)
         );

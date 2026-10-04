@@ -34,7 +34,7 @@ public class ExternalLoginEndpoint : IEndpoint
         }
 
         var callbackUrl = QueryHelpers.AddQueryString(
-            $"{httpContext.Request.PathBase}/account/external-login/callback",
+            $"{httpContext.Request.PathBase}/api/account/external-login/callback",
             "returnUrl",
             ExternalLoginRedirects.LocalOrRoot(returnUrl)
         );

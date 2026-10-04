@@ -11,11 +11,13 @@ public static class EndpointExtensions
             && typeof(IEndpoint).IsAssignableFrom(type)
         );
 
+        var api = app.MapGroup("/api");
+
         foreach (var endpoint in endpoints)
         {
             if (Activator.CreateInstance(endpoint) is IEndpoint instance)
             {
-                instance.MapEndpoints(app);
+                instance.MapEndpoints(api);
             }
         }
 

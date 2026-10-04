@@ -89,13 +89,13 @@ The API sends email over SMTP using the `Mail` connection string, for example `E
 
 ### Authentication and the `/api` proxy
 
-The web app never calls the API directly. It proxies `/api/*` to the API: Vite does this in development (`API_URL`) and nginx does it in the container (`API_URL`). This keeps the Identity cookie first-party even when the API is hosted on a different domain.
+The web app never calls the API directly. It proxies `/api/*` to the API unchanged, since every API endpoint is mapped under `/api`: Vite does this in development (`API_URL`) and nginx does it in the container (`API_URL`). This keeps the Identity cookie first-party even when the API is hosted on a different domain.
 
-The proxy sends the public host, scheme and path prefix in `X-FootballTvPlanner-*` headers. The API reads them in `ForwardedHeadersExtensions` so it can build correct external login redirect URIs. Custom header names are used so they can't clash with the `X-Forwarded-*` headers that the hosting provider sets.
+The proxy sends the public host and scheme in `X-FootballTvPlanner-*` headers. The API reads them in `ForwardedHeadersExtensions` so it can build correct external login redirect URIs. Custom header names are used so they can't clash with the `X-Forwarded-*` headers that the hosting provider sets.
 
 ### Dates and times
 
-Every time is stored and returned in UTC: `timestamptz` in Postgres, ISO 8601 strings in the API, and UTC `DTSTART` values in `.ics` files. The web app converts them to the viewer's time zone (`src/lib/local-time.ts`). When you pick a day, the web app sends it to `GET /fixtures` as a UTC `from`/`to` range, so the API doesn't need to know the viewer's time zone. The only code that knows about UK time is in the fixture providers, which convert UK kick-off times to UTC with `UkTime`.
+Every time is stored and returned in UTC: `timestamptz` in Postgres, ISO 8601 strings in the API, and UTC `DTSTART` values in `.ics` files. The web app converts them to the viewer's time zone (`src/lib/local-time.ts`). When you pick a day, the web app sends it to `GET /api/fixtures` as a UTC `from`/`to` range, so the API doesn't need to know the viewer's time zone. The only code that knows about UK time is in the fixture providers, which convert UK kick-off times to UTC with `UkTime`.
 
 ### Fixture sync
 

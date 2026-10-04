@@ -5,11 +5,10 @@ server {
     access_log  /var/log/nginx/server.access.log  main;
 
     location /api/ {
-        proxy_pass ${API_URL}/;
+        proxy_pass ${API_URL};
         proxy_ssl_server_name on;
         proxy_set_header X-FootballTvPlanner-Host $http_host;
         proxy_set_header X-FootballTvPlanner-Proto $http_x_forwarded_proto;
-        proxy_set_header X-FootballTvPlanner-Prefix /api;
     }
 
     location / {

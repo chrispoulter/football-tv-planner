@@ -56,6 +56,7 @@ public static class AuthenticationExtensions
                     options.ClientId = googleSettings.ClientId;
                     options.ClientSecret = googleSettings.ClientSecret;
                     options.SignInScheme = IdentityConstants.ExternalScheme;
+                    options.CallbackPath = "/api/signin-google";
 
                     options.Events.OnRemoteFailure = context =>
                     {
