@@ -46,6 +46,7 @@ services:
     environment:
       DOTNET_ENVIRONMENT: Development
       ConnectionStrings__Database: Host=host.docker.internal;Port=5432;Database=football_tv_planner;Username=postgres;Password=password
+      FixtureSync__Provider: Mock
       Logging__Console__FormatterName: json
     restart: "no"
     depends_on:
@@ -64,7 +65,7 @@ services:
       - postgres_data:/var/lib/postgresql
     restart: always
     healthcheck:
-      test: [ "CMD", "pg_isready" ]
+      test: ["CMD", "pg_isready"]
       interval: 10s
       timeout: 5s
       retries: 3
