@@ -10,7 +10,7 @@ public class GetChannelsEndpoint : IEndpoint
     {
         app.MapGet("/channels", HandleAsync)
             .AllowAnonymous()
-            .Produces<List<string>>()
+            .Produces<GetChannelsResponse>()
             .WithTags(Tags.Fixtures)
             .WithSummary("Get Channels")
             .WithDescription("List the TV channels and streaming services showing fixtures.");
@@ -22,12 +22,12 @@ public class GetChannelsEndpoint : IEndpoint
     )
     {
         var channels = await dbContext
-            .Fixtures.AsNoTracking()
-            .SelectMany(f => f.Channels)
-            .Distinct()
-            .OrderBy(c => c)
+            .Channels.AsNoTracking()
+            .Where(c => dbContext.Fixtures.Any(f => f.Channels.Any(fc => fc.Id == c.Id)))
+            .OrderBy(c => c.Name)
+            .Select(c => new GetChannelsItem(c.Id, c.Name))
             .ToListAsync(cancellationToken);
 
-        return Results.Ok(channels);
+        return Results.Ok(new GetChannelsResponse(channels));
     }
 }

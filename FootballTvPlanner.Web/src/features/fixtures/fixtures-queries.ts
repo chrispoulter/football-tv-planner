@@ -11,23 +11,31 @@ export const fixtureKeys = {
 export interface FixtureSummary {
     id: string;
     kickoffUtc: string;
-    competition: string;
-    homeTeam: string;
-    awayTeam: string;
-    channels: string[];
+    competition: { id: string; name: string };
+    homeTeam: { id: string; name: string };
+    awayTeam: { id: string; name: string };
+    channels: { id: string; name: string }[];
     isBookmarked?: boolean;
 }
 
 interface GetFixturesRequest {
     from: string;
     to: string;
-    competition?: string;
-    channel?: string;
+    competitionId?: string;
+    channelId?: string;
     bookmarked?: boolean;
 }
 
 export interface GetFixturesResponse {
     items: FixtureSummary[];
+}
+
+export interface GetCompetitionsResponse {
+    items: { id: string; name: string }[];
+}
+
+export interface GetChannelsResponse {
+    items: { id: string; name: string }[];
 }
 
 export const useGetFixtures = (
@@ -56,7 +64,9 @@ export const useGetCompetitions = () =>
     useQuery({
         queryKey: fixtureKeys.competitions,
         queryFn: ({ signal }) =>
-            apiClient.get('competitions', { signal }).json<string[]>(),
+            apiClient
+                .get('competitions', { signal })
+                .json<GetCompetitionsResponse>(),
         staleTime: 1000 * 60 * 60,
     });
 
@@ -64,6 +74,6 @@ export const useGetChannels = () =>
     useQuery({
         queryKey: fixtureKeys.channels,
         queryFn: ({ signal }) =>
-            apiClient.get('channels', { signal }).json<string[]>(),
+            apiClient.get('channels', { signal }).json<GetChannelsResponse>(),
         staleTime: 1000 * 60 * 60,
     });

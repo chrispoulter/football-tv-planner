@@ -43,14 +43,14 @@ public class GetFixturesEndpoint : IEndpoint
             .Fixtures.AsNoTracking()
             .Where(f => f.KickoffUtc >= start && f.KickoffUtc < end);
 
-        if (!string.IsNullOrEmpty(request.Competition))
+        if (request.CompetitionId is { } competitionId)
         {
-            query = query.Where(f => f.Competition == request.Competition);
+            query = query.Where(f => f.CompetitionId == competitionId);
         }
 
-        if (!string.IsNullOrEmpty(request.Channel))
+        if (request.ChannelId is { } channelId)
         {
-            query = query.Where(f => f.Channels.Contains(request.Channel));
+            query = query.Where(f => f.Channels.Any(c => c.Id == channelId));
         }
 
         if (request.Bookmarked == true && currentUser is not null)
@@ -62,10 +62,23 @@ public class GetFixturesEndpoint : IEndpoint
             );
         }
 
+        var userId = currentUser?.Id;
+
         var fixtures = await query
-            .OrderBy(f => f.Competition)
+            .OrderBy(f => f.Competition.Name)
             .ThenBy(f => f.KickoffUtc)
-            .Select(FixtureProjections.ToSummary(dbContext, currentUser?.Id))
+            .Select(f => new GetFixturesItem(
+                f.Id,
+                f.KickoffUtc,
+                new GetFixturesCompetition(f.Competition.Id, f.Competition.Name),
+                new GetFixturesTeam(f.HomeTeam.Id, f.HomeTeam.Name),
+                new GetFixturesTeam(f.AwayTeam.Id, f.AwayTeam.Name),
+                f.Channels.OrderBy(c => c.Name)
+                    .Select(c => new GetFixturesChannel(c.Id, c.Name))
+                    .ToList(),
+                userId != null
+                    && dbContext.UserFixtures.Any(uf => uf.UserId == userId && uf.FixtureId == f.Id)
+            ))
             .ToListAsync(cancellationToken);
 
         return Results.Ok(new GetFixturesResponse(fixtures));

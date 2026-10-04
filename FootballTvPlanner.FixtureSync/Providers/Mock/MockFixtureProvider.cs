@@ -15,7 +15,6 @@ public class MockFixtureProvider(IOptions<MockSettings> settings, TimeProvider t
     {
         var fixtures = new List<ProviderFixture>();
 
-        // Start a day back so every time zone's "today" is covered.
         var from = DateOnly.FromDateTime(timeProvider.GetUtcNow().UtcDateTime).AddDays(-1);
         var to = from.AddDays(_settings.DaysAhead + 1);
 
@@ -51,7 +50,7 @@ public class MockFixtureProvider(IOptions<MockSettings> settings, TimeProvider t
 
     private record MockCompetition(
         string Name,
-        ProviderChannel Channel,
+        string Channel,
         string[] Teams,
         (DayOfWeek Day, TimeOnly Time)[] KickOffs
     );
@@ -60,7 +59,7 @@ public class MockFixtureProvider(IOptions<MockSettings> settings, TimeProvider t
     [
         new(
             "Premier League",
-            new("Sky Sports Main Event", 10),
+            "Sky Sports Main Event",
             [
                 "Arsenal",
                 "Aston Villa",
@@ -83,7 +82,7 @@ public class MockFixtureProvider(IOptions<MockSettings> settings, TimeProvider t
         ),
         new(
             "Championship",
-            new("Sky Sports Football", 12),
+            "Sky Sports Football",
             [
                 "Birmingham City",
                 "Coventry City",
@@ -104,7 +103,7 @@ public class MockFixtureProvider(IOptions<MockSettings> settings, TimeProvider t
         ),
         new(
             "UEFA Champions League",
-            new("TNT Sports 1", 20),
+            "TNT Sports 1",
             [
                 "Arsenal",
                 "Liverpool",
@@ -123,13 +122,13 @@ public class MockFixtureProvider(IOptions<MockSettings> settings, TimeProvider t
         ),
         new(
             "Scottish Premiership",
-            new("Premier Sports 1", 60),
+            "Premier Sports 1",
             ["Aberdeen", "Celtic", "Hearts", "Hibernian", "Rangers", "St Mirren"],
             [(DayOfWeek.Sunday, new(12, 0))]
         ),
         new(
             "Women's Super League",
-            new("BBC Two", 40),
+            "BBC Two",
             [
                 "Arsenal Women",
                 "Chelsea Women",
@@ -141,7 +140,7 @@ public class MockFixtureProvider(IOptions<MockSettings> settings, TimeProvider t
         ),
         new(
             "La Liga",
-            new("Premier Sports 2", 61),
+            "Premier Sports 2",
             ["Real Madrid", "Barcelona", "Atlético Madrid", "Sevilla", "Valencia", "Villarreal"],
             [(DayOfWeek.Saturday, new(20, 0)), (DayOfWeek.Sunday, new(20, 0))]
         ),
