@@ -79,10 +79,12 @@ export function FixturesPage() {
 
             <h1 className="text-2xl font-bold tracking-tight">Fixtures</h1>
 
-            <DayStrip
-                date={request.date}
-                onChange={(date) => setParam('date', date)}
-            />
+            <div className="sticky top-14 z-40 -mx-4 border-b bg-background/95 px-4 py-2 backdrop-blur supports-backdrop-filter:bg-background/60">
+                <DayStrip
+                    date={request.date}
+                    onChange={(date) => setParam('date', date)}
+                />
+            </div>
 
             <FixtureFilters
                 competitionId={competitionId}
@@ -95,7 +97,7 @@ export function FixturesPage() {
                 }
             />
 
-            <h2 className="text-lg font-semibold">
+            <h2 ref={headingRef} className="scroll-mt-32 text-lg font-semibold">
                 {toLongDayLabel(request.date)}
             </h2>
 
