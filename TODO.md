@@ -5,7 +5,6 @@
 - Are errors handled   
 
 - Swipe left and right to change days   
-- Handle cold starts
 - github actions build matrix
 
 
