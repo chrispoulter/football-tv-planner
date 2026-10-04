@@ -21,15 +21,15 @@ export function FixtureCard({ fixture }: FixtureCardProps) {
             <div className="min-w-0 flex-1 space-y-2">
                 <div className="space-y-0.5">
                     <div className="text-base font-medium">
-                        {fixture.homeTeam}{' '}
+                        {fixture.homeTeam.name}{' '}
                         <span className="text-muted-foreground">v</span>{' '}
-                        {fixture.awayTeam}
+                        {fixture.awayTeam.name}
                     </div>
                 </div>
 
                 <div className="flex flex-wrap gap-1.5">
                     {fixture.channels.map((channel) => (
-                        <ChannelBadge key={channel} channel={channel} />
+                        <ChannelBadge key={channel.id} channel={channel.name} />
                     ))}
                 </div>
             </div>

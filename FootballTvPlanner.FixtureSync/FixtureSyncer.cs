@@ -22,12 +22,18 @@ public class FixtureSyncer(
             throw new InvalidOperationException($"{fixtureProvider.Source} returned no fixtures.");
         }
 
+        var competitions = await dbContext.Competitions.ToDictionaryAsync(
+            c => c.Name,
+            cancellationToken
+        );
+        var teams = await dbContext.Teams.ToDictionaryAsync(t => t.Name, cancellationToken);
+        var channels = await dbContext.Channels.ToDictionaryAsync(c => c.Name, cancellationToken);
+
         var externalIds = items.Select(i => i.ExternalId).ToList();
 
         var fixtures = await dbContext
-            .Fixtures.Where(f =>
-                f.Source == fixtureProvider.Source && externalIds.Contains(f.ExternalId)
-            )
+            .Fixtures.Include(f => f.Channels)
+            .Where(f => f.Source == fixtureProvider.Source && externalIds.Contains(f.ExternalId))
             .ToDictionaryAsync(f => f.ExternalId, cancellationToken);
 
         foreach (var item in items)
@@ -43,14 +49,22 @@ public class FixtureSyncer(
                 fixtures.Add(item.ExternalId, fixture);
             }
 
-            fixture.Competition = item.Competition;
-            fixture.HomeTeam = item.HomeTeam;
-            fixture.AwayTeam = item.AwayTeam;
+            fixture.Competition = GetOrAdd(
+                competitions,
+                item.Competition,
+                name => new Competition { Name = name }
+            );
+            fixture.HomeTeam = GetOrAdd(teams, item.HomeTeam, name => new Team { Name = name });
+            fixture.AwayTeam = GetOrAdd(teams, item.AwayTeam, name => new Team { Name = name });
             fixture.KickoffUtc = item.KickoffUtc;
-            fixture.Channels =
-            [
-                .. item.Channels.OrderBy(c => c.SortOrder).ThenBy(c => c.Name).Select(c => c.Name),
-            ];
+
+            var itemChannels = item
+                .Channels.Distinct()
+                .Select(c => GetOrAdd(channels, c, name => new Channel { Name = name }))
+                .ToList();
+
+            fixture.Channels.RemoveAll(c => !itemChannels.Contains(c));
+            fixture.Channels.AddRange(itemChannels.Except(fixture.Channels));
         }
 
         await dbContext.SaveChangesAsync(cancellationToken);
@@ -70,5 +84,18 @@ public class FixtureSyncer(
             items.Count,
             removed
         );
+    }
+
+    private T GetOrAdd<T>(Dictionary<string, T> existing, string name, Func<string, T> create)
+        where T : class
+    {
+        if (!existing.TryGetValue(name, out var entity))
+        {
+            entity = create(name);
+            dbContext.Add(entity);
+            existing.Add(name, entity);
+        }
+
+        return entity;
     }
 }

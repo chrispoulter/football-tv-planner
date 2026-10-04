@@ -45,8 +45,8 @@ export function FixturesPage() {
 
     const request = searchParamsSchema.parse(Object.fromEntries(searchParams));
 
-    const [competition, setCompetition] = useState<string>();
-    const [channel, setChannel] = useState<string>();
+    const [competitionId, setCompetitionId] = useState<string>();
+    const [channelId, setChannelId] = useState<string>();
 
     const mine = request.mine && !!user;
 
@@ -54,8 +54,8 @@ export function FixturesPage() {
         useGetFixtures(
             {
                 ...toUtcDayRange(request.date),
-                competition,
-                channel,
+                competitionId,
+                channelId,
                 bookmarked: mine,
             },
             { enabled: !(request.mine && isAuthLoading) }
@@ -85,10 +85,10 @@ export function FixturesPage() {
             />
 
             <FixtureFilters
-                competition={competition}
-                channel={channel}
-                onCompetitionChange={setCompetition}
-                onChannelChange={setChannel}
+                competitionId={competitionId}
+                channelId={channelId}
+                onCompetitionChange={setCompetitionId}
+                onChannelChange={setChannelId}
                 mine={mine}
                 onMineChange={(value) =>
                     setParam('mine', value ? 'true' : undefined)

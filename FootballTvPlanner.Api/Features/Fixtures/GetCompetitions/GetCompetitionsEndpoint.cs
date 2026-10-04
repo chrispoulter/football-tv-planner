@@ -10,7 +10,7 @@ public class GetCompetitionsEndpoint : IEndpoint
     {
         app.MapGet("/competitions", HandleAsync)
             .AllowAnonymous()
-            .Produces<List<string>>()
+            .Produces<GetCompetitionsResponse>()
             .WithTags(Tags.Fixtures)
             .WithSummary("Get Competitions")
             .WithDescription("List the competitions that have televised fixtures.");
@@ -22,12 +22,12 @@ public class GetCompetitionsEndpoint : IEndpoint
     )
     {
         var competitions = await dbContext
-            .Fixtures.AsNoTracking()
-            .Select(f => f.Competition)
-            .Distinct()
-            .OrderBy(c => c)
+            .Competitions.AsNoTracking()
+            .Where(c => dbContext.Fixtures.Any(f => f.CompetitionId == c.Id))
+            .OrderBy(c => c.Name)
+            .Select(c => new GetCompetitionsItem(c.Id, c.Name))
             .ToListAsync(cancellationToken);
 
-        return Results.Ok(competitions);
+        return Results.Ok(new GetCompetitionsResponse(competitions));
     }
 }

@@ -16,11 +16,11 @@ interface AddToCalendarMenuProps {
 }
 
 export function AddToCalendarMenu({ fixture }: AddToCalendarMenuProps) {
-    const channels = fixture.channels.join(', ');
+    const channels = fixture.channels.map((c) => c.name).join(', ');
 
     const event = {
-        title: `${fixture.homeTeam} v ${fixture.awayTeam}`,
-        description: `${fixture.competition}\nWatch on: ${channels}`,
+        title: `${fixture.homeTeam.name} v ${fixture.awayTeam.name}`,
+        description: `${fixture.competition.name}\nWatch on: ${channels}`,
         location: channels,
         start: fixture.kickoffUtc,
         durationMinutes: 120,

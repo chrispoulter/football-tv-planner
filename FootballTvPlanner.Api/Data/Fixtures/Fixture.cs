@@ -1,3 +1,7 @@
+using FootballTvPlanner.Api.Data.Channels;
+using FootballTvPlanner.Api.Data.Competitions;
+using FootballTvPlanner.Api.Data.Teams;
+
 namespace FootballTvPlanner.Api.Data.Fixtures;
 
 public class Fixture
@@ -8,13 +12,19 @@ public class Fixture
 
     public string ExternalId { get; set; } = null!;
 
-    public string Competition { get; set; } = null!;
+    public Guid CompetitionId { get; set; }
 
-    public string HomeTeam { get; set; } = null!;
+    public Competition Competition { get; set; } = null!;
 
-    public string AwayTeam { get; set; } = null!;
+    public Guid HomeTeamId { get; set; }
+
+    public Team HomeTeam { get; set; } = null!;
+
+    public Guid AwayTeamId { get; set; }
+
+    public Team AwayTeam { get; set; } = null!;
 
     public DateTimeOffset KickoffUtc { get; set; }
 
-    public List<string> Channels { get; set; } = [];
+    public List<Channel> Channels { get; set; } = [];
 }
