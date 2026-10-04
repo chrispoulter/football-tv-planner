@@ -15,7 +15,6 @@ public class MockFixtureProvider(IOptions<MockSettings> settings, TimeProvider t
     {
         var fixtures = new List<ProviderFixture>();
 
-        // Start a day back so every time zone's "today" is covered.
         var from = DateOnly.FromDateTime(timeProvider.GetUtcNow().UtcDateTime).AddDays(-1);
         var to = from.AddDays(_settings.DaysAhead + 1);
 
