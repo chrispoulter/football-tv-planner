@@ -11,9 +11,7 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 
-export function ErrorPage({
-    resetErrorBoundary,
-}: Partial<Pick<FallbackProps, 'resetErrorBoundary'>>) {
+export function ErrorPage({ resetErrorBoundary }: FallbackProps) {
     return (
         <>
             <Metadata title="Error" />

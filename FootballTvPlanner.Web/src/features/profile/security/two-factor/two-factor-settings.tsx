@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { QueryError } from '@/components/query-error';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
@@ -32,7 +32,7 @@ export function TwoFactorSettings() {
 
     const [recoveryCodes, setRecoveryCodes] = useState<string[]>([]);
 
-    const { data: status, isPending, isSuccess, error } = useGetTwoFactor();
+    const { data: status, isPending, isSuccess } = useGetTwoFactor();
 
     const {
         mutate: setup,
@@ -52,7 +52,14 @@ export function TwoFactorSettings() {
     }
 
     if (!isSuccess) {
-        return <QueryError error={error} />;
+        return (
+            <Alert variant="destructive">
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>
+                    Failed to load two-factor settings. Please try again.
+                </AlertDescription>
+            </Alert>
+        );
     }
 
     function onSetup() {

@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router';
 import { toast } from 'sonner';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { QueryError } from '@/components/query-error';
 import { authProviders } from '@/lib/auth-providers';
 import {
     linkAccountUrl,
@@ -24,7 +24,7 @@ interface LinkedAccountsProps {
 export function LinkedAccounts({ hasPassword }: LinkedAccountsProps) {
     const [searchParams, setSearchParams] = useSearchParams();
 
-    const { data, isPending, isSuccess, error } = useGetLinkedAccounts();
+    const { data, isPending, isSuccess } = useGetLinkedAccounts();
 
     const {
         mutate: removeLinkedAccount,
@@ -52,7 +52,14 @@ export function LinkedAccounts({ hasPassword }: LinkedAccountsProps) {
     }
 
     if (!isSuccess) {
-        return <QueryError error={error} />;
+        return (
+            <Alert variant="destructive">
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>
+                    Failed to load linked accounts. Please try again.
+                </AlertDescription>
+            </Alert>
+        );
     }
 
     const isLinked = (providerId: string) =>

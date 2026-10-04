@@ -1,4 +1,6 @@
 import ky, { HTTPError } from 'ky';
+import { sessionKeys } from '@/components/auth-provider';
+import { queryClient } from './query-client';
 
 export interface ProblemDetails {
     title?: string;
@@ -22,6 +24,15 @@ export const apiClient = ky.create({
                     error.message = firstError || body?.title || error.message;
                 }
                 return error;
+            },
+        ],
+        afterResponse: [
+            ({ response }) => {
+                // The cookie is missing or expired, so forget the user
+                if (response.status === 401) {
+                    queryClient.setQueryData(sessionKeys.all, null);
+                }
+                return response;
             },
         ],
     },
