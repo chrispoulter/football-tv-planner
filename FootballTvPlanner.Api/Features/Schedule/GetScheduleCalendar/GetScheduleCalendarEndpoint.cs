@@ -53,7 +53,7 @@ public class GetScheduleCalendarEndpoint : IEndpoint
             .Select(FixtureProjections.ToCalendarFixture())
             .ToListAsync(cancellationToken);
 
-        var calendar = CalendarBuilder.Build(fixtures, now, calendarName: "My Football on TV");
+        var calendar = CalendarBuilder.Build(fixtures, now, calendarName: "Football TV Planner");
 
         return Results.Text(calendar, CalendarBuilder.ContentType);
     }
