@@ -97,7 +97,7 @@ export function FixturesPage() {
                 }
             />
 
-            <h2 ref={headingRef} className="scroll-mt-32 text-lg font-semibold">
+            <h2 className="scroll-mt-32 text-lg font-semibold">
                 {toLongDayLabel(request.date)}
             </h2>
 
