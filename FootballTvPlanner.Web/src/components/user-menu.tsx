@@ -1,4 +1,5 @@
 import { Link, useNavigate } from 'react-router';
+import { toast } from 'sonner';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -20,7 +21,10 @@ export function UserMenu() {
     const { mutate: logout, isPending } = useLogout();
 
     function onLogout() {
-        logout(undefined, { onSettled: () => navigate('/') });
+        logout(undefined, {
+            onSuccess: () => navigate('/'),
+            onError: (error) => toast.error(error.message),
+        });
     }
 
     if (isLoading) {

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { CalendarSync, Copy } from 'lucide-react';
 import { toast } from 'sonner';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -42,8 +43,11 @@ interface CalendarFeedDialogProps {
 export function CalendarFeedDialog({ disabled }: CalendarFeedDialogProps) {
     const [open, setOpen] = useState(false);
 
-    // Only fetch once opened, so the private feed link is created on first use.
-    const { data: feed, isSuccess } = useGetCalendarFeed({ enabled: open });
+    const {
+        data: feed,
+        isPending,
+        isSuccess,
+    } = useGetCalendarFeed({ enabled: open });
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -63,10 +67,17 @@ export function CalendarFeedDialog({ disabled }: CalendarFeedDialogProps) {
                     </DialogDescription>
                 </DialogHeader>
 
-                {isSuccess ? (
+                {isPending ? (
+                    <CalendarFeedOptionsSkeleton />
+                ) : isSuccess ? (
                     <CalendarFeedOptions feed={feed} />
                 ) : (
-                    <CalendarFeedOptionsSkeleton />
+                    <Alert variant="destructive">
+                        <AlertTitle>Error</AlertTitle>
+                        <AlertDescription>
+                            Failed to load your calendar link. Please try again.
+                        </AlertDescription>
+                    </Alert>
                 )}
             </DialogContent>
         </Dialog>
