@@ -14,6 +14,8 @@ public partial class LiveFootballOnTvFixtureProvider(
 {
     public const string HttpClientName = "LiveFootballOnTv";
 
+    private static readonly string[] Annotations = ["(joins match in progress)"];
+
     private readonly LiveFootballOnTvSettings _settings = settings.Value;
 
     public string Source => "LiveFootballOnTv";
@@ -57,7 +59,7 @@ public partial class LiveFootballOnTvFixtureProvider(
     private ProviderFixture? ParseFixture(IElement element, DateOnly date)
     {
         var timeText = Text(element, ".fixture__time");
-        var teamsText = Text(element, ".fixture__teams");
+        var teamsText = RemoveAnnotations(Text(element, ".fixture__teams"));
         var competitionText = Text(element, ".fixture__competition");
 
         if (
@@ -115,6 +117,15 @@ public partial class LiveFootballOnTvFixtureProvider(
             ? date
             : null;
     }
+
+    private static string RemoveAnnotations(string text) =>
+        Annotations
+            .Aggregate(
+                text,
+                (current, annotation) =>
+                    current.Replace(annotation, "", StringComparison.OrdinalIgnoreCase)
+            )
+            .Trim();
 
     private static string Text(IElement element, string selector) =>
         element.QuerySelector(selector)?.TextContent.Trim() ?? "";
