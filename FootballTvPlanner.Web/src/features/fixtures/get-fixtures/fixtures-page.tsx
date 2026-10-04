@@ -4,6 +4,7 @@ import { useSwipeable, type SwipeEventData } from 'react-swipeable';
 import { z } from 'zod';
 import { Star, Tv } from 'lucide-react';
 import { useAuth } from '@/components/auth-provider';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import {
     Empty,
@@ -14,7 +15,6 @@ import {
     EmptyTitle,
 } from '@/components/ui/empty';
 import { Metadata } from '@/components/metadata';
-import { QueryError } from '@/components/query-error';
 import {
     addDays,
     isDateString,
@@ -59,16 +59,15 @@ export function FixturesPage() {
 
     const mine = request.mine && !!user;
 
-    const { data, isPending, isPlaceholderData, isSuccess, error } =
-        useGetFixtures(
-            {
-                ...toUtcDayRange(request.date),
-                competitionId,
-                channelId,
-                bookmarked: mine,
-            },
-            { enabled: !(request.mine && isAuthLoading) }
-        );
+    const { data, isPending, isPlaceholderData, isSuccess } = useGetFixtures(
+        {
+            ...toUtcDayRange(request.date),
+            competitionId,
+            channelId,
+            bookmarked: mine,
+        },
+        { enabled: !(request.mine && isAuthLoading) }
+    );
 
     function setParam(name: string, value?: string) {
         setSearchParams((prev) => {
@@ -128,7 +127,12 @@ export function FixturesPage() {
                 {isPending || (isPlaceholderData && !data.items.length) ? (
                     <FixturesLoading />
                 ) : !isSuccess ? (
-                    <QueryError error={error} />
+                    <Alert variant="destructive">
+                        <AlertTitle>Error</AlertTitle>
+                        <AlertDescription>
+                            Failed to load fixtures. Please try again.
+                        </AlertDescription>
+                    </Alert>
                 ) : data.items.length ? (
                     <div
                         className={isPlaceholderData ? 'opacity-60' : undefined}
