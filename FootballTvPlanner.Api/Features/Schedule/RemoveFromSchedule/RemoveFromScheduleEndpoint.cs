@@ -25,7 +25,8 @@ public class RemoveFromScheduleEndpoint : IEndpoint
     )
     {
         await dbContext
-            .UserFixtures.Where(uf => uf.UserId == currentUser.Id && uf.FixtureId == fixtureId)
+            .UserFixtures.IgnoreQueryFilters()
+            .Where(uf => uf.UserId == currentUser.Id && uf.FixtureId == fixtureId)
             .ExecuteDeleteAsync(cancellationToken);
 
         return Results.Ok(new ScheduleItemResponse(fixtureId));
