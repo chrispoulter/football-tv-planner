@@ -1,22 +1,14 @@
-# The hosting provider may terminate TLS before nginx, so prefer its forwarded scheme
-map $http_x_forwarded_proto $public_proto {
-    default $http_x_forwarded_proto;
-    ''      $scheme;
-}
-
 server {
     listen 80;
     server_name _;
 
     access_log  /var/log/nginx/server.access.log  main;
 
-    # Proxy the API through this origin so the auth cookie is first-party
     location /api/ {
         proxy_pass ${API_URL}/;
-        proxy_set_header Host $proxy_host;
         proxy_ssl_server_name on;
         proxy_set_header X-FootballTvPlanner-Host $http_host;
-        proxy_set_header X-FootballTvPlanner-Proto $public_proto;
+        proxy_set_header X-FootballTvPlanner-Proto $http_x_forwarded_proto;
         proxy_set_header X-FootballTvPlanner-Prefix /api;
     }
 
