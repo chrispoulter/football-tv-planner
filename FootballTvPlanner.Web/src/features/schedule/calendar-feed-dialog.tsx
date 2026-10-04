@@ -34,7 +34,7 @@ import {
     type CalendarFeedResponse,
 } from './schedule-queries';
 
-const CALENDAR_NAME = 'My Football on TV';
+const CALENDAR_NAME = 'Football TV Planner';
 
 interface CalendarFeedDialogProps {
     disabled?: boolean;
