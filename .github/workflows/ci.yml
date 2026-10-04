@@ -40,16 +40,24 @@ jobs:
           npm run build
 
   docker:
-    name: Build and Push Images
+    name: Build and Push Image (${{ matrix.name }})
     runs-on: ubuntu-latest
     needs: check
     permissions:
       contents: read
       packages: write
-    outputs:
-      apiImage: ${{ steps.outputs.outputs.apiImage }}
-      fixtureSyncImage: ${{ steps.outputs.outputs.fixtureSyncImage }}
-      webImage: ${{ steps.outputs.outputs.webImage }}
+    strategy:
+      matrix:
+        include:
+          - name: api
+            dockerfile: ./FootballTvPlanner.Api/Dockerfile
+            context: .
+          - name: fixture-sync
+            dockerfile: ./FootballTvPlanner.FixtureSync/Dockerfile
+            context: .
+          - name: web
+            dockerfile: ./FootballTvPlanner.Web/Dockerfile
+            context: ./FootballTvPlanner.Web
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -64,79 +72,26 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ github.token }}
 
-      - name: Lowercase the repo name
-        run: echo "REPO=${GITHUB_REPOSITORY,,}" >> "$GITHUB_ENV"
-
-      - name: Docker metadata (api)
-        id: meta-api
+      - name: Docker metadata
+        id: meta
         uses: docker/metadata-action@v6
         with:
-          images: ghcr.io/${{ env.REPO }}-api
+          images: ghcr.io/${{ github.repository }}-${{ matrix.name }}
           tags: |
             type=sha,prefix=,format=short
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
             type=ref,event=branch,enable=${{ github.ref != 'refs/heads/main' }}
 
-      - name: Build and push container image to registry (api)
+      - name: Build and push container image to registry
         uses: docker/build-push-action@v7
         with:
-          file: ./FootballTvPlanner.Api/Dockerfile
-          context: .
-          tags: ${{ steps.meta-api.outputs.tags }}
-          labels: ${{ steps.meta-api.outputs.labels }}
+          file: ${{ matrix.dockerfile }}
+          context: ${{ matrix.context }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
           build-args: GIT_COMMIT_SHA=${{ github.sha }}
           push: true
           provenance: false
-
-      - name: Docker metadata (fixture-sync)
-        id: meta-fixture-sync
-        uses: docker/metadata-action@v6
-        with:
-          images: ghcr.io/${{ env.REPO }}-fixture-sync
-          tags: |
-            type=sha,prefix=,format=short
-            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
-            type=ref,event=branch,enable=${{ github.ref != 'refs/heads/main' }}
-
-      - name: Build and push container image to registry (fixture-sync)
-        uses: docker/build-push-action@v7
-        with:
-          file: ./FootballTvPlanner.FixtureSync/Dockerfile
-          context: .
-          tags: ${{ steps.meta-fixture-sync.outputs.tags }}
-          labels: ${{ steps.meta-fixture-sync.outputs.labels }}
-          build-args: GIT_COMMIT_SHA=${{ github.sha }}
-          push: true
-          provenance: false
-
-      - name: Docker metadata (web)
-        id: meta-web
-        uses: docker/metadata-action@v6
-        with:
-          images: ghcr.io/${{ env.REPO }}-web
-          tags: |
-            type=sha,prefix=,format=short
-            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
-            type=ref,event=branch,enable=${{ github.ref != 'refs/heads/main' }}
-
-      - name: Build and push container image to registry (web)
-        uses: docker/build-push-action@v7
-        with:
-          file: ./FootballTvPlanner.Web/Dockerfile
-          context: ./FootballTvPlanner.Web
-          tags: ${{ steps.meta-web.outputs.tags }}
-          labels: ${{ steps.meta-web.outputs.labels }}
-          build-args: GIT_COMMIT_SHA=${{ github.sha }}
-          push: true
-          provenance: false
-
-      - name: Set outputs
-        id: outputs
-        run: |
-          SHORT_SHA="${GITHUB_SHA::7}"
-          echo "apiImage=ghcr.io/${REPO}-api:${SHORT_SHA}" >> "$GITHUB_OUTPUT"
-          echo "fixtureSyncImage=ghcr.io/${REPO}-fixture-sync:${SHORT_SHA}" >> "$GITHUB_OUTPUT"
-          echo "webImage=ghcr.io/${REPO}-web:${SHORT_SHA}" >> "$GITHUB_OUTPUT"
 
   deploy:
     name: Deploy to Azure Container Apps
@@ -155,18 +110,7 @@ jobs:
       AZURE_WEB_APP: ${{ vars.AZURE_WEB_APP }}
       AZURE_FIXTURE_SYNC_JOB: ${{ vars.AZURE_FIXTURE_SYNC_JOB }}
     steps:
-      - name: Check deployment configuration
-        id: config
-        run: |
-          if [ -z "$AZURE_RESOURCE_GROUP" ] || [ -z "$AZURE_API_APP" ] || [ -z "$AZURE_WEB_APP" ] || [ -z "$AZURE_FIXTURE_SYNC_JOB" ]; then
-            echo "Azure Container Apps are not configured for this environment; skipping deploy."
-            echo "configured=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "configured=true" >> "$GITHUB_OUTPUT"
-          fi
-
       - name: Log in to Azure
-        if: steps.config.outputs.configured == 'true'
         uses: azure/login@v2
         with:
           client-id: ${{ vars.AZURE_CLIENT_ID }}
@@ -174,12 +118,11 @@ jobs:
           subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
       - name: Deploy to Azure Container Apps
-        if: steps.config.outputs.configured == 'true'
-        env:
-          API_IMAGE: ${{ needs.docker.outputs.apiImage }}
-          FIXTURE_SYNC_IMAGE: ${{ needs.docker.outputs.fixtureSyncImage }}
-          WEB_IMAGE: ${{ needs.docker.outputs.webImage }}
         run: |
+          SHORT_SHA="${GITHUB_SHA::7}"
+          API_IMAGE="ghcr.io/${GITHUB_REPOSITORY}-api:${SHORT_SHA}"
+          FIXTURE_SYNC_IMAGE="ghcr.io/${GITHUB_REPOSITORY}-fixture-sync:${SHORT_SHA}"
+          WEB_IMAGE="ghcr.io/${GITHUB_REPOSITORY}-web:${SHORT_SHA}"
           az containerapp update -g "$AZURE_RESOURCE_GROUP" -n "$AZURE_API_APP" --image "$API_IMAGE" --output none
           az containerapp update -g "$AZURE_RESOURCE_GROUP" -n "$AZURE_WEB_APP" --image "$WEB_IMAGE" --output none
           az containerapp job update -g "$AZURE_RESOURCE_GROUP" -n "$AZURE_FIXTURE_SYNC_JOB" --image "$FIXTURE_SYNC_IMAGE" --output none
