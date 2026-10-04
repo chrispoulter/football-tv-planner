@@ -6,7 +6,7 @@ Shows the football on UK TV and streaming services, day by day. Signed-in users 
 
 - **Fixtures by day.** Pick one of the next 14 days, then filter by competition or channel. Kick-off times, and which games fall on which day, use the viewer's local time zone.
 - **My Schedule.** Star a game to add it to your schedule. The **My Schedule** filter narrows the list to your starred games.
-- **Add to calendar.** Each game has links for Google Calendar and Outlook.com, plus an `.ics` download. Events include a reminder 30 minutes before kick-off.
+- **Add to calendar.** Each game has links for Google Calendar and Outlook.com, plus an `.ics` download. Events include a reminder at kick-off.
 - **Calendar feed.** Each user gets a private `webcal://` feed of their starred games, with one-click subscribe for Google and Outlook. Resetting the link stops the old one from working.
 - **Accounts.** Email and password registration with email confirmation and password reset, optional Google sign-in, linking Google to an existing account, two-factor authentication with recovery codes, and account deletion.
 

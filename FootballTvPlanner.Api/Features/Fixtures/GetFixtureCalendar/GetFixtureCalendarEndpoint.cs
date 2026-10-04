@@ -15,7 +15,7 @@ public class GetFixtureCalendarEndpoint : IEndpoint
             .WithTags(Tags.Fixtures)
             .WithSummary("Get Fixture Calendar Event")
             .WithDescription(
-                "Download a fixture as an iCalendar (.ics) event, with a reminder 30 minutes before kick-off."
+                "Download a fixture as an iCalendar (.ics) event, with a reminder at kick-off."
             );
     }
 

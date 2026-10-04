@@ -22,8 +22,6 @@ public static class CalendarBuilder
 {
     public const string ContentType = "text/calendar; charset=utf-8";
 
-    private const int ReminderMinutesBefore = 30;
-
     private static readonly TimeSpan MatchDuration = TimeSpan.FromHours(2);
 
     public static string Build(
@@ -77,7 +75,7 @@ public static class CalendarBuilder
             {
                 Action = AlarmAction.Display,
                 Description = $"{summary} on {channels}",
-                Trigger = new Trigger(Duration.FromMinutes(-ReminderMinutesBefore)),
+                Trigger = new Trigger(Duration.FromMinutes(0)),
             }
         );
 
