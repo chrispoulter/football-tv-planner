@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useSearchParams } from 'react-router';
+import { useSwipeable, type SwipeEventData } from 'react-swipeable';
 import { z } from 'zod';
 import { Star, Tv } from 'lucide-react';
 import { useAuth } from '@/components/auth-provider';
@@ -15,6 +16,7 @@ import {
 import { Metadata } from '@/components/metadata';
 import { QueryError } from '@/components/query-error';
 import {
+    addDays,
     isDateString,
     toLongDayLabel,
     todayLocal,
@@ -25,6 +27,13 @@ import { DayStrip } from './day-strip';
 import { FixtureFilters } from './fixture-filters';
 import { FixtureList } from './fixture-list';
 import { FixturesLoading } from './fixtures-loading';
+
+// Ignore swipes starting near the screen edges, which trigger browser back/forward.
+const SWIPE_EDGE_PX = 24;
+
+function isEdgeSwipe({ initial: [x] }: SwipeEventData) {
+    return x < SWIPE_EDGE_PX || x > window.innerWidth - SWIPE_EDGE_PX;
+}
 
 const searchParamsSchema = z.object({
     date: z
@@ -73,6 +82,20 @@ export function FixturesPage() {
         });
     }
 
+    const swipeHandlers = useSwipeable({
+        onSwipedLeft: (event) => {
+            if (!isEdgeSwipe(event)) {
+                setParam('date', addDays(request.date, 1));
+            }
+        },
+        onSwipedRight: (event) => {
+            if (!isEdgeSwipe(event) && request.date > todayLocal()) {
+                setParam('date', addDays(request.date, -1));
+            }
+        },
+        delta: 60,
+    });
+
     return (
         <div className="space-y-6">
             <Metadata title="Fixtures" />
@@ -97,48 +120,52 @@ export function FixturesPage() {
                 }
             />
 
-            <h2 className="scroll-mt-32 text-lg font-semibold">
-                {toLongDayLabel(request.date)}
-            </h2>
+            <div {...swipeHandlers} className="space-y-6">
+                <h2 className="scroll-mt-32 text-lg font-semibold">
+                    {toLongDayLabel(request.date)}
+                </h2>
 
-            {isPending || (isPlaceholderData && !data.items.length) ? (
-                <FixturesLoading />
-            ) : !isSuccess ? (
-                <QueryError error={error} />
-            ) : data.items.length ? (
-                <div className={isPlaceholderData ? 'opacity-60' : undefined}>
-                    <FixtureList fixtures={data.items} />
-                </div>
-            ) : mine ? (
-                <Empty className="border border-dashed">
-                    <EmptyHeader>
-                        <EmptyMedia variant="icon">
-                            <Star />
-                        </EmptyMedia>
-                        <EmptyTitle>Nothing Scheduled</EmptyTitle>
-                        <EmptyDescription>
-                            No starred games on this day.
-                        </EmptyDescription>
-                    </EmptyHeader>
-                    <EmptyContent>
-                        <Button onClick={() => setParam('mine', undefined)}>
-                            Show All Games
-                        </Button>
-                    </EmptyContent>
-                </Empty>
-            ) : (
-                <Empty className="border border-dashed">
-                    <EmptyHeader>
-                        <EmptyMedia variant="icon">
-                            <Tv />
-                        </EmptyMedia>
-                        <EmptyTitle>No Games</EmptyTitle>
-                        <EmptyDescription>
-                            No televised games found for this day.
-                        </EmptyDescription>
-                    </EmptyHeader>
-                </Empty>
-            )}
+                {isPending || (isPlaceholderData && !data.items.length) ? (
+                    <FixturesLoading />
+                ) : !isSuccess ? (
+                    <QueryError error={error} />
+                ) : data.items.length ? (
+                    <div
+                        className={isPlaceholderData ? 'opacity-60' : undefined}
+                    >
+                        <FixtureList fixtures={data.items} />
+                    </div>
+                ) : mine ? (
+                    <Empty className="border border-dashed">
+                        <EmptyHeader>
+                            <EmptyMedia variant="icon">
+                                <Star />
+                            </EmptyMedia>
+                            <EmptyTitle>Nothing Scheduled</EmptyTitle>
+                            <EmptyDescription>
+                                No starred games on this day.
+                            </EmptyDescription>
+                        </EmptyHeader>
+                        <EmptyContent>
+                            <Button onClick={() => setParam('mine', undefined)}>
+                                Show All Games
+                            </Button>
+                        </EmptyContent>
+                    </Empty>
+                ) : (
+                    <Empty className="border border-dashed">
+                        <EmptyHeader>
+                            <EmptyMedia variant="icon">
+                                <Tv />
+                            </EmptyMedia>
+                            <EmptyTitle>No Games</EmptyTitle>
+                            <EmptyDescription>
+                                No televised games found for this day.
+                            </EmptyDescription>
+                        </EmptyHeader>
+                    </Empty>
+                )}
+            </div>
         </div>
     );
 }
