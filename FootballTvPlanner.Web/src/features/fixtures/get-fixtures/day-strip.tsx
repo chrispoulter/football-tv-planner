@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { addDays, toDayLabel, todayLocal } from '@/lib/local-time';
+import { addDays, toDayLabel, todayLocal } from '@/lib/date-time';
 
 const DAYS_SHOWN = 14;
 

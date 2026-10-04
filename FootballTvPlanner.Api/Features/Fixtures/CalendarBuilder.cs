@@ -1,5 +1,7 @@
-using System.Globalization;
-using System.Text;
+﻿using Ical.Net;
+using Ical.Net.CalendarComponents;
+using Ical.Net.DataTypes;
+using Ical.Net.Serialization;
 
 namespace FootballTvPlanner.Api.Features.Fixtures;
 
@@ -30,96 +32,64 @@ public static class CalendarBuilder
         string? calendarName = null
     )
     {
-        var sb = new StringBuilder();
-
-        AppendLine(sb, "BEGIN:VCALENDAR");
-        AppendLine(sb, "VERSION:2.0");
-        AppendLine(sb, "PRODID:-//FootballTvPlanner//Football TV Planner//EN");
-        AppendLine(sb, "CALSCALE:GREGORIAN");
-        AppendLine(sb, "METHOD:PUBLISH");
+        var calendar = new Calendar
+        {
+            ProductId = "-//FootballTvPlanner//Football TV Planner//EN",
+            Method = CalendarMethods.Publish,
+        };
 
         if (calendarName is not null)
         {
-            AppendLine(sb, $"X-WR-CALNAME:{Escape(calendarName)}");
-            AppendLine(sb, "REFRESH-INTERVAL;VALUE=DURATION:PT1H");
-            AppendLine(sb, "X-PUBLISHED-TTL:PT1H");
+            calendar.AddProperty("X-WR-CALNAME", calendarName);
+            calendar.AddProperty(DurationProperty("REFRESH-INTERVAL", "PT1H"));
+            calendar.AddProperty("X-PUBLISHED-TTL", "PT1H");
         }
 
         foreach (var fixture in fixtures)
         {
-            AppendEvent(sb, fixture, timestamp);
+            calendar.Events.Add(CreateEvent(fixture, timestamp));
         }
 
-        AppendLine(sb, "END:VCALENDAR");
-
-        return sb.ToString();
+        return new CalendarSerializer().SerializeToString(calendar)!;
     }
 
-    private static void AppendEvent(
-        StringBuilder sb,
-        CalendarFixture fixture,
-        DateTimeOffset timestamp
-    )
+    private static CalendarEvent CreateEvent(CalendarFixture fixture, DateTimeOffset timestamp)
     {
         var summary = $"{fixture.HomeTeam} v {fixture.AwayTeam}";
         var channels = string.Join(", ", fixture.Channels);
 
-        AppendLine(sb, "BEGIN:VEVENT");
-        AppendLine(sb, $"UID:fixture-{fixture.Id}@footballtvplanner");
-        AppendLine(sb, $"DTSTAMP:{FormatUtc(timestamp)}");
-        AppendLine(sb, $"DTSTART:{FormatUtc(fixture.KickoffUtc)}");
-        AppendLine(sb, $"DTEND:{FormatUtc(fixture.KickoffUtc + MatchDuration)}");
-        AppendLine(sb, $"SUMMARY:{Escape(summary)}");
-        AppendLine(sb, $"DESCRIPTION:{Escape($"{fixture.Competition}\nWatch on: {channels}")}");
-        AppendLine(sb, $"LOCATION:{Escape(channels)}");
-        AppendLine(sb, $"CATEGORIES:{Escape(fixture.Competition)}");
-        AppendLine(sb, "STATUS:CONFIRMED");
-        AppendLine(sb, "TRANSP:TRANSPARENT");
+        var calendarEvent = new CalendarEvent
+        {
+            Uid = $"fixture-{fixture.Id}@footballtvplanner",
+            DtStamp = ToUtc(timestamp),
+            DtStart = ToUtc(fixture.KickoffUtc),
+            DtEnd = ToUtc(fixture.KickoffUtc + MatchDuration),
+            Summary = summary,
+            Description = $"{fixture.Competition}\nWatch on: {channels}",
+            Location = channels,
+            Categories = [fixture.Competition],
+            Status = EventStatus.Confirmed,
+            Transparency = TransparencyType.Transparent,
+        };
 
-        AppendLine(sb, "BEGIN:VALARM");
-        AppendLine(sb, "ACTION:DISPLAY");
-        AppendLine(sb, $"DESCRIPTION:{Escape($"{summary} on {channels}")}");
-        AppendLine(sb, $"TRIGGER:-PT{ReminderMinutesBefore}M");
-        AppendLine(sb, "END:VALARM");
+        calendarEvent.Alarms.Add(
+            new Alarm
+            {
+                Action = AlarmAction.Display,
+                Description = $"{summary} on {channels}",
+                Trigger = new Trigger(Duration.FromMinutes(-ReminderMinutesBefore)),
+            }
+        );
 
-        AppendLine(sb, "END:VEVENT");
+        return calendarEvent;
     }
 
-    private static string FormatUtc(DateTimeOffset value) =>
-        value.UtcDateTime.ToString("yyyyMMdd'T'HHmmss'Z'", CultureInfo.InvariantCulture);
+    private static CalDateTime ToUtc(DateTimeOffset value) => new(value.UtcDateTime);
 
-    private static string Escape(string value) =>
-        value
-            .Replace("\\", "\\\\")
-            .Replace(";", "\\;")
-            .Replace(",", "\\,")
-            .Replace("\r\n", "\\n")
-            .Replace("\n", "\\n");
-
-    /// <summary>
-    /// Content lines longer than 75 octets must be folded onto continuation lines that
-    /// begin with a single space.
-    /// </summary>
-    private static void AppendLine(StringBuilder sb, string line)
+    private static CalendarProperty DurationProperty(string name, string value)
     {
-        const int maxOctets = 75;
-
-        var octets = 0;
-
-        foreach (var rune in line.EnumerateRunes())
-        {
-            var length = rune.Utf8SequenceLength;
-
-            if (octets + length > maxOctets)
-            {
-                sb.Append("\r\n ");
-                octets = 1;
-            }
-
-            sb.Append(rune.ToString());
-            octets += length;
-        }
-
-        sb.Append("\r\n");
+        var property = new CalendarProperty(name, value);
+        property.Parameters.Add("VALUE", "DURATION");
+        return property;
     }
 }

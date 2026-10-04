@@ -1,4 +1,4 @@
-import { toLocalTime } from '@/lib/local-time';
+import { toLocalTime } from '@/lib/date-time';
 import type { FixtureSummary } from './fixtures-queries';
 import { AddToCalendarMenu } from './add-to-calendar-menu';
 import { BookmarkButton } from './bookmark-button';

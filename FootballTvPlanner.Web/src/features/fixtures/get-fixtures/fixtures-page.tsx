@@ -19,7 +19,7 @@ import {
     toLongDayLabel,
     todayLocal,
     toUtcDayRange,
-} from '@/lib/local-time';
+} from '@/lib/date-time';
 import { useGetFixtures } from '../fixtures-queries';
 import { DayStrip } from './day-strip';
 import { FixtureFilters } from './fixture-filters';

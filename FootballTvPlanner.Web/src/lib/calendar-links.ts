@@ -1,3 +1,5 @@
+import { addMinutes, toCompactUtc, toUtcIso } from '@/lib/date-time';
+
 interface CalendarEvent {
     title: string;
     description: string;
@@ -6,22 +8,15 @@ interface CalendarEvent {
     durationMinutes: number;
 }
 
-function toCompactUtc(value: Date) {
-    return value
-        .toISOString()
-        .replace(/[-:]/g, '')
-        .replace(/\.\d{3}/, '');
-}
-
 function getEnd({ start, durationMinutes }: CalendarEvent) {
-    return new Date(new Date(start).getTime() + durationMinutes * 60 * 1000);
+    return addMinutes(start, durationMinutes);
 }
 
 export function googleCalendarUrl(event: CalendarEvent) {
     const params = new URLSearchParams({
         action: 'TEMPLATE',
         text: event.title,
-        dates: `${toCompactUtc(new Date(event.start))}/${toCompactUtc(getEnd(event))}`,
+        dates: `${toCompactUtc(event.start)}/${toCompactUtc(getEnd(event))}`,
         details: event.description,
         location: event.location,
     });
@@ -34,8 +29,8 @@ export function outlookComUrl(event: CalendarEvent) {
         path: '/calendar/action/compose',
         rru: 'addevent',
         subject: event.title,
-        startdt: new Date(event.start).toISOString(),
-        enddt: getEnd(event).toISOString(),
+        startdt: toUtcIso(event.start),
+        enddt: getEnd(event),
         body: event.description,
         location: event.location,
     });
