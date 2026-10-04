@@ -13,17 +13,22 @@ public class GetCompetitionsEndpoint : IEndpoint
             .Produces<GetCompetitionsResponse>()
             .WithTags(Tags.Fixtures)
             .WithSummary("Get Competitions")
-            .WithDescription("List the competitions that have televised fixtures.");
+            .WithDescription("List the competitions that have upcoming televised fixtures.");
     }
 
     private static async Task<IResult> HandleAsync(
         FootballTvPlannerDbContext dbContext,
+        TimeProvider timeProvider,
         CancellationToken cancellationToken = default
     )
     {
+        var cutoff = timeProvider.GetUtcNow().AddDays(-1);
+
         var competitions = await dbContext
             .Competitions.AsNoTracking()
-            .Where(c => dbContext.Fixtures.Any(f => f.CompetitionId == c.Id))
+            .Where(c =>
+                dbContext.Fixtures.Any(f => f.CompetitionId == c.Id && f.KickoffUtc >= cutoff)
+            )
             .OrderBy(c => c.Name)
             .Select(c => new GetCompetitionsItem(c.Id, c.Name))
             .ToListAsync(cancellationToken);

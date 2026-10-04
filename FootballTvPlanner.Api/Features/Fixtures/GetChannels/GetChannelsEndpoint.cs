@@ -13,17 +13,26 @@ public class GetChannelsEndpoint : IEndpoint
             .Produces<GetChannelsResponse>()
             .WithTags(Tags.Fixtures)
             .WithSummary("Get Channels")
-            .WithDescription("List the TV channels and streaming services showing fixtures.");
+            .WithDescription(
+                "List the TV channels and streaming services showing upcoming fixtures."
+            );
     }
 
     private static async Task<IResult> HandleAsync(
         FootballTvPlannerDbContext dbContext,
+        TimeProvider timeProvider,
         CancellationToken cancellationToken = default
     )
     {
+        var cutoff = timeProvider.GetUtcNow().AddDays(-1);
+
         var channels = await dbContext
             .Channels.AsNoTracking()
-            .Where(c => dbContext.Fixtures.Any(f => f.Channels.Any(fc => fc.Id == c.Id)))
+            .Where(c =>
+                dbContext.Fixtures.Any(f =>
+                    f.KickoffUtc >= cutoff && f.Channels.Any(fc => fc.Id == c.Id)
+                )
+            )
             .OrderBy(c => c.Name)
             .Select(c => new GetChannelsItem(c.Id, c.Name))
             .ToListAsync(cancellationToken);
