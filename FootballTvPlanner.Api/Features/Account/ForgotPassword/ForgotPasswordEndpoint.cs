@@ -25,9 +25,18 @@ public class ForgotPasswordEndpoint : IEndpoint
         UserManager<User> userManager,
         IEmailService emailService,
         IOptions<EmailSettings> emailSettings,
+        EmailRateLimiter emailRateLimiter,
         CancellationToken cancellationToken
     )
     {
+        if (!emailRateLimiter.TryAcquire(request.Email))
+        {
+            return Results.Problem(
+                statusCode: StatusCodes.Status429TooManyRequests,
+                title: "Too many emails have been sent to this address, please try again later."
+            );
+        }
+
         var user = await userManager.FindByEmailAsync(request.Email);
 
         if (user is not null)

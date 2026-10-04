@@ -29,6 +29,7 @@ public class ChangeEmailEndpoint : IEndpoint
         UserManager<User> userManager,
         IEmailService emailService,
         IOptions<EmailSettings> emailSettings,
+        EmailRateLimiter emailRateLimiter,
         CancellationToken cancellationToken
     )
     {
@@ -39,6 +40,14 @@ public class ChangeEmailEndpoint : IEndpoint
             return Results.Problem(
                 statusCode: StatusCodes.Status404NotFound,
                 title: "User not found."
+            );
+        }
+
+        if (!emailRateLimiter.TryAcquire(request.NewEmail))
+        {
+            return Results.Problem(
+                statusCode: StatusCodes.Status429TooManyRequests,
+                title: "Too many emails have been sent to this address, please try again later."
             );
         }
 
