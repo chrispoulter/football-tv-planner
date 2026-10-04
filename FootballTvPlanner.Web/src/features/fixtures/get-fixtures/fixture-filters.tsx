@@ -1,4 +1,6 @@
+import { useEffect } from 'react';
 import { Star } from 'lucide-react';
+import { toast } from 'sonner';
 import { useAuth } from '@/components/auth-provider';
 import { Button } from '@/components/ui/button';
 import {
@@ -35,10 +37,22 @@ export function FixtureFilters({
 }: FixtureFiltersProps) {
     const { user, isLoading: isAuthLoading } = useAuth();
 
-    const { data: competitions, isPending: isCompetitionsPending } =
+    const { data: competitions, isError: isCompetitionsError } =
         useGetCompetitions();
 
-    const { data: channels, isPending: isChannelsPending } = useGetChannels();
+    const { data: channels, isError: isChannelsError } = useGetChannels();
+
+    useEffect(() => {
+        if (isCompetitionsError) {
+            toast.error('Unable to load competitions');
+        }
+    }, [isCompetitionsError]);
+
+    useEffect(() => {
+        if (isChannelsError) {
+            toast.error('Unable to load channels');
+        }
+    }, [isChannelsError]);
 
     return (
         <div className="flex flex-col gap-2 sm:flex-row">
@@ -47,7 +61,7 @@ export function FixtureFilters({
                 onValueChange={(value) =>
                     onCompetitionChange(value === ALL ? undefined : value)
                 }
-                disabled={disabled || isCompetitionsPending}
+                disabled={disabled || !competitions}
             >
                 <SelectTrigger
                     className="w-full sm:w-56"
@@ -70,7 +84,7 @@ export function FixtureFilters({
                 onValueChange={(value) =>
                     onChannelChange(value === ALL ? undefined : value)
                 }
-                disabled={disabled || isChannelsPending}
+                disabled={disabled || !channels}
             >
                 <SelectTrigger className="w-full sm:w-56" aria-label="Channel">
                     <SelectValue />
