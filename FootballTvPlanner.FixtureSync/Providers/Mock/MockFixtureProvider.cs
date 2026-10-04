@@ -37,7 +37,7 @@ public class MockFixtureProvider(IOptions<MockSettings> settings, TimeProvider t
                             Competition: competition.Name,
                             HomeTeam: teams[0],
                             AwayTeam: teams[1],
-                            KickoffUtc: UkTime.ToUtc(date, time),
+                            KickoffUtc: DateTimeExtensions.ToUtc(date, time),
                             Channels: [competition.Channel]
                         )
                     );

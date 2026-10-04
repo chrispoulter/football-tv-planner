@@ -96,7 +96,7 @@ public partial class LiveFootballOnTvFixtureProvider(
             Competition: competitionText,
             HomeTeam: home,
             AwayTeam: away,
-            KickoffUtc: UkTime.ToUtc(date, time),
+            KickoffUtc: DateTimeExtensions.ToUtc(date, time),
             Channels: channels
         );
     }
