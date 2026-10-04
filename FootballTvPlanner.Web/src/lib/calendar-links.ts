@@ -19,6 +19,7 @@ export function googleCalendarUrl(event: CalendarEvent) {
         dates: `${toCompactUtc(event.start)}/${toCompactUtc(getEnd(event))}`,
         details: event.description,
         location: event.location,
+        crm: 'AVAILABLE',
     });
 
     return `https://calendar.google.com/calendar/render?${params}`;
