@@ -21,6 +21,8 @@ public class FixtureConfiguration : IEntityTypeConfiguration<Fixture>
         builder.HasIndex(f => new { f.Source, f.ExternalId }).IsUnique();
         builder.HasIndex(f => f.KickoffUtc);
 
+        builder.HasQueryFilter(f => !f.Competition.IsHidden && f.Channels.Any(c => !c.IsHidden));
+
         builder
             .HasOne(f => f.Competition)
             .WithMany()

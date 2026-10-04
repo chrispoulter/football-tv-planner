@@ -13,6 +13,10 @@ public class UserFixtureConfiguration : IEntityTypeConfiguration<UserFixture>
 
         builder.HasKey(uf => new { uf.UserId, uf.FixtureId });
 
+        builder.HasQueryFilter(uf =>
+            !uf.Fixture.Competition.IsHidden && uf.Fixture.Channels.Any(c => !c.IsHidden)
+        );
+
         builder
             .HasOne(uf => uf.User)
             .WithMany()
