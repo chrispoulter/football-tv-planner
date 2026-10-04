@@ -19,7 +19,7 @@ RUN dotnet build "./FootballTvPlanner.FixtureSync.csproj" -c $BUILD_CONFIGURATIO
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
 ARG GIT_COMMIT_SHA
-RUN dotnet publish "./FootballTvPlanner.FixtureSync.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false /p:SourceRevisionId=$GIT_COMMIT_SHA
+RUN dotnet publish "./FootballTvPlanner.FixtureSync.csproj" -c $BUILD_CONFIGURATION -o /app/publish -r linux-x64 --self-contained false /p:PublishReadyToRun=true /p:UseAppHost=false /p:SourceRevisionId=$GIT_COMMIT_SHA
 
 # Runs a single sync and exits; schedule it externally (cron, Container Apps Job, etc.).
 FROM base AS final

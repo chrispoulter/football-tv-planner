@@ -23,7 +23,7 @@ RUN dotnet build "./FootballTvPlanner.Api.csproj" -c $BUILD_CONFIGURATION -o /ap
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
 ARG GIT_COMMIT_SHA
-RUN dotnet publish "./FootballTvPlanner.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false /p:SourceRevisionId=$GIT_COMMIT_SHA
+RUN dotnet publish "./FootballTvPlanner.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish -r linux-x64 --self-contained false /p:PublishReadyToRun=true /p:UseAppHost=false /p:SourceRevisionId=$GIT_COMMIT_SHA
 
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
