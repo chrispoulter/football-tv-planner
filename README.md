@@ -1,6 +1,6 @@
 # Football TV Planner
 
-Shows the football on UK TV and streaming services, day by day. Signed-in users can star games to build their own schedule, then add games to their calendar or subscribe to a private feed that keeps up with the schedule.
+A full-stack app for browsing football on UK TV and streaming services and adding games to your calendar feed. .NET minimal API with EF Core and PostgreSQL, a React SPA, and Aspire for local development.
 
 ## Features
 
@@ -12,8 +12,8 @@ Shows the football on UK TV and streaming services, day by day. Signed-in users 
 
 ## Projects
 
-| Project                    | Description                                                                                                                                                                   |
-| -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Project                             | Description                                                                                                                                                                   |
+| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `FootballTvPlanner.Api`             | .NET 10 minimal API. ASP.NET Core Identity with cookie auth, EF Core with PostgreSQL, and Scalar API docs at `/`. Owns the database schema and applies migrations on startup. |
 | `FootballTvPlanner.FixtureSync`     | Console job that pulls fixtures from a provider into the `fixtures` table, then exits. Run it on a schedule.                                                                  |
 | `FootballTvPlanner.Web`             | React 19 app built with Vite, React Router, TanStack Query, shadcn/ui and Tailwind CSS.                                                                                       |
