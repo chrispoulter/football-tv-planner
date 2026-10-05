@@ -25,7 +25,7 @@ public static class EmailExtensions
         }
 
         builder
-            .Services.AddFluentEmail(emailSettings.NoReplyAddress)
+            .Services.AddFluentEmail(emailSettings.FromAddress, emailSettings.FromName)
             .AddLiquidRenderer(configure =>
             {
                 configure.ConfigureTemplateContext = (context, _) =>

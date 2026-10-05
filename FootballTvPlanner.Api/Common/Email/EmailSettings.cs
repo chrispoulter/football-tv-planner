@@ -16,7 +16,9 @@ public class EmailSettings
 
     public string SmtpPassword { get; set; } = null!;
 
-    public string NoReplyAddress { get; set; } = null!;
+    public string FromAddress { get; set; } = null!;
+
+    public string FromName { get; set; } = null!;
 
     public string SiteUrl { get; set; } = null!;
 
