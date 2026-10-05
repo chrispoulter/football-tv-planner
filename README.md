@@ -83,7 +83,7 @@ Set `FixtureSync:Provider` in `FootballTvPlanner.FixtureSync/appsettings.Develop
 
 ### Email
 
-The API sends email over SMTP using the `Mail` connection string, for example `Endpoint=smtp://localhost:1025`. `Email:NoReplyAddress` is the sender. `Email:SiteUrl` is the web app URL used for links in emails. Aspire sets `Email:SiteUrl` for you.
+The API sends email over SMTP using the `Mail` connection string, for example `Endpoint=smtp://localhost:1025`. `Email:FromAddress` and `Email:FromName` are the sender address and display name. `Email:SiteUrl` is the web app URL used for links in emails. Aspire sets `Email:SiteUrl` for you.
 
 ## How it works
 
@@ -141,7 +141,7 @@ On every push to `main`, `develop`, `feature/**`, `release/**` and `hotfix/**`, 
 
 In production:
 
-- **API:** set `ConnectionStrings__Database`, `ConnectionStrings__Mail`, `Email__SiteUrl`, `Email__NoReplyAddress` and, optionally, `Authentication__Google__*`.
+- **API:** set `ConnectionStrings__Database`, `ConnectionStrings__Mail`, `Email__SiteUrl`, `Email__FromAddress` and, optionally, `Authentication__Google__*`.
 - **Web:** set `API_URL` to the API's URL.
 - **Fixture sync:** set `ConnectionStrings__Database` and `FixtureSync__Provider`, and run it as a scheduled job, for example an Azure Container Apps job or a cron job.
 
