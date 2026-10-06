@@ -2,7 +2,6 @@ import {
     addDays as addCalendarDays,
     addMinutes as addMinutesToDate,
     format,
-    getYear,
     isMatch,
     isToday,
     isTomorrow,
