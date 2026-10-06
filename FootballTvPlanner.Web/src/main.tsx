@@ -4,9 +4,9 @@ import { BrowserRouter } from 'react-router';
 import { ErrorBoundary } from 'react-error-boundary';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { Toaster } from './components/ui/sonner';
-import { ThemeProvider } from './components/theme-provider';
-import { queryClient } from './lib/query-client';
+import { Toaster } from '@/components/ui/sonner';
+import { ThemeProvider } from '@/components/theme-provider';
+import { queryClient } from '@/lib/query-client';
 import App from './app';
 
 import '@/index.css';

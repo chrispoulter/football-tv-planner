@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useLogout } from '@/features/account/account-queries';
-import { useAuth } from './auth-provider';
+import { useAuth } from '@/components/auth-provider';
 
 export function UserMenu() {
     const navigate = useNavigate();

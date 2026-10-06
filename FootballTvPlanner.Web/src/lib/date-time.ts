@@ -100,10 +100,6 @@ export function isDateString(value: string) {
     return /^\d{4}-\d{2}-\d{2}$/.test(value) && isMatch(value, DATE_FORMAT);
 }
 
-export function currentYear() {
-    return getYear(new Date());
-}
-
 /**
  * Adds minutes to an instant, returning a UTC ISO string.
  */

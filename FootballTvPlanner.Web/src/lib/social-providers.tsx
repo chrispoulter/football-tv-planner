@@ -1,10 +1,10 @@
-export interface AuthProviderConfig {
+export interface SocialProviderConfig {
     id: string;
     label: string;
     icon: React.ReactNode;
 }
 
-export const authProviders: AuthProviderConfig[] = [
+export const socialProviders: SocialProviderConfig[] = [
     {
         id: 'Google',
         label: 'Google',

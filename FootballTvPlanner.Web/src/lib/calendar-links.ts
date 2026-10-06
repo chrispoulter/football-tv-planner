@@ -1,4 +1,4 @@
-import { addMinutes, toCompactUtc, toUtcIso } from '@/lib/date-time';
+import { addMinutes, toCompactUtc, toUtcIso } from './date-time';
 
 interface CalendarEvent {
     title: string;

@@ -4,11 +4,11 @@ import {
     useQueryClient,
     type QueryClient,
 } from '@tanstack/react-query';
-import { apiClient } from '@/lib/api-client';
 import {
     fixtureKeys,
     type GetFixturesResponse,
-} from '../fixtures/fixtures-queries';
+} from '@/features/fixtures/fixtures-queries';
+import { apiClient } from '@/lib/api-client';
 
 export const scheduleKeys = {
     all: ['schedule'] as const,

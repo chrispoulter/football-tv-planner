@@ -5,7 +5,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { authProviders } from '@/lib/auth-providers';
+import { socialProviders } from '@/lib/social-providers';
 import {
     linkAccountUrl,
     useGetLinkedAccounts,
@@ -76,7 +76,7 @@ export function LinkedAccounts({ hasPassword }: LinkedAccountsProps) {
 
     return (
         <div className="space-y-4">
-            {authProviders.map((provider) => (
+            {socialProviders.map((provider) => (
                 <div
                     key={provider.id}
                     className="flex items-center justify-between gap-4"

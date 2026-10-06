@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { authProviders } from '@/lib/auth-providers';
+import { socialProviders } from '@/lib/social-providers';
 import { externalLoginUrl } from './account-queries';
 
 interface SocialLoginButtonsProps {
@@ -9,7 +9,7 @@ interface SocialLoginButtonsProps {
 export function SocialLoginButtons({ returnUrl }: SocialLoginButtonsProps) {
     return (
         <>
-            {authProviders.map((provider) => (
+            {socialProviders.map((provider) => (
                 <Button
                     key={provider.id}
                     asChild
