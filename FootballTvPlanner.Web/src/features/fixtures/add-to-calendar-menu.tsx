@@ -8,7 +8,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { googleCalendarUrl, outlookComUrl } from '@/lib/calendar-links';
+import { googleCalendarUrl, outlookComUrl } from '@/lib/calendar-urls';
 import type { FixtureSummary } from './fixtures-queries';
 
 interface AddToCalendarMenuProps {

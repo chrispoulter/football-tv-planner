@@ -27,7 +27,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import {
     googleSubscribeUrl,
     outlookComSubscribeUrl,
-} from '@/lib/calendar-links';
+} from '@/lib/calendar-urls';
 import {
     useGetCalendarFeed,
     useResetCalendarFeed,
