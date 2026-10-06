@@ -95,7 +95,7 @@ The proxy sends the public host and scheme in `X-FootballTvPlanner-*` headers. T
 
 ### Dates and times
 
-Every time is stored and returned in UTC: `timestamptz` in Postgres, ISO 8601 strings in the API, and UTC `DTSTART` values in `.ics` files. The web app converts them to the viewer's time zone (`src/lib/local-time.ts`). When you pick a day, the web app sends it to `GET /api/fixtures` as a UTC `from`/`to` range, so the API doesn't need to know the viewer's time zone. The only code that knows about UK time is in the fixture providers, which convert UK kick-off times to UTC with `DateTimeExtensions.ToUtc`.
+Every time is stored and returned in UTC: `timestamptz` in Postgres, ISO 8601 strings in the API, and UTC `DTSTART` values in `.ics` files. The web app converts them to the viewer's time zone (`FootballTvPlanner.Web/src/lib/date-time.ts`). When you pick a day, the web app sends it to `GET /api/fixtures` as a UTC `from`/`to` range, so the API doesn't need to know the viewer's time zone. The only code that knows about UK time is in the fixture providers, which convert UK kick-off times to UTC with `DateTimeExtensions.ToUtc`.
 
 ### Fixture sync
 
