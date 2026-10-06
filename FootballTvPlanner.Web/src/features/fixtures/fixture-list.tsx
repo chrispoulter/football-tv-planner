@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import type { FixtureSummary } from '../fixtures-queries';
-import { FixtureCard } from '../fixture-card';
+import type { FixtureSummary } from './fixtures-queries';
+import { FixtureCard } from './fixture-card';
 
 interface FixtureListProps {
     fixtures: FixtureSummary[];

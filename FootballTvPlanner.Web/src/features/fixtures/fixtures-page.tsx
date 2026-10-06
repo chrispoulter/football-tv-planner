@@ -14,6 +14,7 @@ import {
     EmptyMedia,
     EmptyTitle,
 } from '@/components/ui/empty';
+import { DayStrip } from '@/components/day-strip';
 import { Metadata } from '@/components/metadata';
 import {
     addDays,
@@ -22,8 +23,7 @@ import {
     todayLocal,
     toUtcDayRange,
 } from '@/lib/date-time';
-import { useGetFixtures } from '../fixtures-queries';
-import { DayStrip } from './day-strip';
+import { useGetFixtures } from './fixtures-queries';
 import { FixtureFilters } from './fixture-filters';
 import { FixtureList } from './fixture-list';
 import { FixturesLoading } from './fixtures-loading';

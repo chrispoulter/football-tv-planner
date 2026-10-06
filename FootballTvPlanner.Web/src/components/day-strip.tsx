@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
 import { addDays, toDayLabel, todayLocal } from '@/lib/date-time';
 
 const DAYS_SHOWN = 14;
@@ -54,7 +53,7 @@ export function DayStrip({ date, onChange, disabled }: DayStripProps) {
                             ref={selected ? selectedRef : undefined}
                             variant={selected ? 'default' : 'ghost'}
                             size="sm"
-                            className={cn('shrink-0')}
+                            className="shrink-0"
                             onClick={() => onChange(day)}
                             disabled={disabled}
                             aria-current={selected ? 'date' : undefined}

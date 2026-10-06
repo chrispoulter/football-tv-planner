@@ -4,14 +4,17 @@ import { toast } from 'sonner';
 import { useAuth } from '@/components/auth-provider';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { useToggleSchedule } from '@/features/schedule/schedule-queries';
-import type { FixtureSummary } from './fixtures-queries';
+import { useToggleSchedule } from './schedule-queries';
 
 interface BookmarkButtonProps {
-    fixture: FixtureSummary;
+    fixtureId: string;
+    isBookmarked: boolean;
 }
 
-export function BookmarkButton({ fixture }: BookmarkButtonProps) {
+export function BookmarkButton({
+    fixtureId,
+    isBookmarked,
+}: BookmarkButtonProps) {
     const navigate = useNavigate();
 
     const location = useLocation();
@@ -19,8 +22,6 @@ export function BookmarkButton({ fixture }: BookmarkButtonProps) {
     const { user } = useAuth();
 
     const { mutate: toggleSchedule } = useToggleSchedule();
-
-    const isBookmarked = !!fixture.isBookmarked;
 
     const label = isBookmarked
         ? 'Remove from my schedule'
@@ -34,7 +35,7 @@ export function BookmarkButton({ fixture }: BookmarkButtonProps) {
         }
 
         toggleSchedule(
-            { fixtureId: fixture.id, isBookmarked: !isBookmarked },
+            { fixtureId, isBookmarked: !isBookmarked },
             {
                 onError: (error) => toast.error(error.message),
             }

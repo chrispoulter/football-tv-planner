@@ -1,8 +1,8 @@
+import { HashedBadge } from '@/components/hashed-badge';
+import { BookmarkButton } from '@/features/schedule/bookmark-button';
 import { toLocalTime } from '@/lib/date-time';
 import type { FixtureSummary } from './fixtures-queries';
 import { AddToCalendarMenu } from './add-to-calendar-menu';
-import { BookmarkButton } from './bookmark-button';
-import { ChannelBadge } from './channel-badge';
 
 interface FixtureCardProps {
     fixture: FixtureSummary;
@@ -29,13 +29,16 @@ export function FixtureCard({ fixture }: FixtureCardProps) {
 
                 <div className="flex flex-wrap gap-1.5">
                     {fixture.channels.map((channel) => (
-                        <ChannelBadge key={channel.id} channel={channel.name} />
+                        <HashedBadge key={channel.id} label={channel.name} />
                     ))}
                 </div>
             </div>
 
             <div className="flex shrink-0 items-center">
-                <BookmarkButton fixture={fixture} />
+                <BookmarkButton
+                    fixtureId={fixture.id}
+                    isBookmarked={!!fixture.isBookmarked}
+                />
                 <AddToCalendarMenu fixture={fixture} />
             </div>
         </div>

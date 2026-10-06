@@ -1,6 +1,6 @@
 import { Badge } from '@/components/ui/badge';
 
-const CHANNEL_COLORS = [
+const BADGE_COLORS = [
     'bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300',
     'bg-orange-50 text-orange-700 dark:bg-orange-950 dark:text-orange-300',
     'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300',
@@ -19,18 +19,18 @@ const CHANNEL_COLORS = [
     'bg-rose-50 text-rose-700 dark:bg-rose-950 dark:text-rose-300',
 ];
 
-function getChannelColor(channel: string): string {
+function getColorForLabel(label: string): string {
     let hash = 0;
-    for (const char of channel.trim().toLowerCase()) {
+    for (const char of label.trim().toLowerCase()) {
         hash = (hash * 31 + char.charCodeAt(0)) | 0;
     }
-    return CHANNEL_COLORS[Math.abs(hash) % CHANNEL_COLORS.length];
+    return BADGE_COLORS[Math.abs(hash) % BADGE_COLORS.length];
 }
 
-interface ChannelBadgeProps {
-    channel: string;
+interface HashedBadgeProps {
+    label: string;
 }
 
-export function ChannelBadge({ channel }: ChannelBadgeProps) {
-    return <Badge className={getChannelColor(channel)}>{channel}</Badge>;
+export function HashedBadge({ label }: HashedBadgeProps) {
+    return <Badge className={getColorForLabel(label)}>{label}</Badge>;
 }

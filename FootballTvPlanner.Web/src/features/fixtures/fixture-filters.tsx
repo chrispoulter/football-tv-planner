@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 import { CalendarFeedDialog } from '@/features/schedule/calendar-feed-dialog';
-import { useGetChannels, useGetCompetitions } from '../fixtures-queries';
+import { useGetChannels, useGetCompetitions } from './fixtures-queries';
 
 const ALL = 'all';
 
