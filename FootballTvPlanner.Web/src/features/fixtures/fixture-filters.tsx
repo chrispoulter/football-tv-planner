@@ -19,20 +19,20 @@ const ALL = 'all';
 interface FixtureFiltersProps {
     competitionId?: string;
     channelId?: string;
-    mine?: boolean;
+    bookmarked?: boolean;
     onCompetitionChange: (competitionId?: string) => void;
     onChannelChange: (channelId?: string) => void;
-    onMineChange: (mine: boolean) => void;
+    onBookmarkedChange: (bookmarked: boolean) => void;
     disabled?: boolean;
 }
 
 export function FixtureFilters({
     competitionId,
     channelId,
-    mine,
+    bookmarked,
     onCompetitionChange,
     onChannelChange,
-    onMineChange,
+    onBookmarkedChange,
     disabled,
 }: FixtureFiltersProps) {
     const { user, isLoading: isAuthLoading } = useAuth();
@@ -109,13 +109,15 @@ export function FixtureFilters({
             {user && (
                 <div className="flex gap-2">
                     <Button
-                        variant={mine ? 'default' : 'outline'}
-                        onClick={() => onMineChange(!mine)}
+                        variant={bookmarked ? 'default' : 'outline'}
+                        onClick={() => onBookmarkedChange(!bookmarked)}
                         disabled={disabled}
-                        aria-pressed={!!mine}
+                        aria-pressed={!!bookmarked}
                         className="flex-1 sm:flex-none"
                     >
-                        <Star className={mine ? 'fill-current' : undefined} />
+                        <Star
+                            className={bookmarked ? 'fill-current' : undefined}
+                        />
                         My Schedule
                     </Button>
 

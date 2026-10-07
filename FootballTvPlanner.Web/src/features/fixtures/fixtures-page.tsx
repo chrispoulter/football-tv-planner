@@ -40,7 +40,7 @@ const searchParamsSchema = z.object({
         .string()
         .refine(isDateString)
         .catch(() => todayLocal()),
-    mine: z
+    bookmarked: z
         .string()
         .optional()
         .transform((value) => value === 'true')
@@ -57,16 +57,16 @@ export function FixturesPage() {
     const [competitionId, setCompetitionId] = useState<string>();
     const [channelId, setChannelId] = useState<string>();
 
-    const mine = request.mine && !!user;
+    const bookmarked = request.bookmarked && !!user;
 
     const { data, isPending, isPlaceholderData, isSuccess } = useGetFixtures(
         {
             ...toUtcDayRange(request.date),
             competitionId,
             channelId,
-            bookmarked: mine,
+            bookmarked,
         },
-        { enabled: !(request.mine && isAuthLoading) }
+        { enabled: !(request.bookmarked && isAuthLoading) }
     );
 
     function setParam(name: string, value?: string) {
@@ -115,9 +115,9 @@ export function FixturesPage() {
                 channelId={channelId}
                 onCompetitionChange={setCompetitionId}
                 onChannelChange={setChannelId}
-                mine={mine}
-                onMineChange={(value) =>
-                    setParam('mine', value ? 'true' : undefined)
+                bookmarked={bookmarked}
+                onBookmarkedChange={(value) =>
+                    setParam('bookmarked', value ? 'true' : undefined)
                 }
             />
 
@@ -141,7 +141,7 @@ export function FixturesPage() {
                     >
                         <FixtureList fixtures={data.items} />
                     </div>
-                ) : mine ? (
+                ) : bookmarked ? (
                     <Empty className="border border-dashed">
                         <EmptyHeader>
                             <EmptyMedia variant="icon">
@@ -153,7 +153,11 @@ export function FixturesPage() {
                             </EmptyDescription>
                         </EmptyHeader>
                         <EmptyContent>
-                            <Button onClick={() => setParam('mine', undefined)}>
+                            <Button
+                                onClick={() =>
+                                    setParam('bookmarked', undefined)
+                                }
+                            >
                                 Show All Games
                             </Button>
                         </EmptyContent>
