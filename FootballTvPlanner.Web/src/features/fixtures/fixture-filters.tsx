@@ -99,7 +99,12 @@ export function FixtureFilters({
                 </SelectContent>
             </Select>
 
-            {isAuthLoading && <Skeleton className="h-9 w-full sm:w-36" />}
+            {isAuthLoading && (
+                <div className="flex gap-2">
+                    <Skeleton className="h-9 flex-1 sm:w-36 sm:flex-none" />
+                    <Skeleton className="h-9 flex-1 sm:w-30 sm:flex-none" />
+                </div>
+            )}
 
             {user && (
                 <div className="flex gap-2">
@@ -114,7 +119,10 @@ export function FixtureFilters({
                         My Schedule
                     </Button>
 
-                    {mine && <CalendarFeedDialog disabled={disabled} />}
+                    <CalendarFeedDialog
+                        disabled={disabled}
+                        className="flex-1 sm:flex-none"
+                    />
                 </div>
             )}
         </div>

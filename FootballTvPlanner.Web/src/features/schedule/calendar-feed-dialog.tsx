@@ -38,9 +38,13 @@ const CALENDAR_NAME = 'Football TV Planner';
 
 interface CalendarFeedDialogProps {
     disabled?: boolean;
+    className?: string;
 }
 
-export function CalendarFeedDialog({ disabled }: CalendarFeedDialogProps) {
+export function CalendarFeedDialog({
+    disabled,
+    className,
+}: CalendarFeedDialogProps) {
     const [open, setOpen] = useState(false);
 
     const {
@@ -52,7 +56,11 @@ export function CalendarFeedDialog({ disabled }: CalendarFeedDialogProps) {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant="outline" disabled={disabled}>
+                <Button
+                    variant="outline"
+                    disabled={disabled}
+                    className={className}
+                >
                     <CalendarSync />
                     Subscribe
                 </Button>
