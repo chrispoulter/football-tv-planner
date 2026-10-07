@@ -81,15 +81,20 @@ export function FixturesPage() {
         });
     }
 
+    function changeDate(date: string) {
+        setParam('date', date);
+        window.scrollTo({ top: 0 });
+    }
+
     const swipeHandlers = useSwipeable({
         onSwipedLeft: (event) => {
             if (!isEdgeSwipe(event)) {
-                setParam('date', addDays(request.date, 1));
+                changeDate(addDays(request.date, 1));
             }
         },
         onSwipedRight: (event) => {
             if (!isEdgeSwipe(event) && request.date > todayLocal()) {
-                setParam('date', addDays(request.date, -1));
+                changeDate(addDays(request.date, -1));
             }
         },
         delta: 60,
@@ -102,10 +107,7 @@ export function FixturesPage() {
             <h1 className="text-2xl font-bold tracking-tight">Fixtures</h1>
 
             <div className="sticky top-14 z-40 -mx-4 border-b bg-background/95 px-4 py-2 backdrop-blur supports-backdrop-filter:bg-background/60">
-                <DayStrip
-                    date={request.date}
-                    onChange={(date) => setParam('date', date)}
-                />
+                <DayStrip date={request.date} onChange={changeDate} />
             </div>
 
             <FixtureFilters
