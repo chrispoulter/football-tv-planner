@@ -83,7 +83,7 @@ export function FixturesPage() {
 
     function changeDate(date: string) {
         setParam('date', date);
-        window.scrollTo({ top: 0 });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     const swipeHandlers = useSwipeable({
