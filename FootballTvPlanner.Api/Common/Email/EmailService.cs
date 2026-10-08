@@ -3,7 +3,7 @@ using FluentEmail.Core;
 
 namespace FootballTvPlanner.Api.Common.Email;
 
-public class EmailService(IFluentEmail fluentEmail) : IEmailService
+public class EmailService(IFluentEmail fluentEmail, ILogger<EmailService> logger) : IEmailService
 {
     public async Task SendTemplateEmailAsync(
         string toAddress,
@@ -13,17 +13,26 @@ public class EmailService(IFluentEmail fluentEmail) : IEmailService
         CancellationToken cancellationToken = default
     )
     {
-        var sendResponse = await fluentEmail
-            .To(toAddress)
-            .Subject(subject)
-            .UsingTemplateFromEmbedded(template, model, Assembly.GetExecutingAssembly())
-            .SendAsync(cancellationToken);
-
-        if (!sendResponse.Successful)
+        try
         {
-            var errorMessage = string.Join("; ", sendResponse.ErrorMessages);
+            var sendResponse = await fluentEmail
+                .To(toAddress)
+                .Subject(subject)
+                .UsingTemplateFromEmbedded(template, model, Assembly.GetExecutingAssembly())
+                .SendAsync(cancellationToken);
 
-            throw new Exception($"Failed to send email with template {template}: {errorMessage}");
+            if (!sendResponse.Successful)
+            {
+                logger.LogError(
+                    "Failed to send email with template {Template}: {Errors}",
+                    template,
+                    string.Join("; ", sendResponse.ErrorMessages)
+                );
+            }
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            logger.LogError(ex, "Failed to send email with template {Template}", template);
         }
     }
 }
