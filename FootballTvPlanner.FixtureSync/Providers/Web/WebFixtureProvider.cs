@@ -4,28 +4,28 @@ using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
 using Microsoft.Extensions.Options;
 
-namespace FootballTvPlanner.FixtureSync.Providers.LiveFootballOnTv;
+namespace FootballTvPlanner.FixtureSync.Providers.Web;
 
-public partial class LiveFootballOnTvFixtureProvider(
+public partial class WebFixtureProvider(
     IHttpClientFactory httpClientFactory,
-    IOptions<LiveFootballOnTvSettings> settings,
-    ILogger<LiveFootballOnTvFixtureProvider> logger
+    IOptions<WebSettings> settings,
+    ILogger<WebFixtureProvider> logger
 ) : IFixtureProvider
 {
-    public const string HttpClientName = "LiveFootballOnTv";
+    public const string HttpClientName = "Web";
 
     private static readonly string[] Annotations = ["(joins match in progress)"];
 
-    private readonly LiveFootballOnTvSettings _settings = settings.Value;
+    private readonly WebSettings _settings = settings.Value;
 
-    public string Source => "LiveFootballOnTv";
+    public string Source => "Web";
 
     public async Task<IReadOnlyList<ProviderFixture>> GetFixturesAsync(
         CancellationToken cancellationToken = default
     )
     {
         var httpClient = httpClientFactory.CreateClient(HttpClientName);
-        var html = await httpClient.GetStringAsync(_settings.BaseUrl, cancellationToken);
+        var html = await httpClient.GetStringAsync(_settings.Url, cancellationToken);
 
         var document = await new HtmlParser().ParseDocumentAsync(html, cancellationToken);
 
@@ -78,6 +78,7 @@ public partial class LiveFootballOnTvFixtureProvider(
                 date,
                 timeText
             );
+
             return null;
         }
 
@@ -94,7 +95,7 @@ public partial class LiveFootballOnTvFixtureProvider(
             .ToList();
 
         return new ProviderFixture(
-            ExternalId: $"lfotv-{date:yyyyMMdd}-{Slug(home)}-{Slug(away)}",
+            ExternalId: $"web-{date:yyyyMMdd}-{Slug(home)}-{Slug(away)}",
             Competition: competitionText,
             HomeTeam: home,
             AwayTeam: away,

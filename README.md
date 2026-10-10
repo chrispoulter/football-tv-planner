@@ -78,6 +78,7 @@ The fixture sync reads fixtures from the provider named in `FixtureSync:Provider
 | Provider         | Description                                                                                                            |
 | ---------------- | ---------------------------------------------------------------------------------------------------------------------- |
 | `Mock` (default) | Generates repeatable fake fixtures `FixtureSync:Mock:DaysAhead` days ahead. The same dates always give the same games. |
+| `Web`            | Scrapes fixtures from the page at `FixtureSync:Web:Url`, which is required.                                            |
 
 Set `FixtureSync:Provider` in `FootballTvPlanner.FixtureSync/appsettings.Development.json` to switch.
 
@@ -143,7 +144,7 @@ In production:
 
 - **API:** set `ConnectionStrings__Database`, `ConnectionStrings__Mail`, `Email__SiteUrl`, `Email__FromAddress` and, optionally, `Authentication__Google__*`.
 - **Web:** set `API_URL` to the API's URL.
-- **Fixture sync:** set `ConnectionStrings__Database` and `FixtureSync__Provider`, and run it as a scheduled job, for example an Azure Container Apps job or a cron job.
+- **Fixture sync:** set `ConnectionStrings__Database` and `FixtureSync__Provider` (plus `FixtureSync__Web__Url` for the `Web` provider), and run it as a scheduled job, for example an Azure Container Apps job or a cron job.
 
 ## License
 
