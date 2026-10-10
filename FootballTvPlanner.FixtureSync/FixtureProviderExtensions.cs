@@ -1,6 +1,6 @@
 using FootballTvPlanner.FixtureSync.Providers;
-using FootballTvPlanner.FixtureSync.Providers.LiveFootballOnTv;
 using FootballTvPlanner.FixtureSync.Providers.Mock;
+using FootballTvPlanner.FixtureSync.Providers.Web;
 
 namespace FootballTvPlanner.FixtureSync;
 
@@ -23,12 +23,14 @@ public static class FixtureProviderExtensions
                 builder.Services.AddSingleton<IFixtureProvider, MockFixtureProvider>();
                 break;
 
-            case "LiveFootballOnTv":
-                builder.Services.Configure<LiveFootballOnTvSettings>(
-                    builder.Configuration.GetSection(LiveFootballOnTvSettings.SectionName)
-                );
-                builder.Services.AddHttpClient(LiveFootballOnTvFixtureProvider.HttpClientName);
-                builder.Services.AddSingleton<IFixtureProvider, LiveFootballOnTvFixtureProvider>();
+            case "Web":
+                builder
+                    .Services.AddOptions<WebSettings>()
+                    .Bind(builder.Configuration.GetSection(WebSettings.SectionName))
+                    .Validate(s => s.Url is not null, $"{WebSettings.SectionName}:Url is required.")
+                    .ValidateOnStart();
+                builder.Services.AddHttpClient(WebFixtureProvider.HttpClientName);
+                builder.Services.AddSingleton<IFixtureProvider, WebFixtureProvider>();
                 break;
 
             default:

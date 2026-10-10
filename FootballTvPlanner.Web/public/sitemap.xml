@@ -2,4 +2,13 @@
   <url>
     <loc>https://football-tv-planner.chrispoulter.com</loc>
   </url>
+  <url>
+    <loc>https://football-tv-planner.chrispoulter.com/login</loc>
+  </url>
+  <url>
+    <loc>https://football-tv-planner.chrispoulter.com/register</loc>
+  </url>
+  <url>
+    <loc>https://football-tv-planner.chrispoulter.com/privacy</loc>
+  </url>
 </urlset>
