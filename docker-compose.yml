@@ -26,7 +26,7 @@ services:
       ConnectionStrings__Database: Host=host.docker.internal;Port=5432;Database=football_tv_planner;Username=postgres;Password=password
       ConnectionStrings__Mail: Endpoint=smtp://host.docker.internal:1025
       Email__SiteUrl: http://localhost:5173
-      Email__FromAddress: football-tv-planner@example.com
+      Email__FromAddress: football-tv-planner@chrispoulter.com
       Logging__Console__FormatterName: json
       Logging__LogLevel__Microsoft.EntityFrameworkCore: Warning
     ports:
@@ -71,7 +71,7 @@ services:
       retries: 3
 
   mailpit:
-    image: axllent/mailpit:v1.22.3
+    image: axllent/mailpit:v1.31.2
     environment:
       MP_DATABASE: /data/mailpit.db
     ports:
