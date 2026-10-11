@@ -1,5 +1,6 @@
 # TODO
 
+- bi directional unicode characters?????
 - scroll restoration
 
 ## Bugfixes

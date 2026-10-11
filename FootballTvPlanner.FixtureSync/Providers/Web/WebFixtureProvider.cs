@@ -90,7 +90,7 @@ public partial class WebFixtureProvider(
 
         var channels = element
             .QuerySelectorAll(".channel-pill")
-            .Select(pill => pill.TextContent.Trim())
+            .Select(pill => Clean(pill.TextContent))
             .Distinct()
             .ToList();
 
@@ -106,7 +106,7 @@ public partial class WebFixtureProvider(
 
     private static DateOnly? ParseDate(string text)
     {
-        var normalised = OrdinalSuffix().Replace(text.Trim(), "$1");
+        var normalised = OrdinalSuffix().Replace(Clean(text), "$1");
 
         return DateOnly.TryParseExact(
             normalised,
@@ -129,13 +129,18 @@ public partial class WebFixtureProvider(
             .Trim();
 
     private static string Text(IElement element, string selector) =>
-        element.QuerySelector(selector)?.TextContent.Trim() ?? "";
+        Clean(element.QuerySelector(selector)?.TextContent ?? "");
+
+    private static string Clean(string text) => DisallowedCharacters().Replace(text, " ").Trim();
 
     private static string Slug(string value) =>
         NonAlphanumeric().Replace(value.ToLowerInvariant(), "-").Trim('-');
 
     [GeneratedRegex(@"(\d+)(st|nd|rd|th)\b")]
     private static partial Regex OrdinalSuffix();
+
+    [GeneratedRegex(@"[^\p{L}\p{N}'&+./:()-]+")]
+    private static partial Regex DisallowedCharacters();
 
     [GeneratedRegex("[^a-z0-9]+")]
     private static partial Regex NonAlphanumeric();
