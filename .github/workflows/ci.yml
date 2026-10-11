@@ -3,6 +3,12 @@ name: CI
 on:
   push:
     branches: ["main", "develop", "feature/**", "release/**", "hotfix/**"]
+    paths-ignore:
+      - "**.md"
+      - ".vscode/**"
+      - "**/.gitignore"
+      - "**/.env.example"
+      - "LICENSE"
   workflow_dispatch:
 
 concurrency:
