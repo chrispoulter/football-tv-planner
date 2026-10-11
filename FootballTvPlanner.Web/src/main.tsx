@@ -5,6 +5,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Toaster } from '@/components/ui/sonner';
+import { ScrollToTop } from '@/components/scroll-to-top';
 import { ThemeProvider } from '@/components/theme-provider';
 import { queryClient } from '@/lib/query-client';
 import App from './app';
@@ -22,6 +23,7 @@ createRoot(document.getElementById('root')!).render(
         >
             <QueryClientProvider client={queryClient}>
                 <BrowserRouter>
+                    <ScrollToTop />
                     <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
                         <App />
                         <Toaster richColors />
