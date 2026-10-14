@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useSearchParams } from 'react-router';
-import { useSwipeable, type SwipeEventData } from 'react-swipeable';
 import { z } from 'zod';
 import { Star, Tv } from 'lucide-react';
 import { useAuth } from '@/components/auth-provider';
@@ -17,7 +16,6 @@ import {
 import { DayStrip } from '@/components/day-strip';
 import { Metadata } from '@/components/metadata';
 import {
-    addDays,
     isDateString,
     toLongDayLabel,
     todayLocal,
@@ -27,13 +25,6 @@ import { useGetFixtures } from './fixtures-queries';
 import { FixtureFilters } from './fixture-filters';
 import { FixtureList } from './fixture-list';
 import { FixturesLoading } from './fixtures-loading';
-
-// Ignore swipes starting near the screen edges, which trigger browser back/forward.
-const SWIPE_EDGE_PX = 24;
-
-function isEdgeSwipe({ initial: [x] }: SwipeEventData) {
-    return x < SWIPE_EDGE_PX || x > window.innerWidth - SWIPE_EDGE_PX;
-}
 
 const searchParamsSchema = z.object({
     date: z
@@ -86,20 +77,6 @@ export function FixturesPage() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    const swipeHandlers = useSwipeable({
-        onSwipedLeft: (event) => {
-            if (!isEdgeSwipe(event)) {
-                changeDate(addDays(request.date, 1));
-            }
-        },
-        onSwipedRight: (event) => {
-            if (!isEdgeSwipe(event) && request.date > todayLocal()) {
-                changeDate(addDays(request.date, -1));
-            }
-        },
-        delta: 60,
-    });
-
     return (
         <div className="space-y-6">
             <Metadata title="Fixtures" />
@@ -121,7 +98,7 @@ export function FixturesPage() {
                 }
             />
 
-            <div {...swipeHandlers} className="space-y-6">
+            <div className="space-y-6">
                 <h2 className="scroll-mt-32 text-lg font-semibold">
                     {toLongDayLabel(request.date)}
                 </h2>
