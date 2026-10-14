@@ -1,3 +1,4 @@
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using FootballTvPlanner.Api.Common.Authentication;
 using FootballTvPlanner.Api.Common.Infrastructure;
@@ -10,10 +11,10 @@ namespace FootballTvPlanner.Api.Features.Profile.DownloadPersonalData;
 
 public class DownloadPersonalDataEndpoint : IEndpoint
 {
-    // Unlike the API defaults, false and empty values are kept so the export is complete
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web)
     {
         WriteIndented = true,
+        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
     };
 
     public void MapEndpoints(IEndpointRouteBuilder app)
