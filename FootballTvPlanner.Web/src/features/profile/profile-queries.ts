@@ -193,6 +193,9 @@ export function linkAccountUrl(provider: string, returnUrl: string) {
     return `/api/profile/linked-accounts/link?${searchParams}`;
 }
 
+// A plain link, so the browser downloads the file using the API's filename
+export const personalDataUrl = '/api/profile/personal-data';
+
 interface DeleteAccountResponse {
     id: string;
 }
