@@ -1,4 +1,6 @@
 ﻿using System.Reflection;
+using System.Text.Json.Nodes;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.OpenApi;
 using Scalar.AspNetCore;
 
@@ -20,6 +22,33 @@ public static class OpenApiExtensions
                     {
                         document.Info ??= new OpenApiInfo();
                         document.Info.Version = serviceVersion ?? document.Info.Version;
+
+                        return Task.CompletedTask;
+                    }
+                );
+
+                options.AddOperationTransformer(
+                    (operation, context, cancellationToken) =>
+                    {
+                        var hasEmptyBody = context.Description.ParameterDescriptions.Any(p =>
+                            p.Source == BindingSource.Body && p.Type == typeof(object)
+                        );
+
+                        if (
+                            hasEmptyBody
+                            && operation.RequestBody?.Content?.TryGetValue(
+                                "application/json",
+                                out var mediaType
+                            ) == true
+                        )
+                        {
+                            mediaType.Schema = new OpenApiSchema { Type = JsonSchemaType.Object };
+
+                            mediaType.Examples = new Dictionary<string, IOpenApiExample>
+                            {
+                                ["empty"] = new OpenApiExample { Value = new JsonObject() },
+                            };
+                        }
 
                         return Task.CompletedTask;
                     }
