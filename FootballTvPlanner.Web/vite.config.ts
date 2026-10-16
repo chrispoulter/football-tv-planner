@@ -5,7 +5,8 @@ import path from 'node:path';
 
 const gitCommitSha = process.env.GIT_COMMIT_SHA || undefined;
 
-const version = gitCommitSha?.slice(0, 7) ?? process.env.npm_package_version;
+const version =
+    gitCommitSha?.slice(0, 7) ?? `v${process.env.npm_package_version}`;
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {

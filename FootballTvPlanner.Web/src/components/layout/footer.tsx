@@ -10,7 +10,7 @@ export function Footer() {
                     <Link to="/privacy" className="hover:text-foreground">
                         Privacy
                     </Link>
-                    <span>v{config.VITE_APP_VERSION}</span>
+                    <span>{config.VITE_APP_VERSION}</span>
                 </div>
             </div>
         </footer>
