@@ -8,7 +8,8 @@ export const profileKeys = {
     linkedAccounts: ['profile', 'linked-accounts'] as const,
 };
 
-// Most profile changes are also reflected in the session
+export const personalDataUrl = '/api/profile/personal-data';
+
 function useInvalidateSession() {
     const queryClient = useQueryClient();
 
@@ -33,7 +34,6 @@ interface ChangeEmailRequest {
     newEmail: string;
 }
 
-// The email only changes once the link sent to the new address is followed
 export const useChangeEmail = () =>
     useMutation({
         mutationFn: (request: ChangeEmailRequest) =>
@@ -59,7 +59,6 @@ interface SetPasswordRequest {
     newPassword: string;
 }
 
-// For accounts that only sign in with Google
 export const useSetPassword = () => {
     const invalidateSession = useInvalidateSession();
 
@@ -72,7 +71,6 @@ export const useSetPassword = () => {
     });
 };
 
-// The API leaves out false and zero values
 export interface TwoFactorResponse {
     isEnabled?: boolean;
     recoveryCodesLeft?: number;
@@ -92,7 +90,6 @@ interface SetupTwoFactorResponse {
     authenticatorUri: string;
 }
 
-// The key stays the same until 2FA is enabled, so setup can be restarted
 export const useSetupTwoFactor = () =>
     useMutation({
         mutationFn: () =>
@@ -105,7 +102,6 @@ interface RecoveryCodesResponse {
     recoveryCodes: string[];
 }
 
-// Changes to 2FA are also reflected in the session
 function useInvalidateTwoFactor() {
     const queryClient = useQueryClient();
 
@@ -186,10 +182,8 @@ export const useRemoveLinkedAccount = () => {
     });
 };
 
-// A full page navigation, as the provider redirects back to the API
 export function linkAccountUrl(provider: string, returnUrl: string) {
     const searchParams = new URLSearchParams({ provider, returnUrl });
-
     return `/api/profile/linked-accounts/link?${searchParams}`;
 }
 

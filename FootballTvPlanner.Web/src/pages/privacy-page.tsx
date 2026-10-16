@@ -10,7 +10,7 @@ export function PrivacyPage() {
                     <h1 className="text-3xl font-bold tracking-tight text-foreground">
                         Privacy Policy
                     </h1>
-                    <p className="text-sm">Last updated: 10 October 2026</p>
+                    <p className="text-sm">Last updated: 14 October 2026</p>
                 </header>
 
                 <p>
@@ -195,18 +195,19 @@ export function PrivacyPage() {
                         >
                             profile
                         </Link>
-                        , and delete your account at any time from the Danger
-                        zone tab. Deleting your account permanently removes your
+                        , download a copy of your data as a JSON file, and
+                        delete your account at any time from the Danger zone
+                        tab. Deleting your account permanently removes your
                         profile, linked sign-in methods, bookmarked fixtures and
                         calendar feed.
                     </p>
                     <p>
                         Under UK data protection law you also have the right to
                         request a copy of your data, ask for it to be corrected
-                        or erased, and object to its processing. To do so, get
-                        in touch using the details below. If you are unhappy
-                        with how your data has been handled, you can complain to
-                        the{' '}
+                        or erased, and object to its processing. For anything
+                        you cannot do from your profile, get in touch using the
+                        details below. If you are unhappy with how your data has
+                        been handled, you can complain to the{' '}
                         <a
                             href="https://ico.org.uk/make-a-complaint/"
                             target="_blank"
