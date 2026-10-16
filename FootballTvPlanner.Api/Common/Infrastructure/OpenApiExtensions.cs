@@ -22,6 +22,7 @@ public static class OpenApiExtensions
                     {
                         document.Info ??= new OpenApiInfo();
                         document.Info.Version = serviceVersion ?? document.Info.Version;
+                        document.Servers = [];
 
                         return Task.CompletedTask;
                     }

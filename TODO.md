@@ -4,7 +4,7 @@
 
 ## Bugfixes
 
-- scalar documentation examples not working
+-
 
 ## Future
 
