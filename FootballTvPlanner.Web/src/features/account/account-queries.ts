@@ -8,7 +8,6 @@ export interface LoginRequest {
     rememberMe: boolean;
 }
 
-// The API leaves out false values
 interface LoginResponse {
     requiresTwoFactor?: boolean;
 }
@@ -30,7 +29,6 @@ export const useLogin = () => {
     });
 };
 
-// Either a code from the authenticator app or a recovery code
 export interface LoginTwoFactorRequest {
     code?: string;
     recoveryCode?: string;
@@ -67,7 +65,6 @@ interface RegisterRequest {
     password: string;
 }
 
-// Also logs the new user in
 export const useRegister = () => {
     const { refreshAuth } = useAuth();
 
@@ -86,7 +83,6 @@ interface ConfirmEmailRequest {
     changedEmail?: string;
 }
 
-// A query rather than a mutation so the request is only sent once
 export const useConfirmEmail = (request: ConfirmEmailRequest) =>
     useQuery({
         queryKey: ['confirm-email', request],
@@ -125,6 +121,5 @@ export const useResetPassword = () =>
 
 export function externalLoginUrl(provider: string, returnUrl = '/') {
     const searchParams = new URLSearchParams({ provider, returnUrl });
-
     return `/api/account/external-login?${searchParams}`;
 }
