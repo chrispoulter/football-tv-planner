@@ -5,7 +5,6 @@
 ## Bugfixes
 
 - scalar documentation examples not working
-- calendar not syncing. does it need random id, just use user id?
 
 ## Future
 
