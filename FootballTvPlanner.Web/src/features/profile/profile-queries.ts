@@ -8,6 +8,8 @@ export const profileKeys = {
     linkedAccounts: ['profile', 'linked-accounts'] as const,
 };
 
+export const personalDataUrl = '/api/profile/personal-data';
+
 function useInvalidateSession() {
     const queryClient = useQueryClient();
 
@@ -184,8 +186,6 @@ export function linkAccountUrl(provider: string, returnUrl: string) {
     const searchParams = new URLSearchParams({ provider, returnUrl });
     return `/api/profile/linked-accounts/link?${searchParams}`;
 }
-
-export const personalDataUrl = '/api/profile/personal-data';
 
 interface DeleteAccountResponse {
     id: string;
