@@ -3,7 +3,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { addDays, toDayLabel, todayLocal } from '@/lib/date-time';
 
-const DAYS_SHOWN = 14;
+const DAYS_SHOWN = 28;
 
 interface DayStripProps {
     date: string;
@@ -16,13 +16,12 @@ export function DayStrip({ date, onChange, disabled }: DayStripProps) {
 
     const today = todayLocal();
 
-    const start = date > addDays(today, DAYS_SHOWN - 1) ? date : today;
-
-    const isFirstDay = date <= today;
-
     const days = Array.from({ length: DAYS_SHOWN }, (_, i) =>
-        addDays(start, i)
+        addDays(today, i)
     );
+
+    const isFirstDay = date <= days[0];
+    const isLastDay = date >= days[DAYS_SHOWN - 1];
 
     useEffect(() => {
         selectedRef.current?.scrollIntoView({
@@ -68,7 +67,7 @@ export function DayStrip({ date, onChange, disabled }: DayStripProps) {
                 variant="outline"
                 size="icon"
                 onClick={() => onChange(addDays(date, 1))}
-                disabled={disabled}
+                disabled={disabled || isLastDay}
             >
                 <ChevronRight />
                 <span className="sr-only">Next day</span>
