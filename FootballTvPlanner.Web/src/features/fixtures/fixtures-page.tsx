@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useSearchParams } from 'react-router';
 import { z } from 'zod';
 import { Star, Tv } from 'lucide-react';
@@ -48,6 +48,8 @@ export function FixturesPage() {
     const [competitionId, setCompetitionId] = useState<string>();
     const [channelId, setChannelId] = useState<string>();
 
+    const headingRef = useRef<HTMLHeadingElement>(null);
+
     const bookmarked = request.bookmarked && !!user;
 
     const { data, isPending, isPlaceholderData, isSuccess } = useGetFixtures(
@@ -74,7 +76,16 @@ export function FixturesPage() {
 
     function changeDate(date: string) {
         setParam('date', date);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        const heading = headingRef.current;
+
+        if (
+            heading &&
+            heading.getBoundingClientRect().top <
+                parseFloat(getComputedStyle(heading).scrollMarginTop)
+        ) {
+            heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
     }
 
     return (
@@ -99,7 +110,10 @@ export function FixturesPage() {
             />
 
             <div className="space-y-6">
-                <h2 className="scroll-mt-32 text-lg font-semibold">
+                <h2
+                    ref={headingRef}
+                    className="scroll-mt-32 text-lg font-semibold"
+                >
                     {toLongDayLabel(request.date)}
                 </h2>
 
