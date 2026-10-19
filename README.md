@@ -42,7 +42,7 @@ Aspire starts PostgreSQL, Mailpit, the migration service, the API, the fixture s
 - API docs (Scalar): the API's link in the Aspire dashboard
 - Mailpit, which receives confirmation and password reset emails: http://localhost:8025
 
-The migration service applies migrations and exits, and the API starts once it has finished. The fixture sync runs once after the API starts. To pick up new fixtures, restart the `fixture-sync` resource from the dashboard.
+The migration service applies migrations and exits, and the API starts once it has finished. The fixture sync only needs the migrated database, not the API. Start the `fixture-sync` resource from the dashboard to pull fixtures, and restart it to pick up new ones.
 
 > PostgreSQL (5432) and Mailpit (1025 and 8025) use fixed host ports and persistent containers. Stop anything else that uses those ports, or change them in `FootballTvPlanner.AppHost/AppHost.cs`.
 

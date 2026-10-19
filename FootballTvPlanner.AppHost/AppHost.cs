@@ -18,28 +18,25 @@ var migrations = builder
     .WithReference(database)
     .WaitFor(database);
 
+builder
+    .AddProject<Projects.FootballTvPlanner_FixtureSync>("fixture-sync")
+    .WithReference(database)
+    .WaitForCompletion(migrations)
+    .WithExplicitStart();
+
 var api = builder
     .AddProject<Projects.FootballTvPlanner_Api>("api")
     .WithExternalHttpEndpoints()
     .WithHttpHealthCheck("/health")
     .WithReference(database)
-    .WaitFor(database)
     .WithReference(mailpit)
     .WaitFor(mailpit)
     .WaitForCompletion(migrations);
-
-builder
-    .AddProject<Projects.FootballTvPlanner_FixtureSync>("fixture-sync")
-    .WithReference(database)
-    .WaitFor(database)
-    .WaitFor(api)
-    .WithExplicitStart();
 
 var web = builder
     .AddViteApp("web", "../FootballTvPlanner.Web")
     .WithEndpoint("http", e => e.Port = 5173)
     .WithEnvironment("API_URL", api.GetEndpoint("http"))
-    .WithReference(api)
     .WaitFor(api);
 
 api.WithEnvironment("Email__SiteUrl", web.GetEndpoint("http"));

@@ -64,8 +64,8 @@ services:
       Logging__Console__FormatterName: json
     restart: "no"
     depends_on:
-      football-tv-planner-api:
-        condition: service_started
+      football-tv-planner-migrations:
+        condition: service_completed_successfully
 
   postgres:
     image: postgres:18.3
