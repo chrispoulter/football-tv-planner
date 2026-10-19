@@ -1,6 +1,6 @@
 using FootballTvPlanner.Api.Common.Authentication;
-using FootballTvPlanner.Api.Data;
-using FootballTvPlanner.Api.Data.Users;
+using FootballTvPlanner.Data;
+using FootballTvPlanner.Data.Users;
 using Microsoft.AspNetCore.Identity;
 
 namespace FootballTvPlanner.Api.Common.Authentication;

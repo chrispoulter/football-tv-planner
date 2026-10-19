@@ -1,7 +1,7 @@
 using FootballTvPlanner.Api.Common.Authentication;
 using FootballTvPlanner.Api.Common.Infrastructure;
-using FootballTvPlanner.Api.Data;
-using FootballTvPlanner.Api.Data.Schedule;
+using FootballTvPlanner.Data;
+using FootballTvPlanner.Data.Schedule;
 using Microsoft.EntityFrameworkCore;
 
 namespace FootballTvPlanner.Api.Features.Schedule.AddToSchedule;

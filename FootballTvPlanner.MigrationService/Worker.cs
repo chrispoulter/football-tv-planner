@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using FootballTvPlanner.Api.Data;
+using FootballTvPlanner.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace FootballTvPlanner.MigrationService;
@@ -29,6 +29,10 @@ public class Worker(
         catch (Exception ex)
         {
             activity?.AddException(ex);
+
+            // The host stops on an unhandled BackgroundService exception but still exits with 0,
+            // which would let anything waiting on this service carry on against an old schema.
+            Environment.ExitCode = 1;
             throw;
         }
 
@@ -43,7 +47,6 @@ public class Worker(
         var strategy = dbContext.Database.CreateExecutionStrategy();
         await strategy.ExecuteAsync(async () =>
         {
-            // Run migration in a transaction to avoid partial migration if it fails.
             await dbContext.Database.MigrateAsync(cancellationToken);
         });
     }

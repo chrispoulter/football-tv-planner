@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FootballTvPlanner.Api.Data.Users;
+namespace FootballTvPlanner.Data.Users;
 
 public class UserConfiguration : IEntityTypeConfiguration<User>
 {

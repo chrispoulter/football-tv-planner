@@ -12,6 +12,7 @@
     <PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="13.6.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\FootballTvPlanner.Data\FootballTvPlanner.Data.csproj" />
     <ProjectReference Include="..\FootballTvPlanner.ServiceDefaults\FootballTvPlanner.ServiceDefaults.csproj" />
   </ItemGroup>
 </Project>

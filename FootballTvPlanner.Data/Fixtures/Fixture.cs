@@ -1,8 +1,8 @@
-using FootballTvPlanner.Api.Data.Channels;
-using FootballTvPlanner.Api.Data.Competitions;
-using FootballTvPlanner.Api.Data.Teams;
+using FootballTvPlanner.Data.Channels;
+using FootballTvPlanner.Data.Competitions;
+using FootballTvPlanner.Data.Teams;
 
-namespace FootballTvPlanner.Api.Data.Fixtures;
+namespace FootballTvPlanner.Data.Fixtures;
 
 public class Fixture
 {

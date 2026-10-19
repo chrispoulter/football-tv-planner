@@ -1,4 +1,4 @@
-namespace FootballTvPlanner.Api.Data.Channels;
+namespace FootballTvPlanner.Data.Channels;
 
 public class Channel
 {

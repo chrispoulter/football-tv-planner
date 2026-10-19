@@ -1,6 +1,6 @@
-using FootballTvPlanner.Api.Data;
-using FootballTvPlanner.MigrationService;
 using System.Reflection;
+using FootballTvPlanner.Data;
+using FootballTvPlanner.MigrationService;
 
 var assembly = Assembly.GetExecutingAssembly();
 var serviceVersion = assembly.GetSemVerShortSha();
@@ -12,7 +12,8 @@ builder.Services.AddHostedService<Worker>();
 
 builder.AddNpgsqlDbContext<FootballTvPlannerDbContext>(connectionName: "Database");
 
-builder.Services.AddOpenTelemetry()
+builder
+    .Services.AddOpenTelemetry()
     .WithTracing(tracing => tracing.AddSource(Worker.ActivitySourceName));
 
 var host = builder.Build();

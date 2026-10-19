@@ -1,5 +1,5 @@
 using System.Linq.Expressions;
-using FootballTvPlanner.Api.Data.Fixtures;
+using FootballTvPlanner.Data.Fixtures;
 
 namespace FootballTvPlanner.Api.Features.Fixtures;
 

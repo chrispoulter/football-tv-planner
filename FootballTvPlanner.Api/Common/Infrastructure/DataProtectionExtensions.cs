@@ -1,4 +1,4 @@
-using FootballTvPlanner.Api.Data;
+using FootballTvPlanner.Data;
 using Microsoft.AspNetCore.DataProtection;
 
 namespace FootballTvPlanner.Api.Common.Infrastructure;

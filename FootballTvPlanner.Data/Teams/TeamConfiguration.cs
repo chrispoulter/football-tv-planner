@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FootballTvPlanner.Api.Data.Teams;
+namespace FootballTvPlanner.Data.Teams;
 
 public class TeamConfiguration : IEntityTypeConfiguration<Team>
 {

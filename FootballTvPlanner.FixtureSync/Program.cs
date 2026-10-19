@@ -1,6 +1,6 @@
 using System.Reflection;
+using FootballTvPlanner.Data;
 using FootballTvPlanner.FixtureSync;
-using FootballTvPlanner.FixtureSync.Data;
 
 var serviceVersion = Assembly.GetExecutingAssembly().GetSemVerShortSha();
 
@@ -8,7 +8,7 @@ var builder = Host.CreateApplicationBuilder(args);
 
 builder.AddServiceDefaults(serviceVersion);
 
-builder.AddNpgsqlDbContext<FixtureSyncDbContext>(connectionName: "Database");
+builder.AddNpgsqlDbContext<FootballTvPlannerDbContext>(connectionName: "Database");
 builder.AddFixtureProvider();
 
 builder.Services.AddSingleton(TimeProvider.System);

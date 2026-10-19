@@ -35,6 +35,20 @@ services:
     volumes:
       - ${USERPROFILE}/.aspnet/https:/https:ro
     depends_on:
+      football-tv-planner-migrations:
+        condition: service_completed_successfully
+
+  football-tv-planner-migrations:
+    image: football-tv-planner-migrations:latest
+    build:
+      context: .
+      dockerfile: ./FootballTvPlanner.MigrationService/Dockerfile
+    environment:
+      DOTNET_ENVIRONMENT: Development
+      ConnectionStrings__Database: Host=host.docker.internal;Port=5432;Database=football_tv_planner;Username=postgres;Password=password
+      Logging__Console__FormatterName: json
+    restart: "no"
+    depends_on:
       postgres:
         condition: service_healthy
 

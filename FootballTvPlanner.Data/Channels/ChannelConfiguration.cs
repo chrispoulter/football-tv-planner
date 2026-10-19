@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FootballTvPlanner.Api.Data.Channels;
+namespace FootballTvPlanner.Data.Channels;
 
 public class ChannelConfiguration : IEntityTypeConfiguration<Channel>
 {

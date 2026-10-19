@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 
-namespace FootballTvPlanner.Api.Data.Users;
+namespace FootballTvPlanner.Data.Users;
 
 public class User : IdentityUser<Guid>
 {

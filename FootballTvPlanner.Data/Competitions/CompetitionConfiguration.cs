@@ -1,19 +1,20 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FootballTvPlanner.FixtureSync.Data;
+namespace FootballTvPlanner.Data.Competitions;
 
 public class CompetitionConfiguration : IEntityTypeConfiguration<Competition>
 {
     public void Configure(EntityTypeBuilder<Competition> builder)
     {
-        builder.ToTable(t => t.ExcludeFromMigrations());
-
         builder.Property(c => c.Id).HasDefaultValueSql("gen_random_uuid()").ValueGeneratedOnAdd();
 
         builder.Property(c => c.Name).IsRequired();
+        builder.Property(c => c.IsHidden).HasDefaultValue(false);
 
         builder.HasKey(c => c.Id);
         builder.HasIndex(c => c.Name).IsUnique();
+
+        builder.HasQueryFilter(c => !c.IsHidden);
     }
 }

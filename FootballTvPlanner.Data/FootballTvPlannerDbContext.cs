@@ -1,16 +1,16 @@
 using System.Reflection;
-using FootballTvPlanner.Api.Data.Channels;
-using FootballTvPlanner.Api.Data.Competitions;
-using FootballTvPlanner.Api.Data.Fixtures;
-using FootballTvPlanner.Api.Data.Schedule;
-using FootballTvPlanner.Api.Data.Teams;
-using FootballTvPlanner.Api.Data.Users;
+using FootballTvPlanner.Data.Channels;
+using FootballTvPlanner.Data.Competitions;
+using FootballTvPlanner.Data.Fixtures;
+using FootballTvPlanner.Data.Schedule;
+using FootballTvPlanner.Data.Teams;
+using FootballTvPlanner.Data.Users;
 using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace FootballTvPlanner.Api.Data;
+namespace FootballTvPlanner.Data;
 
 public class FootballTvPlannerDbContext(DbContextOptions<FootballTvPlannerDbContext> options)
     : IdentityDbContext<User, IdentityRole<Guid>, Guid>(options),

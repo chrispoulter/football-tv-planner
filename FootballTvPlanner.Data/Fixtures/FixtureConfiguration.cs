@@ -1,8 +1,8 @@
-using FootballTvPlanner.Api.Data.Channels;
+using FootballTvPlanner.Data.Channels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FootballTvPlanner.Api.Data.Fixtures;
+namespace FootballTvPlanner.Data.Fixtures;
 
 public class FixtureConfiguration : IEntityTypeConfiguration<Fixture>
 {

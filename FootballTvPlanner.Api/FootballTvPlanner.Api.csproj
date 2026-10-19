@@ -13,14 +13,6 @@
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
     <PackageReference Include="Ical.Net" Version="5.2.3" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="10.0.12" />
-    <PackageReference
-      Include="Microsoft.AspNetCore.DataProtection.EntityFrameworkCore"
-      Version="10.0.12"
-    />
-    <PackageReference
-      Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore"
-      Version="10.0.12"
-    />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.12" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.12">
       <PrivateAssets>all</PrivateAssets>
@@ -36,6 +28,7 @@
     <EmbeddedResource Include="Features\**\*.html" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\FootballTvPlanner.Data\FootballTvPlanner.Data.csproj" />
     <ProjectReference Include="..\FootballTvPlanner.ServiceDefaults\FootballTvPlanner.ServiceDefaults.csproj" />
   </ItemGroup>
 </Project>

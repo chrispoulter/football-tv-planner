@@ -1,6 +1,6 @@
 using FootballTvPlanner.Api.Common.Infrastructure;
 using FootballTvPlanner.Api.Common.Validation;
-using FootballTvPlanner.Api.Data.Users;
+using FootballTvPlanner.Data.Users;
 using Microsoft.AspNetCore.Identity;
 
 namespace FootballTvPlanner.Api.Features.Account.ResetPassword;

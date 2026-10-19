@@ -1,7 +1,7 @@
-using FootballTvPlanner.Api.Data.Fixtures;
-using FootballTvPlanner.Api.Data.Users;
+using FootballTvPlanner.Data.Fixtures;
+using FootballTvPlanner.Data.Users;
 
-namespace FootballTvPlanner.Api.Data.Schedule;
+namespace FootballTvPlanner.Data.Schedule;
 
 public class UserFixture
 {

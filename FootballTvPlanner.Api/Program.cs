@@ -3,7 +3,7 @@ using FluentValidation;
 using FootballTvPlanner.Api.Common.Authentication;
 using FootballTvPlanner.Api.Common.Email;
 using FootballTvPlanner.Api.Common.Infrastructure;
-using FootballTvPlanner.Api.Data;
+using FootballTvPlanner.Data;
 
 var assembly = Assembly.GetExecutingAssembly();
 var serviceVersion = assembly.GetSemVerShortSha();

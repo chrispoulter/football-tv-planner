@@ -13,6 +13,7 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["FootballTvPlanner.Api/FootballTvPlanner.Api.csproj", "FootballTvPlanner.Api/"]
+COPY ["FootballTvPlanner.Data/FootballTvPlanner.Data.csproj", "FootballTvPlanner.Data/"]
 COPY ["FootballTvPlanner.ServiceDefaults/FootballTvPlanner.ServiceDefaults.csproj", "FootballTvPlanner.ServiceDefaults/"]
 RUN dotnet restore "./FootballTvPlanner.Api/FootballTvPlanner.Api.csproj"
 COPY . .

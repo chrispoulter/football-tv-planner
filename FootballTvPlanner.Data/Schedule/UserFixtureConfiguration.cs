@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FootballTvPlanner.Api.Data.Schedule;
+namespace FootballTvPlanner.Data.Schedule;
 
 public class UserFixtureConfiguration : IEntityTypeConfiguration<UserFixture>
 {

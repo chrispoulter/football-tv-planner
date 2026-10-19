@@ -1,4 +1,4 @@
-namespace FootballTvPlanner.Api.Data.Teams;
+namespace FootballTvPlanner.Data.Teams;
 
 public class Team
 {

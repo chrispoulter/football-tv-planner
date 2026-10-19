@@ -12,13 +12,15 @@ A full-stack app for browsing football on UK TV and streaming services and addin
 
 ## Projects
 
-| Project                             | Description                                                                                                                                                                   |
-| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `FootballTvPlanner.Api`             | .NET 10 minimal API. ASP.NET Core Identity with cookie auth, EF Core with PostgreSQL, and Scalar API docs at `/`. Owns the database schema and applies migrations on startup. |
-| `FootballTvPlanner.FixtureSync`     | Console job that pulls fixtures from a provider into the `fixtures` table, then exits. Run it on a schedule.                                                                  |
-| `FootballTvPlanner.Web`             | React 19 app built with Vite, React Router, TanStack Query, shadcn/ui and Tailwind CSS.                                                                                       |
-| `FootballTvPlanner.AppHost`         | Aspire app host for local development.                                                                                                                                        |
-| `FootballTvPlanner.ServiceDefaults` | Shared Aspire setup: OpenTelemetry, health checks, service discovery and resilience.                                                                                          |
+| Project                              | Description                                                                                                       |
+| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
+| `FootballTvPlanner.Api`              | .NET 10 minimal API. ASP.NET Core Identity with cookie auth, EF Core with PostgreSQL, and Scalar API docs at `/`. |
+| `FootballTvPlanner.FixtureSync`      | Console job that pulls fixtures from a provider into the `fixtures` table, then exits. Run it on a schedule.      |
+| `FootballTvPlanner.Data`             | EF Core DbContext, entities and migrations, shared by the API, the fixture sync and the migration service.        |
+| `FootballTvPlanner.MigrationService` | Worker that applies pending EF Core migrations to the database, then exits. Runs before the API starts.           |
+| `FootballTvPlanner.Web`              | React 19 app built with Vite, React Router, TanStack Query, shadcn/ui and Tailwind CSS.                           |
+| `FootballTvPlanner.AppHost`          | Aspire app host for local development.                                                                            |
+| `FootballTvPlanner.ServiceDefaults`  | Shared Aspire setup: OpenTelemetry, health checks, service discovery and resilience.                              |
 
 ## Getting started
 
@@ -34,17 +36,17 @@ A full-stack app for browsing football on UK TV and streaming services and addin
 dotnet run --project FootballTvPlanner.AppHost
 ```
 
-Aspire starts PostgreSQL, Mailpit, the API, the fixture sync and the web app. When they're up:
+Aspire starts PostgreSQL, Mailpit, the migration service, the API, the fixture sync and the web app. When they're up:
 
 - Web app: http://localhost:5173
 - API docs (Scalar): the API's link in the Aspire dashboard
 - Mailpit, which receives confirmation and password reset emails: http://localhost:8025
 
-When the API starts, it applies migrations. The fixture sync runs once after the API starts. To pick up new fixtures, restart the `fixture-sync` resource from the dashboard.
+The migration service applies migrations and exits, and the API starts once it has finished. The fixture sync runs once after the API starts. To pick up new fixtures, restart the `fixture-sync` resource from the dashboard.
 
 > PostgreSQL (5432) and Mailpit (1025 and 8025) use fixed host ports and persistent containers. Stop anything else that uses those ports, or change them in `FootballTvPlanner.AppHost/AppHost.cs`.
 
-You can also run everything with `docker compose up`, which builds the three app images and uses the same ports.
+You can also run everything with `docker compose up`, which builds the four app images and uses the same ports.
 
 ## Configuration
 
@@ -108,7 +110,7 @@ Each run, `FixtureSyncer`:
 
 If a provider returns nothing, the run fails instead of deleting every upcoming fixture.
 
-The API owns the schema. `FootballTvPlanner.FixtureSync/Data/Fixture.cs` maps the same table, so update it whenever the API's `Fixture` entity changes.
+The sync uses the shared `FootballTvPlannerDbContext` and ignores its query filters, so hidden competitions and channels, and the fixtures they hide, are still updated.
 
 To add a provider:
 
@@ -119,12 +121,14 @@ To add a provider:
 
 ### Database migrations
 
-Migrations are in `FootballTvPlanner.Api/Migrations`. To add one:
+Migrations are in `FootballTvPlanner.Data/Migrations`, next to the DbContext. To add one:
 
 ```
 dotnet tool restore
-dotnet ef migrations add <Name> --project FootballTvPlanner.Api
+dotnet ef migrations add <Name> --project FootballTvPlanner.Data --startup-project FootballTvPlanner.Api
 ```
+
+The API doesn't apply migrations itself. `FootballTvPlanner.MigrationService` applies them: through Aspire locally, as a `docker compose` service that the API waits for, and as an Azure Container Apps job that the deploy pipeline runs before it updates the API.
 
 ### Formatting and linting
 
@@ -138,10 +142,11 @@ npm run format
 
 ## Deployment
 
-On every push to `main`, `develop`, `feature/**`, `release/**` and `hotfix/**`, GitHub Actions builds and lints everything and pushes three images to GitHub Container Registry: `-api`, `-fixture-sync` and `-web`.
+On every push to `main`, `develop`, `feature/**`, `release/**` and `hotfix/**`, GitHub Actions builds and lints everything and pushes four images to GitHub Container Registry: `-api`, `-fixture-sync`, `-migrations` and `-web`.
 
 In production:
 
+- **Migrations:** set `ConnectionStrings__Database` and run it as a manually triggered job, for example an Azure Container Apps job named by the `AZURE_MIGRATIONS_JOB` variable. The deploy pipeline starts it and only updates the API once it has succeeded.
 - **API:** set `ConnectionStrings__Database`, `ConnectionStrings__Mail`, `Email__SiteUrl`, `Email__FromAddress` and, optionally, `Authentication__Google__*`.
 - **Web:** set `API_URL` to the API's URL.
 - **Fixture sync:** set `ConnectionStrings__Database` and `FixtureSync__Provider` (plus `FixtureSync__Web__Url` for the `Web` provider), and run it as a scheduled job, for example an Azure Container Apps job or a cron job.
