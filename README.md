@@ -128,7 +128,7 @@ dotnet tool restore
 dotnet ef migrations add <Name> --project FootballTvPlanner.Data --startup-project FootballTvPlanner.Api
 ```
 
-The API doesn't apply migrations itself. `FootballTvPlanner.MigrationService` applies them: through Aspire locally, as a `docker compose` service that the API waits for, and as an Azure Container Apps job that the deploy pipeline runs before it updates the API.
+The API doesn't apply migrations itself. `FootballTvPlanner.MigrationService` applies them: through Aspire locally, as a `docker compose` service that the API waits for, and as an Azure Container Apps job that the deploy pipeline starts in production.
 
 ### Formatting and linting
 
@@ -146,7 +146,7 @@ On every push to `main`, `develop`, `feature/**`, `release/**` and `hotfix/**`, 
 
 In production:
 
-- **Migrations:** set `ConnectionStrings__Database` and run it as a manually triggered job, for example an Azure Container Apps job named by the `AZURE_MIGRATIONS_JOB` variable. The deploy pipeline starts it and only updates the API once it has succeeded.
+- **Migrations:** set `ConnectionStrings__Database` and run it as a manually triggered job, for example an Azure Container Apps job named by the `AZURE_MIGRATIONS_JOB` variable. The deploy pipeline updates the job's image and starts it before updating the other containers, but doesn't wait for it to finish. Check the job's execution history if a deploy includes a new migration.
 - **API:** set `ConnectionStrings__Database`, `ConnectionStrings__Mail`, `Email__SiteUrl`, `Email__FromAddress` and, optionally, `Authentication__Google__*`.
 - **Web:** set `API_URL` to the API's URL.
 - **Fixture sync:** set `ConnectionStrings__Database` and `FixtureSync__Provider` (plus `FixtureSync__Web__Url` for the `Web` provider), and run it as a scheduled job, for example an Azure Container Apps job or a cron job.
