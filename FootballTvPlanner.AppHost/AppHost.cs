@@ -13,6 +13,10 @@ var mailpit = builder
     .AddMailPit("mail", httpPort: 8025, smtpPort: 1025)
     .WithLifetime(ContainerLifetime.Persistent);
 
+var migrations = builder.AddProject<Projects.FootballTvPlanner_MigrationService>("migrations")
+    .WithReference(database)
+    .WaitFor(database);
+
 var api = builder
     .AddProject<Projects.FootballTvPlanner_Api>("api")
     .WithExternalHttpEndpoints()
@@ -20,7 +24,9 @@ var api = builder
     .WithReference(database)
     .WaitFor(database)
     .WithReference(mailpit)
-    .WaitFor(mailpit);
+    .WaitFor(mailpit)
+    .WithReference(migrations)
+    .WaitForCompletion(migrations);
 
 builder
     .AddProject<Projects.FootballTvPlanner_FixtureSync>("fixture-sync")

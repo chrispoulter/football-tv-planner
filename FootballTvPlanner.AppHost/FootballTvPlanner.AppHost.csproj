@@ -10,6 +10,7 @@
   <ItemGroup>
     <ProjectReference Include="..\FootballTvPlanner.Api\FootballTvPlanner.Api.csproj" />
     <ProjectReference Include="..\FootballTvPlanner.FixtureSync\FootballTvPlanner.FixtureSync.csproj" />
+    <ProjectReference Include="..\FootballTvPlanner.MigrationService\FootballTvPlanner.MigrationService.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Aspire.Hosting.JavaScript" Version="13.6.0" />
