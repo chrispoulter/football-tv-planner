@@ -31,7 +31,9 @@ public class FixtureSyncer(
         var competitions = await dbContext
             .Competitions.IgnoreQueryFilters()
             .ToDictionaryAsync(c => c.Name, cancellationToken);
+
         var teams = await dbContext.Teams.ToDictionaryAsync(t => t.Name, cancellationToken);
+
         var channels = await dbContext
             .Channels.IgnoreQueryFilters()
             .ToDictionaryAsync(c => c.Name, cancellationToken);
@@ -62,6 +64,7 @@ public class FixtureSyncer(
                 item.Competition,
                 name => new Competition { Name = name }
             );
+
             fixture.HomeTeam = GetOrAdd(teams, item.HomeTeam, name => new Team { Name = name });
             fixture.AwayTeam = GetOrAdd(teams, item.AwayTeam, name => new Team { Name = name });
             fixture.KickoffUtc = item.KickoffUtc;
