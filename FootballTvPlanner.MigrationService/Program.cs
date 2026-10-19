@@ -2,8 +2,7 @@ using System.Reflection;
 using FootballTvPlanner.Data;
 using FootballTvPlanner.MigrationService;
 
-var assembly = Assembly.GetExecutingAssembly();
-var serviceVersion = assembly.GetSemVerShortSha();
+var serviceVersion = Assembly.GetExecutingAssembly().GetSemVerShortSha();
 
 var builder = Host.CreateApplicationBuilder(args);
 
