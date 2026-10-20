@@ -29,8 +29,23 @@ using (var activity = activitySource.StartActivity("Migrating database"))
         using var scope = host.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<FootballTvPlannerDbContext>();
 
+        var pending = await dbContext.Database.GetPendingMigrationsAsync(lifetime.ApplicationStopping);
+
         var strategy = dbContext.Database.CreateExecutionStrategy();
         await strategy.ExecuteAsync(lifetime.ApplicationStopping, dbContext.Database.MigrateAsync);
+
+        if (!pending.Any())
+        {
+            logger.LogInformation("Database is up to date; no migrations applied");
+        }
+        else
+        {
+            logger.LogInformation(
+                "Applied {Count} migrations: {Migrations}",
+                pending.Count(),
+                pending
+            );
+        }
     }
     catch (Exception ex)
     {
