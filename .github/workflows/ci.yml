@@ -136,15 +136,29 @@ jobs:
           tenant-id: ${{ vars.AZURE_TENANT_ID }}
           subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
+      - name: Run database migrations
+        timeout-minutes: 4
+        run: |
+          SHORT_SHA="${GITHUB_SHA::7}"
+          MIGRATIONS_IMAGE="ghcr.io/${GITHUB_REPOSITORY}-migrations:${SHORT_SHA}"
+          az containerapp job update -g "$AZURE_RESOURCE_GROUP" -n "$AZURE_MIGRATIONS_JOB" --image "$MIGRATIONS_IMAGE" --output none
+          EXECUTION=$(az containerapp job start -g "$AZURE_RESOURCE_GROUP" -n "$AZURE_MIGRATIONS_JOB" --query name --output tsv)
+          while true; do
+            STATUS=$(az containerapp job execution show -g "$AZURE_RESOURCE_GROUP" -n "$AZURE_MIGRATIONS_JOB" --job-execution-name "$EXECUTION" --query properties.status --output tsv)
+            echo "Migrations $EXECUTION: $STATUS"
+            case "$STATUS" in
+              Succeeded) break ;;
+              Failed|Stopped|Degraded) exit 1 ;;
+            esac
+            sleep 10
+          done
+
       - name: Deploy to Azure Container Apps
         run: |
           SHORT_SHA="${GITHUB_SHA::7}"
           API_IMAGE="ghcr.io/${GITHUB_REPOSITORY}-api:${SHORT_SHA}"
           WEB_IMAGE="ghcr.io/${GITHUB_REPOSITORY}-web:${SHORT_SHA}"
           FIXTURE_SYNC_IMAGE="ghcr.io/${GITHUB_REPOSITORY}-fixture-sync:${SHORT_SHA}"
-          MIGRATIONS_IMAGE="ghcr.io/${GITHUB_REPOSITORY}-migrations:${SHORT_SHA}"
-          az containerapp job update -g "$AZURE_RESOURCE_GROUP" -n "$AZURE_MIGRATIONS_JOB" --image "$MIGRATIONS_IMAGE" --output none
-          az containerapp job start -g "$AZURE_RESOURCE_GROUP" -n "$AZURE_MIGRATIONS_JOB" --output none
           az containerapp update -g "$AZURE_RESOURCE_GROUP" -n "$AZURE_API_APP" --image "$API_IMAGE" --output none
           az containerapp update -g "$AZURE_RESOURCE_GROUP" -n "$AZURE_WEB_APP" --image "$WEB_IMAGE" --output none
           az containerapp job update -g "$AZURE_RESOURCE_GROUP" -n "$AZURE_FIXTURE_SYNC_JOB" --image "$FIXTURE_SYNC_IMAGE" --output none

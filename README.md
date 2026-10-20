@@ -146,7 +146,7 @@ On every push to `main`, `develop`, `feature/**`, `release/**` and `hotfix/**`, 
 
 In production:
 
-- **Migrations:** set `ConnectionStrings__Database` and run it as a manually triggered job, for example an Azure Container Apps job named by the `AZURE_MIGRATIONS_JOB` variable. The deploy pipeline updates the job's image and starts it before updating the other containers, but doesn't wait for it to finish. Check the job's execution history if a deploy includes a new migration.
+- **Migrations:** set `ConnectionStrings__Database` and run it as a manually triggered job, for example an Azure Container Apps job named by the `AZURE_MIGRATIONS_JOB` variable. The deploy pipeline updates the job's image, starts it and waits for that execution to succeed before updating the other containers. If the execution fails, or the step doesn't finish within 4 minutes, the deploy stops. The job's replica timeout (120s) must stay below that limit.
 - **API:** set `ConnectionStrings__Database`, `ConnectionStrings__Mail`, `Email__SiteUrl`, `Email__FromAddress` and, optionally, `Authentication__Google__*`.
 - **Web:** set `API_URL` to the API's URL.
 - **Fixture sync:** set `ConnectionStrings__Database` and `FixtureSync__Provider` (plus `FixtureSync__Web__Url` for the `Web` provider), and run it as a scheduled job, for example an Azure Container Apps job or a cron job.
