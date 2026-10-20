@@ -1,10 +1,9 @@
 using System.Reflection;
 using FluentValidation;
 using FootballTvPlanner.Api.Common.Authentication;
-using FootballTvPlanner.Api.Common.Database;
 using FootballTvPlanner.Api.Common.Email;
 using FootballTvPlanner.Api.Common.Infrastructure;
-using FootballTvPlanner.Api.Data;
+using FootballTvPlanner.Data;
 
 var assembly = Assembly.GetExecutingAssembly();
 var serviceVersion = assembly.GetSemVerShortSha();
@@ -26,8 +25,6 @@ builder.AddAuthentication();
 builder.AddOpenApi(serviceVersion);
 
 var app = builder.Build();
-
-await app.MigrateDatabaseAsync<FootballTvPlannerDbContext>();
 
 app.UseForwardedHeaders();
 app.UseExceptionHandler();

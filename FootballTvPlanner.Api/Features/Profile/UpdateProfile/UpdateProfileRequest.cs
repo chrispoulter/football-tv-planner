@@ -1,5 +1,5 @@
 using FluentValidation;
-using FootballTvPlanner.Api.Data.Users;
+using FootballTvPlanner.Data.Users;
 
 namespace FootballTvPlanner.Api.Features.Profile.UpdateProfile;
 

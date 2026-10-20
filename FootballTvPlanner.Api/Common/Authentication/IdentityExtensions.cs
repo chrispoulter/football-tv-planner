@@ -1,4 +1,4 @@
-using FootballTvPlanner.Api.Data.Users;
+using FootballTvPlanner.Data.Users;
 using Microsoft.AspNetCore.Identity;
 
 namespace FootballTvPlanner.Api.Common.Authentication;

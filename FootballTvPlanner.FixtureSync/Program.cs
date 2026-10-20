@@ -1,6 +1,7 @@
+using System.Diagnostics;
 using System.Reflection;
+using FootballTvPlanner.Data;
 using FootballTvPlanner.FixtureSync;
-using FootballTvPlanner.FixtureSync.Data;
 
 var serviceVersion = Assembly.GetExecutingAssembly().GetSemVerShortSha();
 
@@ -8,7 +9,7 @@ var builder = Host.CreateApplicationBuilder(args);
 
 builder.AddServiceDefaults(serviceVersion);
 
-builder.AddNpgsqlDbContext<FixtureSyncDbContext>(connectionName: "Database");
+builder.AddNpgsqlDbContext<FootballTvPlannerDbContext>(connectionName: "Database");
 builder.AddFixtureProvider();
 
 builder.Services.AddSingleton(TimeProvider.System);
@@ -21,19 +22,25 @@ await host.StartAsync();
 var lifetime = host.Services.GetRequiredService<IHostApplicationLifetime>();
 var logger = host.Services.GetRequiredService<ILogger<Program>>();
 
+using var activitySource = new ActivitySource(builder.Environment.ApplicationName);
+
 var exitCode = 0;
 
-try
+using (var activity = activitySource.StartActivity("Syncing fixtures"))
 {
-    using var scope = host.Services.CreateScope();
-    var syncer = scope.ServiceProvider.GetRequiredService<FixtureSyncer>();
+    try
+    {
+        using var scope = host.Services.CreateScope();
+        var syncer = scope.ServiceProvider.GetRequiredService<FixtureSyncer>();
 
-    await syncer.SyncAsync(lifetime.ApplicationStopping);
-}
-catch (Exception ex)
-{
-    logger.LogError(ex, "Fixture sync failed");
-    exitCode = 1;
+        await syncer.SyncAsync(lifetime.ApplicationStopping);
+    }
+    catch (Exception ex)
+    {
+        activity?.AddException(ex).SetStatus(ActivityStatusCode.Error);
+        logger.LogError(ex, "Fixture sync failed");
+        exitCode = 1;
+    }
 }
 
 await host.StopAsync();

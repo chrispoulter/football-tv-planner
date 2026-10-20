@@ -1,7 +1,7 @@
 using FootballTvPlanner.Api.Common.Authentication;
 using FootballTvPlanner.Api.Common.Infrastructure;
 using FootballTvPlanner.Api.Common.Validation;
-using FootballTvPlanner.Api.Data;
+using FootballTvPlanner.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace FootballTvPlanner.Api.Features.Fixtures.GetFixtures;

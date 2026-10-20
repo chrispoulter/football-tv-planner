@@ -1,11 +1,15 @@
-using FootballTvPlanner.FixtureSync.Data;
+using FootballTvPlanner.Data;
+using FootballTvPlanner.Data.Channels;
+using FootballTvPlanner.Data.Competitions;
+using FootballTvPlanner.Data.Fixtures;
+using FootballTvPlanner.Data.Teams;
 using FootballTvPlanner.FixtureSync.Providers;
 using Microsoft.EntityFrameworkCore;
 
 namespace FootballTvPlanner.FixtureSync;
 
 public class FixtureSyncer(
-    FixtureSyncDbContext dbContext,
+    FootballTvPlannerDbContext dbContext,
     IFixtureProvider fixtureProvider,
     TimeProvider timeProvider,
     ILogger<FixtureSyncer> logger
@@ -22,17 +26,23 @@ public class FixtureSyncer(
             throw new InvalidOperationException($"{fixtureProvider.Source} returned no fixtures.");
         }
 
-        var competitions = await dbContext.Competitions.ToDictionaryAsync(
-            c => c.Name,
-            cancellationToken
-        );
+        // The sync owns every row, so it must see hidden competitions, channels and the fixtures
+        // they hide; otherwise it would re-insert them and break the unique indexes.
+        var competitions = await dbContext
+            .Competitions.IgnoreQueryFilters()
+            .ToDictionaryAsync(c => c.Name, cancellationToken);
+
         var teams = await dbContext.Teams.ToDictionaryAsync(t => t.Name, cancellationToken);
-        var channels = await dbContext.Channels.ToDictionaryAsync(c => c.Name, cancellationToken);
+
+        var channels = await dbContext
+            .Channels.IgnoreQueryFilters()
+            .ToDictionaryAsync(c => c.Name, cancellationToken);
 
         var externalIds = items.Select(i => i.ExternalId).ToList();
 
         var fixtures = await dbContext
-            .Fixtures.Include(f => f.Channels)
+            .Fixtures.IgnoreQueryFilters()
+            .Include(f => f.Channels)
             .Where(f => f.Source == fixtureProvider.Source && externalIds.Contains(f.ExternalId))
             .ToDictionaryAsync(f => f.ExternalId, cancellationToken);
 
@@ -54,6 +64,7 @@ public class FixtureSyncer(
                 item.Competition,
                 name => new Competition { Name = name }
             );
+
             fixture.HomeTeam = GetOrAdd(teams, item.HomeTeam, name => new Team { Name = name });
             fixture.AwayTeam = GetOrAdd(teams, item.AwayTeam, name => new Team { Name = name });
             fixture.KickoffUtc = item.KickoffUtc;
@@ -72,7 +83,8 @@ public class FixtureSyncer(
         var now = timeProvider.GetUtcNow();
 
         var removed = await dbContext
-            .Fixtures.Where(f =>
+            .Fixtures.IgnoreQueryFilters()
+            .Where(f =>
                 f.Source == fixtureProvider.Source
                 && f.KickoffUtc > now
                 && !externalIds.Contains(f.ExternalId)

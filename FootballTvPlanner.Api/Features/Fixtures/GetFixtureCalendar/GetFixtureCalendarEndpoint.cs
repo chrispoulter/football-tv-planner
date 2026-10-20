@@ -1,6 +1,6 @@
 using System.Text;
 using FootballTvPlanner.Api.Common.Infrastructure;
-using FootballTvPlanner.Api.Data;
+using FootballTvPlanner.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace FootballTvPlanner.Api.Features.Fixtures.GetFixtureCalendar;

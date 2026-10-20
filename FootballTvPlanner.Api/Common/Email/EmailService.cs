@@ -18,7 +18,7 @@ public class EmailService(IFluentEmail fluentEmail, ILogger<EmailService> logger
             var sendResponse = await fluentEmail
                 .To(toAddress)
                 .Subject(subject)
-                .UsingTemplateFromEmbedded(template, model, Assembly.GetExecutingAssembly())
+                .UsingTemplateFromEmbedded(template, model, Assembly.GetEntryAssembly())
                 .SendAsync(cancellationToken);
 
             if (!sendResponse.Successful)
