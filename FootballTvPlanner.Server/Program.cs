@@ -34,6 +34,7 @@ app.UseAuthorization();
 
 app.MapOpenApiWithUI();
 app.MapEndpoints(assembly);
+app.MapClientConfig();
 app.MapDefaultEndpoints();
 app.MapFallbackToFile("index.html");
 
