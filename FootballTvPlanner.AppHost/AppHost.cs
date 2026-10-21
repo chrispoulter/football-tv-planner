@@ -41,6 +41,5 @@ var web = builder
     .WaitFor(api);
 
 api.WithEnvironment("Email__SiteUrl", web.GetEndpoint("http"));
-api.PublishWithContainerFiles(web, "wwwroot");
 
 builder.Build().Run();
