@@ -71,9 +71,6 @@ jobs:
           - name: migrations
             dockerfile: ./FootballTvPlanner.MigrationService/Dockerfile
             context: .
-          # - name: web
-          #   dockerfile: ./FootballTvPlanner.Web/Dockerfile
-          #   context: ./FootballTvPlanner.Web
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
@@ -125,7 +122,6 @@ jobs:
     env:
       AZURE_RESOURCE_GROUP: ${{ vars.AZURE_RESOURCE_GROUP }}
       AZURE_API_APP: ${{ vars.AZURE_API_APP }}
-      AZURE_WEB_APP: ${{ vars.AZURE_WEB_APP }}
       AZURE_FIXTURE_SYNC_JOB: ${{ vars.AZURE_FIXTURE_SYNC_JOB }}
       AZURE_MIGRATIONS_JOB: ${{ vars.AZURE_MIGRATIONS_JOB }}
     steps:
@@ -157,8 +153,6 @@ jobs:
         run: |
           SHORT_SHA="${GITHUB_SHA::7}"
           API_IMAGE="ghcr.io/${GITHUB_REPOSITORY}-api:${SHORT_SHA}"
-          WEB_IMAGE="ghcr.io/${GITHUB_REPOSITORY}-web:${SHORT_SHA}"
           FIXTURE_SYNC_IMAGE="ghcr.io/${GITHUB_REPOSITORY}-fixture-sync:${SHORT_SHA}"
           az containerapp update -g "$AZURE_RESOURCE_GROUP" -n "$AZURE_API_APP" --image "$API_IMAGE" --output none
-          # az containerapp update -g "$AZURE_RESOURCE_GROUP" -n "$AZURE_WEB_APP" --image "$WEB_IMAGE" --output none
           az containerapp job update -g "$AZURE_RESOURCE_GROUP" -n "$AZURE_FIXTURE_SYNC_JOB" --image "$FIXTURE_SYNC_IMAGE" --output none
