@@ -28,9 +28,6 @@ export default defineConfig(({ mode }) => {
                     target: env.API_URL,
                     xfwd: true,
                 },
-                '/env.js': {
-                    target: env.API_URL,
-                },
             },
         },
     };
