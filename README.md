@@ -92,9 +92,9 @@ The API sends email over SMTP using the `Mail` connection string, for example `E
 
 ### Authentication and the `/api` proxy
 
-The web app never calls the API directly. It proxies `/api/*` to the API unchanged, since every API endpoint is mapped under `/api`: Vite does this in development (`API_URL`) and nginx does it in the container (`API_URL`). This keeps the Identity cookie first-party even when the API is hosted on a different domain.
+In production the API serves the web app's static files itself, so the SPA and every API endpoint (mapped under `/api`) share one origin. This keeps the Identity cookie first-party. In development, Vite proxies `/api/*` to the API (`API_URL`).
 
-The proxy sends the public host and scheme in `X-FootballTvPlanner-*` headers. The API reads them in `ForwardedHeadersExtensions` so it can build correct external login redirect URIs. Custom header names are used so they can't clash with the `X-Forwarded-*` headers that the hosting provider sets.
+The Vite proxy keeps the original `Host` and sends `X-Forwarded-*` headers. The API reads them in `ForwardedHeadersExtensions` so it can build correct external login redirect URIs.
 
 ### Dates and times
 

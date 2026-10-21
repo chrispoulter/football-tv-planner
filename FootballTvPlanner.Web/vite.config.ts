@@ -26,19 +26,7 @@ export default defineConfig(({ mode }) => {
             proxy: {
                 '/api': {
                     target: env.API_URL,
-                    changeOrigin: true,
-                    configure: (proxy) => {
-                        proxy.on('proxyReq', (proxyReq, req) => {
-                            proxyReq.setHeader(
-                                'X-FootballTvPlanner-Host',
-                                req.headers.host ?? ''
-                            );
-                            proxyReq.setHeader(
-                                'X-FootballTvPlanner-Proto',
-                                'http'
-                            );
-                        });
-                    },
+                    xfwd: true,
                 },
             },
         },

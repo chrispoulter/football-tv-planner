@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using System.Text.Json.Nodes;
+﻿using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.OpenApi;
 using Scalar.AspNetCore;
@@ -65,7 +64,7 @@ public static class OpenApiExtensions
         app.MapOpenApi();
 
         app.MapScalarApiReference(
-            "/",
+            "/scalar",
             options =>
             {
                 options.Title = app.Environment.ApplicationName;

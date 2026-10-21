@@ -28,6 +28,7 @@ var api = builder
     .AddProject<Projects.FootballTvPlanner_Api>("api")
     .WithExternalHttpEndpoints()
     .WithHttpHealthCheck("/health")
+    .WithUrlForEndpoint("http", u => u.Url = "/scalar")
     .WithReference(database)
     .WithReference(mailpit)
     .WaitFor(mailpit)
@@ -40,5 +41,6 @@ var web = builder
     .WaitFor(api);
 
 api.WithEnvironment("Email__SiteUrl", web.GetEndpoint("http"));
+api.PublishWithContainerFiles(web, "wwwroot");
 
 builder.Build().Run();
