@@ -21,6 +21,8 @@ public static class EndpointExtensions
             }
         }
 
+        api.MapFallback(() => Results.NotFound()).ExcludeFromDescription();
+
         return app;
     }
 }
