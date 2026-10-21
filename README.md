@@ -14,7 +14,7 @@ A full-stack app for browsing football on UK TV and streaming services and addin
 
 | Project                              | Description                                                                                                       |
 | ------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
-| `FootballTvPlanner.Api`              | .NET 10 minimal API. ASP.NET Core Identity with cookie auth, EF Core with PostgreSQL, and Scalar API docs at `/`. |
+| `FootballTvPlanner.Api`              | .NET 10 minimal API. ASP.NET Core Identity with cookie auth, EF Core with PostgreSQL, and Scalar API docs at `/scalar` in Development. Serves the built web app in production. |
 | `FootballTvPlanner.FixtureSync`      | Console job that pulls fixtures from a provider into the `fixtures` table, then exits. Run it on a schedule.      |
 | `FootballTvPlanner.Data`             | EF Core DbContext, entities and migrations, shared by the API, the fixture sync and the migration service.        |
 | `FootballTvPlanner.MigrationService` | Console job that applies pending EF Core migrations to the database, then exits. Runs before the API starts.      |
