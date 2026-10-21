@@ -12,15 +12,15 @@ A full-stack app for browsing football on UK TV and streaming services and addin
 
 ## Projects
 
-| Project                              | Description                                                                                                       |
-| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
-| `FootballTvPlanner.Server`           | .NET 10 minimal API. ASP.NET Core Identity with cookie auth, EF Core with PostgreSQL, and Scalar API docs at `/scalar`. Serves the built web app in production. |
-| `FootballTvPlanner.FixtureSync`      | Console job that pulls fixtures from a provider into the `fixtures` table, then exits. Run it on a schedule.      |
-| `FootballTvPlanner.Data`             | EF Core DbContext, entities and migrations, shared by the API, the fixture sync and the migration service.        |
-| `FootballTvPlanner.MigrationService` | Console job that applies pending EF Core migrations to the database, then exits. Runs before the API starts.      |
-| `FootballTvPlanner.Client`           | React 19 app built with Vite, React Router, TanStack Query, shadcn/ui and Tailwind CSS.                           |
-| `FootballTvPlanner.AppHost`          | Aspire app host for local development.                                                                            |
-| `FootballTvPlanner.ServiceDefaults`  | Shared Aspire setup: OpenTelemetry, health checks, service discovery and resilience.                              |
+| Project                              | Description                                                                                                   |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| `FootballTvPlanner.Server`           | .NET 10 minimal API with Identity cookie auth, EF Core and Scalar at `/scalar`. Also serves the built client. |
+| `FootballTvPlanner.FixtureSync`      | Console job that pulls fixtures from a provider into the `fixtures` table, then exits. Run it on a schedule.  |
+| `FootballTvPlanner.Data`             | EF Core DbContext, entities and migrations, shared by the API, the fixture sync and the migration service.    |
+| `FootballTvPlanner.MigrationService` | Console job that applies pending EF Core migrations to the database, then exits. Runs before the API starts.  |
+| `FootballTvPlanner.Client`           | React 19 app built with Vite, React Router, TanStack Query, shadcn/ui and Tailwind CSS.                       |
+| `FootballTvPlanner.AppHost`          | Aspire app host for local development.                                                                        |
+| `FootballTvPlanner.ServiceDefaults`  | Shared Aspire setup: OpenTelemetry, health checks, service discovery and resilience.                          |
 
 ## Getting started
 
@@ -36,17 +36,17 @@ A full-stack app for browsing football on UK TV and streaming services and addin
 dotnet run --project FootballTvPlanner.AppHost
 ```
 
-Aspire starts PostgreSQL, Mailpit, the migration service, the API, the fixture sync and the web app. When they're up:
+Aspire starts PostgreSQL, Mailpit, the migration service, the server (`server`), the fixture sync and the Vite dev server (`client`). When they're up:
 
 - Web app: http://localhost:5173
-- API docs (Scalar): the API's link in the Aspire dashboard
+- API docs (Scalar): the `server` resource's link in the Aspire dashboard
 - Mailpit, which receives confirmation and password reset emails: http://localhost:8025
 
 The migration service applies migrations and exits, and the API starts once it has finished. The fixture sync only needs the migrated database, not the API. Start the `fixture-sync` resource from the dashboard to pull fixtures, and restart it to pick up new ones.
 
 > PostgreSQL (5432) and Mailpit (1025 and 8025) use fixed host ports and persistent containers. Stop anything else that uses those ports, or change them in `FootballTvPlanner.AppHost/AppHost.cs`.
 
-You can also run everything with `docker compose up`, which builds the four app images and uses the same ports.
+You can also run everything with `docker compose up`, which builds the three app images (server, migrations and fixture sync) and serves the app on http://localhost:5257.
 
 ## Configuration
 
@@ -57,9 +57,9 @@ You can also run everything with `docker compose up`, which builds the four app 
 Google sign-in is optional. It's turned on only when `Authentication:Google:ClientId` is set.
 
 1. In Google Cloud Console, go to **APIs & Services → Credentials** and create an OAuth client ID of type **Web application**.
-2. Add these authorised redirect URIs. The web app proxies `/api` to the API, so the callback goes through the web app's origin:
+2. Add these authorised redirect URIs. The callback always goes through the site's origin (Vite proxies `/api` in development):
    - `http://localhost:5173/api/signin-google`
-   - `https://<web app host>/api/signin-google`
+   - `https://<site host>/api/signin-google`
 3. Put the credentials in `FootballTvPlanner.Server/appsettings.Development.json`:
 
    ```json
@@ -88,13 +88,17 @@ Set `FixtureSync:Provider` in `FootballTvPlanner.FixtureSync/appsettings.Develop
 
 The API sends email over SMTP using the `Mail` connection string, for example `Endpoint=smtp://localhost:1025`. `Email:FromAddress` and `Email:FromName` are the sender address and display name. `Email:SiteUrl` is the web app URL used for links in emails. Aspire sets `Email:SiteUrl` for you.
 
+### Client runtime config
+
+Any server setting whose name starts with `VITE_`, such as the environment variable `VITE_FEATURE_X`, is sent to the client at runtime. `index.html` loads `/api/env.js`, which sets `window.__ENV__`, and `FootballTvPlanner.Client/src/lib/config.ts` merges it over the build-time `import.meta.env` and validates it. You can change these values without rebuilding the image. Add new keys to the schema in `config.ts`.
+
 ## How it works
 
-### Authentication and the `/api` proxy
+### Authentication and hosting
 
-In production the API serves the web app's static files itself, so the SPA and every API endpoint (mapped under `/api`) share one origin. This keeps the Identity cookie first-party. In development, Vite proxies `/api/*` to the API (`API_URL`).
+In production the server serves the client's static files itself, so the SPA and every API endpoint (mapped under `/api`) share one origin. This keeps the Identity cookie first-party. In development, Vite proxies `/api/*` to the API (`API_URL`).
 
-The Vite proxy keeps the original `Host` and sends `X-Forwarded-*` headers. The API reads them in `ForwardedHeadersExtensions` so it can build correct external login redirect URIs.
+The Vite proxy in development, and the hosting ingress in production, send `X-Forwarded-*` headers. The API reads them in `ForwardedHeadersExtensions` so it can build correct external login redirect URIs. Unknown `/api/*` routes return 404, and any other unknown path falls back to `index.html` for client-side routing.
 
 ### Dates and times
 
@@ -147,8 +151,7 @@ On every push to `main`, `develop`, `feature/**`, `release/**` and `hotfix/**`, 
 In production:
 
 - **Migrations:** set `ConnectionStrings__Database` and run it as a manually triggered job, for example an Azure Container Apps job named by the `AZURE_MIGRATIONS_JOB` variable. The deploy pipeline updates the job's image, starts it and waits for that execution to succeed before updating the other containers. If the execution fails, or the step doesn't finish within 4 minutes, the deploy stops. The job's replica timeout (120s) must stay below that limit.
-- **API:** set `ConnectionStrings__Database`, `ConnectionStrings__Mail`, `Email__SiteUrl`, `Email__FromAddress` and, optionally, `Authentication__Google__*`.
-- **Web:** set `API_URL` to the API's URL.
+- **Server:** run the `-server` image as a container app with external ingress on port 8080, for example the Azure Container App named by the `AZURE_SERVER_APP` variable. It serves both the API and the client. Set `ConnectionStrings__Database`, `ConnectionStrings__Mail`, `Email__SiteUrl` (the site's public URL), `Email__FromAddress` and, optionally, `Authentication__Google__*` and any `VITE_*` client settings.
 - **Fixture sync:** set `ConnectionStrings__Database` and `FixtureSync__Provider` (plus `FixtureSync__Web__Url` for the `Web` provider), and run it as a scheduled job, for example an Azure Container Apps job or a cron job.
 
 ## License
