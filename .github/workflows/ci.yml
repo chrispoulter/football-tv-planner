@@ -159,7 +159,6 @@ jobs:
           API_IMAGE="ghcr.io/${GITHUB_REPOSITORY}-api:${SHORT_SHA}"
           WEB_IMAGE="ghcr.io/${GITHUB_REPOSITORY}-web:${SHORT_SHA}"
           FIXTURE_SYNC_IMAGE="ghcr.io/${GITHUB_REPOSITORY}-fixture-sync:${SHORT_SHA}"
-          # az containerapp update -g "$AZURE_RESOURCE_GROUP" -n "$AZURE_API_APP" --image "$API_IMAGE" --output none
+          az containerapp update -g "$AZURE_RESOURCE_GROUP" -n "$AZURE_API_APP" --image "$API_IMAGE" --output none
           # az containerapp update -g "$AZURE_RESOURCE_GROUP" -n "$AZURE_WEB_APP" --image "$WEB_IMAGE" --output none
-          az containerapp update -g "$AZURE_RESOURCE_GROUP" -n "$AZURE_WEB_APP" --image "$API_IMAGE" --output none
           az containerapp job update -g "$AZURE_RESOURCE_GROUP" -n "$AZURE_FIXTURE_SYNC_JOB" --image "$FIXTURE_SYNC_IMAGE" --output none
