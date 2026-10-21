@@ -8,7 +8,7 @@
     <UserSecretsId>b064012d-b4e1-4387-b0e6-5246adc287ff</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FootballTvPlanner.Api\FootballTvPlanner.Api.csproj" />
+    <ProjectReference Include="..\FootballTvPlanner.Server\FootballTvPlanner.Server.csproj" />
     <ProjectReference Include="..\FootballTvPlanner.FixtureSync\FootballTvPlanner.FixtureSync.csproj" />
     <ProjectReference Include="..\FootballTvPlanner.MigrationService\FootballTvPlanner.MigrationService.csproj" />
   </ItemGroup>

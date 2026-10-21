@@ -1,0 +1,53 @@
+using FootballTvPlanner.Server.Common.Email;
+using FootballTvPlanner.Server.Common.Infrastructure;
+using FootballTvPlanner.Server.Common.Validation;
+using FootballTvPlanner.Data.Users;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Options;
+
+namespace FootballTvPlanner.Server.Features.Account.ForgotPassword;
+
+public class ForgotPasswordEndpoint : IEndpoint
+{
+    public void MapEndpoints(IEndpointRouteBuilder app)
+    {
+        app.MapPost("/account/forgot-password", HandleAsync)
+            .AllowAnonymous()
+            .AddValidationFilter<ForgotPasswordRequest>()
+            .WithTags(Tags.Account)
+            .WithSummary("Forgot Password")
+            .WithDescription("Send a password reset link, if the email belongs to an account.");
+    }
+
+    private static async Task<IResult> HandleAsync(
+        ForgotPasswordRequest request,
+        UserManager<User> userManager,
+        IEmailService emailService,
+        IOptions<EmailSettings> emailSettings,
+        CancellationToken cancellationToken
+    )
+    {
+        var user = await userManager.FindByEmailAsync(request.Email);
+
+        if (user is not null)
+        {
+            var code = await userManager.GeneratePasswordResetTokenAsync(user);
+
+            var link = QueryHelpers.AddQueryString(
+                $"{emailSettings.Value.SiteUrl}/reset-password",
+                new Dictionary<string, string?> { ["email"] = user.Email, ["code"] = code }
+            );
+
+            await emailService.SendTemplateEmailAsync(
+                toAddress: user.Email!,
+                subject: "Reset your password | Football TV Planner",
+                template: "FootballTvPlanner.Server.Features.Account.Emails.ResetPassword.html",
+                model: new { user.Name, Link = link },
+                cancellationToken
+            );
+        }
+
+        return Results.Ok();
+    }
+}

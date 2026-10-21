@@ -14,11 +14,11 @@ A full-stack app for browsing football on UK TV and streaming services and addin
 
 | Project                              | Description                                                                                                       |
 | ------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
-| `FootballTvPlanner.Api`              | .NET 10 minimal API. ASP.NET Core Identity with cookie auth, EF Core with PostgreSQL, and Scalar API docs at `/scalar`. Serves the built web app in production. |
+| `FootballTvPlanner.Server`           | .NET 10 minimal API. ASP.NET Core Identity with cookie auth, EF Core with PostgreSQL, and Scalar API docs at `/scalar`. Serves the built web app in production. |
 | `FootballTvPlanner.FixtureSync`      | Console job that pulls fixtures from a provider into the `fixtures` table, then exits. Run it on a schedule.      |
 | `FootballTvPlanner.Data`             | EF Core DbContext, entities and migrations, shared by the API, the fixture sync and the migration service.        |
 | `FootballTvPlanner.MigrationService` | Console job that applies pending EF Core migrations to the database, then exits. Runs before the API starts.      |
-| `FootballTvPlanner.Web`              | React 19 app built with Vite, React Router, TanStack Query, shadcn/ui and Tailwind CSS.                           |
+| `FootballTvPlanner.Client`           | React 19 app built with Vite, React Router, TanStack Query, shadcn/ui and Tailwind CSS.                           |
 | `FootballTvPlanner.AppHost`          | Aspire app host for local development.                                                                            |
 | `FootballTvPlanner.ServiceDefaults`  | Shared Aspire setup: OpenTelemetry, health checks, service discovery and resilience.                              |
 
@@ -60,7 +60,7 @@ Google sign-in is optional. It's turned on only when `Authentication:Google:Clie
 2. Add these authorised redirect URIs. The web app proxies `/api` to the API, so the callback goes through the web app's origin:
    - `http://localhost:5173/api/signin-google`
    - `https://<web app host>/api/signin-google`
-3. Put the credentials in `FootballTvPlanner.Api/appsettings.Development.json`:
+3. Put the credentials in `FootballTvPlanner.Server/appsettings.Development.json`:
 
    ```json
    {
@@ -98,7 +98,7 @@ The Vite proxy keeps the original `Host` and sends `X-Forwarded-*` headers. The 
 
 ### Dates and times
 
-Every time is stored and returned in UTC: `timestamptz` in Postgres, ISO 8601 strings in the API, and UTC `DTSTART` values in `.ics` files. The web app converts them to the viewer's time zone (`FootballTvPlanner.Web/src/lib/date-time.ts`). When you pick a day, the web app sends it to `GET /api/fixtures` as a UTC `from`/`to` range, so the API doesn't need to know the viewer's time zone. The only code that knows about UK time is in the fixture providers, which convert UK kick-off times to UTC with `DateTimeExtensions.ToUtc`.
+Every time is stored and returned in UTC: `timestamptz` in Postgres, ISO 8601 strings in the API, and UTC `DTSTART` values in `.ics` files. The web app converts them to the viewer's time zone (`FootballTvPlanner.Client/src/lib/date-time.ts`). When you pick a day, the web app sends it to `GET /api/fixtures` as a UTC `from`/`to` range, so the API doesn't need to know the viewer's time zone. The only code that knows about UK time is in the fixture providers, which convert UK kick-off times to UTC with `DateTimeExtensions.ToUtc`.
 
 ### Fixture sync
 
@@ -125,7 +125,7 @@ Migrations are in `FootballTvPlanner.Data/Migrations`, next to the DbContext. To
 
 ```
 dotnet tool restore
-dotnet ef migrations add <Name> --project FootballTvPlanner.Data --startup-project FootballTvPlanner.Api
+dotnet ef migrations add <Name> --project FootballTvPlanner.Data --startup-project FootballTvPlanner.Server
 ```
 
 The API doesn't apply migrations itself. `FootballTvPlanner.MigrationService` applies them: through Aspire locally, as a `docker compose` service that the API waits for, and as an Azure Container Apps job that the deploy pipeline starts in production.
@@ -135,14 +135,14 @@ The API doesn't apply migrations itself. `FootballTvPlanner.MigrationService` ap
 ```
 dotnet csharpier format .
 
-cd FootballTvPlanner.Web
+cd FootballTvPlanner.Client
 npm run lint
 npm run format
 ```
 
 ## Deployment
 
-On every push to `main`, `develop`, `feature/**`, `release/**` and `hotfix/**`, GitHub Actions builds and lints everything and pushes four images to GitHub Container Registry: `-api`, `-fixture-sync`, `-migrations` and `-web`.
+On every push to `main`, `develop`, `feature/**`, `release/**` and `hotfix/**`, GitHub Actions builds and lints everything and pushes three images to GitHub Container Registry: `-server`, `-fixture-sync` and `-migrations`.
 
 In production:
 

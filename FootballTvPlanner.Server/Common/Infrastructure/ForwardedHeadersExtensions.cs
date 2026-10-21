@@ -1,0 +1,20 @@
+using Microsoft.AspNetCore.HttpOverrides;
+
+namespace FootballTvPlanner.Server.Common.Infrastructure;
+
+public static class ForwardedHeadersExtensions
+{
+    public static IHostApplicationBuilder AddForwardedHeaders(this IHostApplicationBuilder builder)
+    {
+        builder.Services.Configure<ForwardedHeadersOptions>(options =>
+        {
+            options.ForwardedHeaders =
+                ForwardedHeaders.XForwardedHost | ForwardedHeaders.XForwardedProto;
+
+            options.KnownIPNetworks.Clear();
+            options.KnownProxies.Clear();
+        });
+
+        return builder;
+    }
+}

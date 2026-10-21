@@ -19,13 +19,13 @@
     <File Path="README.md" />
     <File Path="TODO.md" />
   </Folder>
-  <Project Path="FootballTvPlanner.Api/FootballTvPlanner.Api.csproj" />
+  <Project Path="FootballTvPlanner.Server/FootballTvPlanner.Server.csproj" />
   <Project Path="FootballTvPlanner.AppHost/FootballTvPlanner.AppHost.csproj" />
   <Project Path="FootballTvPlanner.Data/FootballTvPlanner.Data.csproj" />
   <Project Path="FootballTvPlanner.FixtureSync/FootballTvPlanner.FixtureSync.csproj" />
   <Project Path="FootballTvPlanner.MigrationService/FootballTvPlanner.MigrationService.csproj" />
   <Project Path="FootballTvPlanner.ServiceDefaults/FootballTvPlanner.ServiceDefaults.csproj" />
-  <Project Path="FootballTvPlanner.Web/FootballTvPlanner.Web.esproj">
+  <Project Path="FootballTvPlanner.Client/FootballTvPlanner.Client.esproj">
     <Platform Project="AnyCPU" />
   </Project>
 </Solution>
