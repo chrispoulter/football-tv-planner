@@ -90,7 +90,7 @@ The API sends email over SMTP using the `Mail` connection string, for example `E
 
 ### Client runtime config
 
-Any server setting whose name starts with `VITE_`, such as the environment variable `VITE_FEATURE_X`, is sent to the client at runtime. `index.html` loads `/api/env.js`, which sets `window.__ENV__`, and `FootballTvPlanner.Client/src/lib/config.ts` merges it over the build-time `import.meta.env` and validates it. You can change these values without rebuilding the image. Add new keys to the schema in `config.ts`.
+Any server setting whose name starts with `VITE_`, such as the environment variable `VITE_FEATURE_X`, is sent to the client at runtime. `index.html` loads `/env.js` (mapped in `ClientConfigExtensions`), which sets `window.__ENV__`, and `FootballTvPlanner.Client/src/lib/config.ts` merges it over the build-time `import.meta.env` and validates it. You can change these values without rebuilding the image. Add new keys to the schema in `config.ts`.
 
 ## How it works
 
