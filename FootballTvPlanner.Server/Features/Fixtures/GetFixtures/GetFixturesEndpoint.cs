@@ -1,7 +1,7 @@
+using FootballTvPlanner.Data;
 using FootballTvPlanner.Server.Common.Authentication;
 using FootballTvPlanner.Server.Common.Infrastructure;
 using FootballTvPlanner.Server.Common.Validation;
-using FootballTvPlanner.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace FootballTvPlanner.Server.Features.Fixtures.GetFixtures;

@@ -1,5 +1,5 @@
-using FootballTvPlanner.Server.Common.Infrastructure;
 using FootballTvPlanner.Data.Users;
+using FootballTvPlanner.Server.Common.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 

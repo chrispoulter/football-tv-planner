@@ -1,7 +1,7 @@
 using System.Security.Claims;
+using FootballTvPlanner.Data.Users;
 using FootballTvPlanner.Server.Common.Authentication;
 using FootballTvPlanner.Server.Common.Infrastructure;
-using FootballTvPlanner.Data.Users;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 

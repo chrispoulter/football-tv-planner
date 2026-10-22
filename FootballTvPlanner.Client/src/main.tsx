@@ -24,7 +24,10 @@ createRoot(document.getElementById('root')!).render(
             <QueryClientProvider client={queryClient}>
                 <BrowserRouter>
                     <ScrollToTop />
-                    <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+                    <ThemeProvider
+                        defaultTheme="system"
+                        storageKey="vite-ui-theme"
+                    >
                         <App />
                         <Toaster richColors />
                     </ThemeProvider>

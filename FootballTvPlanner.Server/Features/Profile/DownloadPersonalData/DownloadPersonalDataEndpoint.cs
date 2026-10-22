@@ -1,9 +1,9 @@
 using System.Text.Encodings.Web;
 using System.Text.Json;
-using FootballTvPlanner.Server.Common.Authentication;
-using FootballTvPlanner.Server.Common.Infrastructure;
 using FootballTvPlanner.Data;
 using FootballTvPlanner.Data.Users;
+using FootballTvPlanner.Server.Common.Authentication;
+using FootballTvPlanner.Server.Common.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 

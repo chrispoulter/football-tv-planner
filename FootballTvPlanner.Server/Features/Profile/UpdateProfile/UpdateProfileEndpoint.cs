@@ -1,7 +1,7 @@
+using FootballTvPlanner.Data.Users;
 using FootballTvPlanner.Server.Common.Authentication;
 using FootballTvPlanner.Server.Common.Infrastructure;
 using FootballTvPlanner.Server.Common.Validation;
-using FootballTvPlanner.Data.Users;
 using Microsoft.AspNetCore.Identity;
 
 namespace FootballTvPlanner.Server.Features.Profile.UpdateProfile;

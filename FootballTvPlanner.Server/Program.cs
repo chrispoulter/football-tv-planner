@@ -1,9 +1,9 @@
 using System.Reflection;
 using FluentValidation;
+using FootballTvPlanner.Data;
 using FootballTvPlanner.Server.Common.Authentication;
 using FootballTvPlanner.Server.Common.Email;
 using FootballTvPlanner.Server.Common.Infrastructure;
-using FootballTvPlanner.Data;
 
 var assembly = Assembly.GetExecutingAssembly();
 var serviceVersion = assembly.GetSemVerShortSha();
