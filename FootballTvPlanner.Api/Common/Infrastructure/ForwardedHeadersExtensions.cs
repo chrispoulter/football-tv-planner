@@ -11,9 +11,6 @@ public static class ForwardedHeadersExtensions
             options.ForwardedHeaders =
                 ForwardedHeaders.XForwardedHost | ForwardedHeaders.XForwardedProto;
 
-            options.ForwardedHostHeaderName = "X-FootballTvPlanner-Host";
-            options.ForwardedProtoHeaderName = "X-FootballTvPlanner-Proto";
-
             options.KnownIPNetworks.Clear();
             options.KnownProxies.Clear();
         });

@@ -11,14 +11,15 @@
 **/.vscode
 **/*.*proj.user
 **/aspire.config.json
-**/azure.yaml
 **/bin
+**/obj
 **/docker-compose*
 **/Dockerfile*
 **/node_modules
-**/obj
+**/dist
 **/appSettings.*.json
 **/*.lscache
+**/.eslintcache
 **/LICENSE
 **/README.md
 **/TODO.md

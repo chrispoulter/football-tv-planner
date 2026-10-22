@@ -8,6 +8,17 @@ EXPOSE 8080
 EXPOSE 8081
 
 
+# This stage is used to build the web frontend served from wwwroot
+FROM node:24-alpine AS web
+WORKDIR /web
+COPY ["FootballTvPlanner.Web/package.json", "FootballTvPlanner.Web/package-lock.json", "./"]
+RUN npm ci
+COPY FootballTvPlanner.Web/ .
+ARG GIT_COMMIT_SHA
+ENV GIT_COMMIT_SHA=$GIT_COMMIT_SHA
+RUN npm run build
+
+
 # This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
@@ -30,4 +41,5 @@ RUN dotnet publish "./FootballTvPlanner.Api.csproj" -c $BUILD_CONFIGURATION -o /
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+COPY --from=web /web/dist ./wwwroot
 ENTRYPOINT ["dotnet", "FootballTvPlanner.Api.dll"]

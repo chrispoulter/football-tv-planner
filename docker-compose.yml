@@ -1,18 +1,4 @@
 services:
-  football-tv-planner-web:
-    image: football-tv-planner-web:latest
-    build:
-      context: ./FootballTvPlanner.Web
-      dockerfile: Dockerfile
-    environment:
-      API_URL: http://football-tv-planner-api:8080
-      # VITE_FEATURE_X: ${VITE_FEATURE_X:-}
-    ports:
-      - 5173:80
-    depends_on:
-      football-tv-planner-api:
-        condition: service_started
-
   football-tv-planner-api:
     image: football-tv-planner-api:latest
     build:
@@ -25,8 +11,9 @@ services:
       ASPNETCORE_Kestrel__Certificates__Default__Password: password
       ConnectionStrings__Database: Host=host.docker.internal;Port=5432;Database=football_tv_planner;Username=postgres;Password=password
       ConnectionStrings__Mail: Endpoint=smtp://host.docker.internal:1025
-      Email__SiteUrl: http://localhost:5173
+      Email__SiteUrl: http://localhost:5257
       Email__FromAddress: football-tv-planner@chrispoulter.com
+      # VITE_FEATURE_X: ${VITE_FEATURE_X:-}
       Logging__Console__FormatterName: json
       Logging__LogLevel__Microsoft.EntityFrameworkCore: Warning
     ports:

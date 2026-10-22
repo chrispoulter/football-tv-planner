@@ -12,7 +12,6 @@
     <File Path=".github/workflows/ci.yml" />
     <File Path=".gitignore" />
     <File Path="aspire.config.json" />
-    <File Path="azure.yaml" />
     <File Path="docker-compose.yml" />
     <File Path="global.json" />
     <File Path="LICENSE" />
