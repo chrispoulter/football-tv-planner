@@ -16,11 +16,32 @@ services:
       # VITE_FEATURE_X: ${VITE_FEATURE_X:-}
       Logging__Console__FormatterName: json
       Logging__LogLevel__Microsoft.EntityFrameworkCore: Warning
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://aspire-dashboard:18889
+      OTEL_SERVICE_NAME: server
+      OTEL_RESOURCE_ATTRIBUTES: deployment.environment.name=local
     ports:
       - 5257:8080
       - 7257:8081
     volumes:
       - ${USERPROFILE}/.aspnet/https:/https:ro
+    depends_on:
+      football-tv-planner-migrations:
+        condition: service_completed_successfully
+
+  football-tv-planner-fixture-sync:
+    image: football-tv-planner-fixture-sync:latest
+    build:
+      context: .
+      dockerfile: ./FootballTvPlanner.FixtureSync/Dockerfile
+    environment:
+      DOTNET_ENVIRONMENT: Development
+      ConnectionStrings__Database: Host=host.docker.internal;Port=5432;Database=football_tv_planner;Username=postgres;Password=password
+      FixtureSync__Provider: Mock
+      Logging__Console__FormatterName: json
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://aspire-dashboard:18889
+      OTEL_SERVICE_NAME: fixture-sync
+      OTEL_RESOURCE_ATTRIBUTES: deployment.environment.name=local
+    restart: "no"
     depends_on:
       football-tv-planner-migrations:
         condition: service_completed_successfully
@@ -34,25 +55,15 @@ services:
       DOTNET_ENVIRONMENT: Development
       ConnectionStrings__Database: Host=host.docker.internal;Port=5432;Database=football_tv_planner;Username=postgres;Password=password
       Logging__Console__FormatterName: json
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://aspire-dashboard:18889
+      OTEL_SERVICE_NAME: migrations
+      OTEL_RESOURCE_ATTRIBUTES: deployment.environment.name=local
     restart: "no"
     depends_on:
       postgres:
         condition: service_healthy
-
-  football-tv-planner-fixture-sync:
-    image: football-tv-planner-fixture-sync:latest
-    build:
-      context: .
-      dockerfile: ./FootballTvPlanner.FixtureSync/Dockerfile
-    environment:
-      DOTNET_ENVIRONMENT: Development
-      ConnectionStrings__Database: Host=host.docker.internal;Port=5432;Database=football_tv_planner;Username=postgres;Password=password
-      FixtureSync__Provider: Mock
-      Logging__Console__FormatterName: json
-    restart: "no"
-    depends_on:
-      football-tv-planner-migrations:
-        condition: service_completed_successfully
+      aspire-dashboard:
+        condition: service_started
 
   postgres:
     image: postgres:18.3
@@ -66,22 +77,25 @@ services:
       - postgres_data:/var/lib/postgresql
     restart: always
     healthcheck:
-      test: ["CMD", "pg_isready"]
+      test: [ "CMD", "pg_isready" ]
       interval: 10s
       timeout: 5s
       retries: 3
 
   mailpit:
     image: axllent/mailpit:v1.31.2
-    environment:
-      MP_DATABASE: /data/mailpit.db
     ports:
       - 1025:1025
       - 8025:8025
-    volumes:
-      - mailpit_data:/data
+    restart: always
+
+  aspire-dashboard:
+    image: mcr.microsoft.com/dotnet/aspire-dashboard:13.6
+    environment:
+      ASPIRE_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS: "true"
+    ports:
+      - 18888:18888
     restart: always
 
 volumes:
   postgres_data:
-  mailpit_data:

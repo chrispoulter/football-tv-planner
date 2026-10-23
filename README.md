@@ -46,7 +46,7 @@ The migration service applies migrations and exits, and the server starts once i
 
 > PostgreSQL (5432) and Mailpit (1025 and 8025) use fixed host ports and persistent containers. Stop anything else that uses those ports, or change them in `FootballTvPlanner.AppHost/AppHost.cs`.
 
-You can also run everything with `docker compose up`, which builds the three app images (server, migrations and fixture sync) and serves the app on http://localhost:5257.
+You can also run everything with `docker compose up`, which builds the three app images (server, migrations and fixture sync) and serves the app on http://localhost:5257. The apps send logs, traces and metrics to a standalone Aspire dashboard at http://localhost:18888.
 
 ## Configuration
 
