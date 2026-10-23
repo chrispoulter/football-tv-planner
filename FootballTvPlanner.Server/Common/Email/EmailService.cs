@@ -1,9 +1,15 @@
-using System.Reflection;
-using FluentEmail.Core;
+using MailKit.Net.Smtp;
+using MailKit.Security;
+using Microsoft.Extensions.Options;
+using MimeKit;
 
 namespace FootballTvPlanner.Server.Common.Email;
 
-public class EmailService(IFluentEmail fluentEmail, ILogger<EmailService> logger) : IEmailService
+public class EmailService(
+    IOptions<EmailSettings> emailSettings,
+    EmailTemplateRenderer templateRenderer,
+    ILogger<EmailService> logger
+) : IEmailService
 {
     public async Task SendTemplateEmailAsync(
         string toAddress,
@@ -15,20 +21,40 @@ public class EmailService(IFluentEmail fluentEmail, ILogger<EmailService> logger
     {
         try
         {
-            var sendResponse = await fluentEmail
-                .To(toAddress)
-                .Subject(subject)
-                .UsingTemplateFromEmbedded(template, model, Assembly.GetEntryAssembly())
-                .SendAsync(cancellationToken);
+            var settings = emailSettings.Value;
 
-            if (!sendResponse.Successful)
+            var message = new MimeMessage();
+            message.From.Add(new MailboxAddress(settings.FromName, settings.FromAddress));
+            message.To.Add(MailboxAddress.Parse(toAddress));
+            message.Subject = subject;
+            message.Body = new BodyBuilder
             {
-                logger.LogError(
-                    "Failed to send email with template {Template}: {Errors}",
-                    template,
-                    string.Join("; ", sendResponse.ErrorMessages)
+                HtmlBody = await templateRenderer.RenderAsync(template, model),
+            }.ToMessageBody();
+
+            using var client = new SmtpClient();
+
+            await client.ConnectAsync(
+                settings.SmtpServer,
+                settings.SmtpPort,
+                settings.SmtpSsl ? SecureSocketOptions.StartTls : SecureSocketOptions.None,
+                cancellationToken
+            );
+
+            if (
+                !string.IsNullOrEmpty(settings.SmtpUserName)
+                && !string.IsNullOrEmpty(settings.SmtpPassword)
+            )
+            {
+                await client.AuthenticateAsync(
+                    settings.SmtpUserName,
+                    settings.SmtpPassword,
+                    cancellationToken
                 );
             }
+
+            await client.SendAsync(message, cancellationToken);
+            await client.DisconnectAsync(quit: true, cancellationToken);
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {

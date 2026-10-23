@@ -8,27 +8,25 @@ public static class FixtureProviderExtensions
 {
     public static IHostApplicationBuilder AddFixtureProvider(this IHostApplicationBuilder builder)
     {
-        var fixtureSyncConfig = builder.Configuration.GetSection(FixtureSyncSettings.SectionName);
-        builder.Services.Configure<FixtureSyncSettings>(fixtureSyncConfig);
-
         var fixtureSyncSettings =
-            fixtureSyncConfig.Get<FixtureSyncSettings>() ?? new FixtureSyncSettings();
+            builder
+                .Configuration.GetSection(FixtureSyncSettings.SectionName)
+                .Get<FixtureSyncSettings>()
+            ?? new FixtureSyncSettings();
 
         switch (fixtureSyncSettings.Provider)
         {
             case "Mock":
-                builder.Services.Configure<MockSettings>(
-                    builder.Configuration.GetSection(MockSettings.SectionName)
-                );
+                builder
+                    .Services.AddOptions<MockSettings>()
+                    .Bind(builder.Configuration.GetSection(MockSettings.SectionName));
                 builder.Services.AddSingleton<IFixtureProvider, MockFixtureProvider>();
                 break;
 
             case "Web":
                 builder
                     .Services.AddOptions<WebSettings>()
-                    .Bind(builder.Configuration.GetSection(WebSettings.SectionName))
-                    .Validate(s => s.Url is not null, $"{WebSettings.SectionName}:Url is required.")
-                    .ValidateOnStart();
+                    .Bind(builder.Configuration.GetSection(WebSettings.SectionName));
                 builder.Services.AddHttpClient(WebFixtureProvider.HttpClientName);
                 builder.Services.AddSingleton<IFixtureProvider, WebFixtureProvider>();
                 break;
