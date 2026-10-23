@@ -2,6 +2,7 @@ using FootballTvPlanner.Data;
 using FootballTvPlanner.Server.Common.Authentication;
 using FootballTvPlanner.Server.Common.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Hybrid;
 
 namespace FootballTvPlanner.Server.Features.Schedule.ResetCalendarFeed;
 
@@ -23,6 +24,7 @@ public class ResetCalendarFeedEndpoint : IEndpoint
         CurrentUser currentUser,
         HttpRequest httpRequest,
         FootballTvPlannerDbContext dbContext,
+        HybridCache cache,
         CancellationToken cancellationToken = default
     )
     {
@@ -39,8 +41,15 @@ public class ResetCalendarFeedEndpoint : IEndpoint
             );
         }
 
+        var previousToken = user.CalendarFeedToken;
+
         user.CalendarFeedToken = CalendarFeedResponse.GenerateToken();
         await dbContext.SaveChangesAsync(cancellationToken);
+
+        if (previousToken is not null)
+        {
+            await cache.RemoveByTagAsync($"token:{previousToken}", cancellationToken);
+        }
 
         return Results.Ok(CalendarFeedResponse.Create(httpRequest, user.CalendarFeedToken));
     }

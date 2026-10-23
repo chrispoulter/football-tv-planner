@@ -1,7 +1,9 @@
 using FootballTvPlanner.Data;
 using FootballTvPlanner.Server.Common.Authentication;
 using FootballTvPlanner.Server.Common.Infrastructure;
+using FootballTvPlanner.Server.Features.Schedule.GetScheduleCalendar;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Hybrid;
 
 namespace FootballTvPlanner.Server.Features.Schedule.RemoveFromSchedule;
 
@@ -21,6 +23,7 @@ public class RemoveFromScheduleEndpoint : IEndpoint
         Guid fixtureId,
         CurrentUser currentUser,
         FootballTvPlannerDbContext dbContext,
+        HybridCache cache,
         CancellationToken cancellationToken = default
     )
     {
@@ -28,6 +31,8 @@ public class RemoveFromScheduleEndpoint : IEndpoint
             .UserFixtures.IgnoreQueryFilters()
             .Where(uf => uf.UserId == currentUser.Id && uf.FixtureId == fixtureId)
             .ExecuteDeleteAsync(cancellationToken);
+
+        await cache.RemoveByTagAsync($"user:{currentUser.Id}", cancellationToken);
 
         return Results.Ok(new ScheduleItemResponse(fixtureId));
     }

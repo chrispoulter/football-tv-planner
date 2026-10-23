@@ -3,6 +3,7 @@ using FootballTvPlanner.Data.Schedule;
 using FootballTvPlanner.Server.Common.Authentication;
 using FootballTvPlanner.Server.Common.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Hybrid;
 
 namespace FootballTvPlanner.Server.Features.Schedule.AddToSchedule;
 
@@ -22,6 +23,7 @@ public class AddToScheduleEndpoint : IEndpoint
         Guid fixtureId,
         CurrentUser currentUser,
         FootballTvPlannerDbContext dbContext,
+        HybridCache cache,
         TimeProvider timeProvider,
         CancellationToken cancellationToken
     )
@@ -56,6 +58,8 @@ public class AddToScheduleEndpoint : IEndpoint
             );
 
             await dbContext.SaveChangesAsync(cancellationToken);
+
+            await cache.RemoveByTagAsync($"user:{currentUser.Id}", cancellationToken);
         }
 
         return Results.Ok(new ScheduleItemResponse(fixtureId));

@@ -2,6 +2,7 @@ using FootballTvPlanner.Data;
 using FootballTvPlanner.Server.Common.Infrastructure;
 using FootballTvPlanner.Server.Features.Fixtures;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Hybrid;
 
 namespace FootballTvPlanner.Server.Features.Schedule.GetScheduleCalendar;
 
@@ -24,6 +25,7 @@ public class GetScheduleCalendarEndpoint : IEndpoint
     private static async Task<IResult> HandleAsync(
         string token,
         FootballTvPlannerDbContext dbContext,
+        HybridCache cache,
         TimeProvider timeProvider,
         CancellationToken cancellationToken
     )
@@ -43,15 +45,24 @@ public class GetScheduleCalendarEndpoint : IEndpoint
         }
 
         var now = timeProvider.GetUtcNow();
-        var cutoff = now - HistoryWindow;
 
-        var fixtures = await dbContext
-            .UserFixtures.AsNoTracking()
-            .Where(uf => uf.UserId == userId && uf.Fixture.KickoffUtc >= cutoff)
-            .Select(uf => uf.Fixture)
-            .OrderBy(f => f.KickoffUtc)
-            .Select(FixtureProjections.ToCalendarFixture())
-            .ToListAsync(cancellationToken);
+        var fixtures = await cache.GetOrCreateAsync(
+            $"schedule-calendar:{userId}:{token}",
+            async cancel =>
+            {
+                var cutoff = now - HistoryWindow;
+
+                return await dbContext
+                    .UserFixtures.AsNoTracking()
+                    .Where(uf => uf.UserId == userId && uf.Fixture.KickoffUtc >= cutoff)
+                    .Select(uf => uf.Fixture)
+                    .OrderBy(f => f.KickoffUtc)
+                    .Select(FixtureProjections.ToCalendarFixture())
+                    .ToListAsync(cancel);
+            },
+            tags: [$"user:{userId}", $"token:{token}"],
+            cancellationToken: cancellationToken
+        );
 
         var calendar = CalendarBuilder.Build(fixtures, now, calendarName: "Football TV Planner");
 

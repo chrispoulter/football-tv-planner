@@ -18,6 +18,7 @@ builder.AddEmailServices(connectionName: "Mail");
 builder.Services.AddValidatorsFromAssembly(assembly);
 builder.Services.AddProblemDetails();
 
+builder.AddCaching();
 builder.ConfigureJsonOptions();
 builder.AddForwardedHeaders();
 builder.AddDataProtection();
