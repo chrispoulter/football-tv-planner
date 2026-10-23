@@ -1,7 +1,6 @@
 using FootballTvPlanner.Data;
 using FootballTvPlanner.Server.Common.Authentication;
 using FootballTvPlanner.Server.Common.Infrastructure;
-using FootballTvPlanner.Server.Features.Schedule.GetScheduleCalendar;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
 
