@@ -12,15 +12,15 @@ A full-stack app for browsing football on UK TV and streaming services and addin
 
 ## Projects
 
-| Project                              | Description                                                                                                   |
-| ------------------------------------ | ------------------------------------------------------------------------------------------------------------- |
-| `FootballTvPlanner.Server`           | .NET 10 minimal API with Identity cookie auth, EF Core and Scalar at `/scalar`. Also serves the built client. |
-| `FootballTvPlanner.FixtureSync`      | Console job that pulls fixtures from a provider into the `fixtures` table, then exits. Run it on a schedule.  |
-| `FootballTvPlanner.Data`             | EF Core DbContext, entities and migrations, shared by the API, the fixture sync and the migration service.    |
-| `FootballTvPlanner.MigrationService` | Console job that applies pending EF Core migrations to the database, then exits. Runs before the API starts.  |
-| `FootballTvPlanner.Client`           | React 19 app built with Vite, React Router, TanStack Query, shadcn/ui and Tailwind CSS.                       |
-| `FootballTvPlanner.AppHost`          | Aspire app host for local development.                                                                        |
-| `FootballTvPlanner.ServiceDefaults`  | Shared Aspire setup: OpenTelemetry, health checks, service discovery and resilience.                          |
+| Project                              | Description                                                                                                     |
+| ------------------------------------ | --------------------------------------------------------------------------------------------------------------- |
+| `FootballTvPlanner.Server`           | .NET 10 minimal API with Identity cookie auth, EF Core and Scalar at `/scalar`. Also serves the built client.   |
+| `FootballTvPlanner.FixtureSync`      | Console job that pulls fixtures from a provider into the `fixtures` table, then exits. Run it on a schedule.    |
+| `FootballTvPlanner.Data`             | EF Core DbContext, entities and migrations, shared by the server, the fixture sync and the migration service.   |
+| `FootballTvPlanner.MigrationService` | Console job that applies pending EF Core migrations to the database, then exits. Runs before the server starts. |
+| `FootballTvPlanner.Client`           | React 19 app built with Vite, React Router, TanStack Query, shadcn/ui and Tailwind CSS.                         |
+| `FootballTvPlanner.AppHost`          | Aspire app host for local development.                                                                          |
+| `FootballTvPlanner.ServiceDefaults`  | Shared Aspire setup: OpenTelemetry, health checks, service discovery and resilience.                            |
 
 ## Getting started
 
@@ -38,11 +38,11 @@ dotnet run --project FootballTvPlanner.AppHost
 
 Aspire starts PostgreSQL, Mailpit, the migration service, the server (`server`), the fixture sync and the Vite dev server (`client`). When they're up:
 
-- Web app: http://localhost:5173
+- Client: http://localhost:5173
 - API docs (Scalar): the `server` resource's link in the Aspire dashboard
 - Mailpit, which receives confirmation and password reset emails: http://localhost:8025
 
-The migration service applies migrations and exits, and the API starts once it has finished. The fixture sync only needs the migrated database, not the API. Start the `fixture-sync` resource from the dashboard to pull fixtures, and restart it to pick up new ones.
+The migration service applies migrations and exits, and the server starts once it has finished. The fixture sync only needs the migrated database, not the server. Start the `fixture-sync` resource from the dashboard to pull fixtures, and restart it to pick up new ones.
 
 > PostgreSQL (5432) and Mailpit (1025 and 8025) use fixed host ports and persistent containers. Stop anything else that uses those ports, or change them in `FootballTvPlanner.AppHost/AppHost.cs`.
 
@@ -50,7 +50,7 @@ You can also run everything with `docker compose up`, which builds the three app
 
 ## Configuration
 
-`appsettings.json` in each project lists every setting, with blank values where you need to supply your own. To override them locally, create an `appsettings.Development.json` next to it. Git ignores these files. You can also use user secrets (the API has these set up) or environment variables such as `Authentication__Google__ClientId`.
+`appsettings.json` in each project lists every setting, with blank values where you need to supply your own. To override them locally, create an `appsettings.Development.json` next to it. Git ignores these files. You can also use user secrets (the server has these set up) or environment variables such as `Authentication__Google__ClientId`.
 
 ### Google sign-in
 
@@ -86,7 +86,7 @@ Set `FixtureSync:Provider` in `FootballTvPlanner.FixtureSync/appsettings.Develop
 
 ### Email
 
-The API sends email over SMTP using the `Mail` connection string, for example `Endpoint=smtp://localhost:1025`. `Email:FromAddress` and `Email:FromName` are the sender address and display name. `Email:SiteUrl` is the web app URL used for links in emails. Aspire sets `Email:SiteUrl` for you.
+The server sends email over SMTP using the `Mail` connection string, for example `Endpoint=smtp://localhost:1025`. `Email:FromAddress` and `Email:FromName` are the sender address and display name. `Email:SiteUrl` is the site's URL used for links in emails. Aspire sets `Email:SiteUrl` for you.
 
 ### Client runtime config
 
@@ -96,13 +96,15 @@ Any server setting whose name starts with `VITE_`, such as the environment varia
 
 ### Authentication and hosting
 
-In production the server serves the client's static files itself, so the SPA and every API endpoint (mapped under `/api`) share one origin. This keeps the Identity cookie first-party. In development, Vite proxies `/api/*` to the API (`API_URL`).
+In production the server serves the client's static files itself, so the SPA and every API endpoint (mapped under `/api`) share one origin. This keeps the Identity cookie first-party. In development, Vite proxies `/api/*` and `/env.js` to the server (`API_URL`).
 
-The Vite proxy in development, and the hosting ingress in production, send `X-Forwarded-*` headers. The API reads them in `ForwardedHeadersExtensions` so it can build correct external login redirect URIs. Unknown `/api/*` routes return 404, and any other unknown path falls back to `index.html` for client-side routing.
+The Vite proxy in development, and the hosting ingress in production, send `X-Forwarded-*` headers. The server reads them in `ForwardedHeadersExtensions` so it can build correct external login redirect URIs. Unknown `/api/*` routes return 404, and any other unknown path falls back to `index.html` for client-side routing.
+
+Static files are served by `StaticFileExtensions`. Files under `/assets` have content-hashed names, so they're cached for a year as `immutable`. Everything else, including `index.html`, is sent with `Cache-Control: no-cache`, so browsers revalidate it and pick up a new deploy straight away. `/env.js` is sent with `Cache-Control: no-store`, so a changed `VITE_*` setting reaches browsers without a deploy, and Cloudflare doesn't cache it.
 
 ### Dates and times
 
-Every time is stored and returned in UTC: `timestamptz` in Postgres, ISO 8601 strings in the API, and UTC `DTSTART` values in `.ics` files. The web app converts them to the viewer's time zone (`FootballTvPlanner.Client/src/lib/date-time.ts`). When you pick a day, the web app sends it to `GET /api/fixtures` as a UTC `from`/`to` range, so the API doesn't need to know the viewer's time zone. The only code that knows about UK time is in the fixture providers, which convert UK kick-off times to UTC with `DateTimeExtensions.ToUtc`.
+Every time is stored and returned in UTC: `timestamptz` in Postgres, ISO 8601 strings in the API, and UTC `DTSTART` values in `.ics` files. The client converts them to the viewer's time zone (`FootballTvPlanner.Client/src/lib/date-time.ts`). When you pick a day, the client sends it to `GET /api/fixtures` as a UTC `from`/`to` range, so the API doesn't need to know the viewer's time zone. The only code that knows about UK time is in the fixture providers, which convert UK kick-off times to UTC with `DateTimeExtensions.ToUtc`.
 
 ### Fixture sync
 
@@ -132,7 +134,7 @@ dotnet tool restore
 dotnet ef migrations add <Name> --project FootballTvPlanner.Data --startup-project FootballTvPlanner.Server
 ```
 
-The API doesn't apply migrations itself. `FootballTvPlanner.MigrationService` applies them: through Aspire locally, as a `docker compose` service that the API waits for, and as an Azure Container Apps job that the deploy pipeline starts in production.
+The server doesn't apply migrations itself. `FootballTvPlanner.MigrationService` applies them: through Aspire locally, as a `docker compose` service that the server waits for, and as an Azure Container Apps job that the deploy pipeline starts in production.
 
 ### Formatting and linting
 
