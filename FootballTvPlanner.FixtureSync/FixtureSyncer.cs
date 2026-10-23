@@ -85,7 +85,10 @@ public class FixtureSyncer(
 
         var updatedFixtures = dbContext
             .ChangeTracker.Entries<Fixture>()
-            .Count(e => e.State == EntityState.Modified);
+            .Count(e =>
+                e.State == EntityState.Modified
+                || (e.State == EntityState.Unchanged && e.Collection(f => f.Channels).IsModified)
+            );
 
         var addedCompetitions = dbContext
             .ChangeTracker.Entries<Competition>()
