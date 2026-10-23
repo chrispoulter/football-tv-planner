@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using FootballTvPlanner.Data;
 using FootballTvPlanner.Data.Channels;
 using FootballTvPlanner.Data.Competitions;
@@ -78,11 +79,34 @@ public class FixtureSyncer(
             fixture.Channels.AddRange(itemChannels.Except(fixture.Channels));
         }
 
+        var addedFixtures = dbContext
+            .ChangeTracker.Entries<Fixture>()
+            .Count(e => e.State == EntityState.Added);
+
+        var updatedFixtures = dbContext
+            .ChangeTracker.Entries<Fixture>()
+            .Count(e =>
+                e.State == EntityState.Modified
+                || (e.State == EntityState.Unchanged && e.Collection(f => f.Channels).IsModified)
+            );
+
+        var addedCompetitions = dbContext
+            .ChangeTracker.Entries<Competition>()
+            .Count(e => e.State == EntityState.Added);
+
+        var addedTeams = dbContext
+            .ChangeTracker.Entries<Team>()
+            .Count(e => e.State == EntityState.Added);
+
+        var addedChannels = dbContext
+            .ChangeTracker.Entries<Channel>()
+            .Count(e => e.State == EntityState.Added);
+
         await dbContext.SaveChangesAsync(cancellationToken);
 
         var now = timeProvider.GetUtcNow();
 
-        var removed = await dbContext
+        var removedFixtures = await dbContext
             .Fixtures.IgnoreQueryFilters()
             .Where(f =>
                 f.Source == fixtureProvider.Source
@@ -91,10 +115,25 @@ public class FixtureSyncer(
             )
             .ExecuteDeleteAsync(cancellationToken);
 
+        Activity
+            .Current?.SetTag("fixture_sync.source", fixtureProvider.Source)
+            .SetTag("fixture_sync.fetched", items.Count)
+            .SetTag("fixture_sync.added_fixtures", addedFixtures)
+            .SetTag("fixture_sync.updated_fixtures", updatedFixtures)
+            .SetTag("fixture_sync.removed_fixtures", removedFixtures)
+            .SetTag("fixture_sync.added_competitions", addedCompetitions)
+            .SetTag("fixture_sync.added_teams", addedTeams)
+            .SetTag("fixture_sync.added_channels", addedChannels);
+
         logger.LogInformation(
-            "Synced {Count} fixtures and removed {Removed} no longer listed",
+            "Synced {Fetched} fixtures ({AddedFixtures} added, {UpdatedFixtures} updated) and removed {RemovedFixtures} no longer listed. Added {AddedCompetitions} competitions, {AddedTeams} teams, {AddedChannels} channels",
             items.Count,
-            removed
+            addedFixtures,
+            updatedFixtures,
+            removedFixtures,
+            addedCompetitions,
+            addedTeams,
+            addedChannels
         );
     }
 

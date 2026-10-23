@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Options;
@@ -8,6 +9,7 @@ namespace FootballTvPlanner.Server.Common.Email;
 public class EmailService(
     IOptions<EmailSettings> emailSettings,
     EmailTemplateRenderer templateRenderer,
+    EmailMetrics metrics,
     ILogger<EmailService> logger
 ) : IEmailService
 {
@@ -55,9 +57,13 @@ public class EmailService(
 
             await client.SendAsync(message, cancellationToken);
             await client.DisconnectAsync(quit: true, cancellationToken);
+
+            metrics.RecordSent(template, success: true);
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
+            metrics.RecordSent(template, success: false);
+            Activity.Current?.AddException(ex).SetStatus(ActivityStatusCode.Error);
             logger.LogError(ex, "Failed to send email with template {Template}", template);
         }
     }
