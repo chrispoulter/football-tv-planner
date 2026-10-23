@@ -29,7 +29,9 @@ using (var activity = activitySource.StartActivity("Migrating database"))
         using var scope = host.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<FootballTvPlannerDbContext>();
 
-        var pending = await dbContext.Database.GetPendingMigrationsAsync(lifetime.ApplicationStopping);
+        var pending = await dbContext.Database.GetPendingMigrationsAsync(
+            lifetime.ApplicationStopping
+        );
 
         var strategy = dbContext.Database.CreateExecutionStrategy();
         await strategy.ExecuteAsync(lifetime.ApplicationStopping, dbContext.Database.MigrateAsync);

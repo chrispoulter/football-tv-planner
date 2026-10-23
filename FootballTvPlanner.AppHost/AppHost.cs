@@ -24,8 +24,8 @@ builder
     .WaitForCompletion(migrations)
     .WithExplicitStart();
 
-var api = builder
-    .AddProject<Projects.FootballTvPlanner_Api>("api")
+var server = builder
+    .AddProject<Projects.FootballTvPlanner_Server>("server")
     .WithExternalHttpEndpoints()
     .WithHttpHealthCheck("/health")
     .WithUrlForEndpoint("http", u => u.Url = "/scalar")
@@ -34,12 +34,12 @@ var api = builder
     .WaitFor(mailpit)
     .WaitForCompletion(migrations);
 
-var web = builder
-    .AddViteApp("web", "../FootballTvPlanner.Web")
+var client = builder
+    .AddViteApp("client", "../FootballTvPlanner.Client")
     .WithEndpoint("http", e => e.Port = 5173)
-    .WithEnvironment("API_URL", api.GetEndpoint("http"))
-    .WaitFor(api);
+    .WithEnvironment("API_URL", server.GetEndpoint("http"))
+    .WaitFor(server);
 
-api.WithEnvironment("Email__SiteUrl", web.GetEndpoint("http"));
+server.WithEnvironment("Email__SiteUrl", client.GetEndpoint("http"));
 
 builder.Build().Run();

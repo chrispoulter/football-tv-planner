@@ -1,0 +1,34 @@
+using FootballTvPlanner.Data;
+using FootballTvPlanner.Server.Common.Authentication;
+using FootballTvPlanner.Server.Common.Infrastructure;
+using Microsoft.EntityFrameworkCore;
+
+namespace FootballTvPlanner.Server.Features.Schedule.RemoveFromSchedule;
+
+public class RemoveFromScheduleEndpoint : IEndpoint
+{
+    public void MapEndpoints(IEndpointRouteBuilder app)
+    {
+        app.MapDelete("/schedule/{fixtureId:guid}", HandleAsync)
+            .RequireAuthorization()
+            .Produces<ScheduleItemResponse>()
+            .WithTags(Tags.Schedule)
+            .WithSummary("Remove From Schedule")
+            .WithDescription("Remove a fixture from the current user's schedule.");
+    }
+
+    private static async Task<IResult> HandleAsync(
+        Guid fixtureId,
+        CurrentUser currentUser,
+        FootballTvPlannerDbContext dbContext,
+        CancellationToken cancellationToken = default
+    )
+    {
+        await dbContext
+            .UserFixtures.IgnoreQueryFilters()
+            .Where(uf => uf.UserId == currentUser.Id && uf.FixtureId == fixtureId)
+            .ExecuteDeleteAsync(cancellationToken);
+
+        return Results.Ok(new ScheduleItemResponse(fixtureId));
+    }
+}

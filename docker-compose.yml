@@ -1,9 +1,9 @@
 services:
-  football-tv-planner-api:
-    image: football-tv-planner-api:latest
+  football-tv-planner-server:
+    image: football-tv-planner-server:latest
     build:
       context: .
-      dockerfile: ./FootballTvPlanner.Api/Dockerfile
+      dockerfile: ./FootballTvPlanner.Server/Dockerfile
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: https://+:8081;http://+:8080
