@@ -6,6 +6,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
 namespace Microsoft.Extensions.Hosting;
@@ -62,6 +63,11 @@ public static class Extensions
 
         builder
             .Services.AddOpenTelemetry()
+            .ConfigureResource(resource =>
+                resource
+                    .AddService(builder.Environment.ApplicationName, serviceVersion: serviceVersion)
+                    .AddEnvironmentVariableDetector()
+            )
             .WithMetrics(metrics =>
             {
                 metrics
@@ -75,6 +81,9 @@ public static class Extensions
                     .AddSource(builder.Environment.ApplicationName)
                     .AddAspNetCoreInstrumentation(tracing =>
                     {
+                        // Attach unhandled exceptions to the request span
+                        tracing.RecordException = true;
+
                         // Exclude health check requests from tracing
                         tracing.Filter = context =>
                             !context.Request.Path.StartsWithSegments(HealthEndpointPath)

@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Options;
@@ -58,6 +59,7 @@ public class EmailService(
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
+            Activity.Current?.AddException(ex).SetStatus(ActivityStatusCode.Error);
             logger.LogError(ex, "Failed to send email with template {Template}", template);
         }
     }

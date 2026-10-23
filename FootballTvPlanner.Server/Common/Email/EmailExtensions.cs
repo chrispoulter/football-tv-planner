@@ -1,4 +1,7 @@
-﻿namespace FootballTvPlanner.Server.Common.Email;
+﻿using OpenTelemetry.Metrics;
+using OpenTelemetry.Trace;
+
+namespace FootballTvPlanner.Server.Common.Email;
 
 public static class EmailExtensions
 {
@@ -22,6 +25,15 @@ public static class EmailExtensions
 
         builder.Services.AddSingleton<EmailTemplateRenderer>();
         builder.Services.AddScoped<IEmailService, EmailService>();
+
+        MailKit.Telemetry.SmtpClient.Configure();
+
+        builder
+            .Services.AddOpenTelemetry()
+            .WithTracing(tracing =>
+                tracing.AddSource(MailKit.Telemetry.SmtpClient.ActivitySourceName)
+            )
+            .WithMetrics(metrics => metrics.AddMeter(MailKit.Telemetry.SmtpClient.MeterName));
 
         return builder;
     }
