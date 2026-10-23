@@ -8,10 +8,10 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="13.6.3" />
-    <PackageReference Include="FluentEmail.Liquid" Version="3.0.2" />
-    <PackageReference Include="FluentEmail.MailKit" Version="3.0.2" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.2.0" />
+    <PackageReference Include="Fluid.Core" Version="2.40.0" />
     <PackageReference Include="Ical.Net" Version="5.2.3" />
+    <PackageReference Include="MailKit" Version="4.18.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="10.0.13" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.13" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.13">
@@ -23,6 +23,8 @@
       Version="1.23.0"
     />
     <PackageReference Include="Scalar.AspNetCore" Version="2.18.3" />
+    <!-- Overrides the vulnerable 10.0.0 pulled in transitively by MailKit -> MimeKit -->
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.13" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Features\**\*.html" />
