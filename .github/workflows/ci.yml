@@ -105,8 +105,8 @@ jobs:
           build-args: GIT_COMMIT_SHA=${{ github.sha }}
           push: true
           provenance: false
-          cache-from: type=gha,scope=${{ matrix.name }}
-          cache-to: type=gha,mode=max,scope=${{ matrix.name }}
+          cache-from: type=registry,ref=ghcr.io/${{ github.repository }}-${{ matrix.name }}:buildcache
+          cache-to: type=registry,ref=ghcr.io/${{ github.repository }}-${{ matrix.name }}:buildcache,mode=max,image-manifest=true,oci-mediatypes=true,ignore-error=true
 
   deploy:
     name: Deploy to Azure Container Apps
