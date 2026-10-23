@@ -2,11 +2,10 @@ using System.Collections.Concurrent;
 using System.Reflection;
 using System.Text.Encodings.Web;
 using Fluid;
-using Microsoft.Extensions.Options;
 
 namespace FootballTvPlanner.Server.Common.Email;
 
-public class EmailTemplateRenderer(IOptions<EmailSettings> emailSettings)
+public class EmailTemplateRenderer
 {
     private static readonly FluidParser Parser = new();
 
@@ -20,10 +19,7 @@ public class EmailTemplateRenderer(IOptions<EmailSettings> emailSettings)
     public async Task<string> RenderAsync(string template, object model)
     {
         var fluidTemplate = templates.GetOrAdd(template, ParseTemplate);
-
         var context = new TemplateContext(model, TemplateOptions);
-        context.SetValue("SiteUrl", emailSettings.Value.SiteUrl);
-
         return await fluidTemplate.RenderAsync(context, HtmlEncoder.Default);
     }
 
