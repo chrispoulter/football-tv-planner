@@ -28,7 +28,7 @@ var app = builder.Build();
 
 app.UseForwardedHeaders();
 app.UseExceptionHandler();
-app.UseStaticFiles();
+app.UseClientStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -36,6 +36,6 @@ app.MapOpenApiWithUI();
 app.MapEndpoints(assembly);
 app.MapClientConfig();
 app.MapDefaultEndpoints();
-app.MapFallbackToFile("index.html");
+app.MapClientFallback();
 
 app.Run();

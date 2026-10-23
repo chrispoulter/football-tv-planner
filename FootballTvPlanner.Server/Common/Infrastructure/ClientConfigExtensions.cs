@@ -8,8 +8,11 @@ public static class ClientConfigExtensions
     {
         app.MapGet(
                 "/env.js",
-                (IConfiguration configuration) =>
+                (IConfiguration configuration, HttpResponse response) =>
                 {
+                    // Settings can change without a deploy, so never let a browser or CDN keep a copy
+                    response.Headers.CacheControl = "no-store";
+
                     var env = configuration
                         .AsEnumerable()
                         .Where(kvp =>
