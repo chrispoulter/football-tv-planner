@@ -24,6 +24,7 @@ public static class EmailExtensions
             });
 
         builder.Services.AddSingleton<EmailTemplateRenderer>();
+        builder.Services.AddSingleton<EmailMetrics>();
         builder.Services.AddScoped<IEmailService, EmailService>();
 
         MailKit.Telemetry.SmtpClient.Configure();
@@ -33,7 +34,11 @@ public static class EmailExtensions
             .WithTracing(tracing =>
                 tracing.AddSource(MailKit.Telemetry.SmtpClient.ActivitySourceName)
             )
-            .WithMetrics(metrics => metrics.AddMeter(MailKit.Telemetry.SmtpClient.MeterName));
+            .WithMetrics(metrics =>
+                metrics
+                    .AddMeter(MailKit.Telemetry.SmtpClient.MeterName)
+                    .AddMeter(EmailMetrics.MeterName)
+            );
 
         return builder;
     }

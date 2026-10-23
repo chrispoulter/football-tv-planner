@@ -72,6 +72,8 @@ public static class Extensions
             {
                 metrics
                     .AddAspNetCoreInstrumentation()
+                    .AddMeter("Microsoft.AspNetCore.Authentication")
+                    .AddMeter("Microsoft.AspNetCore.Identity")
                     .AddHttpClientInstrumentation()
                     .AddRuntimeInstrumentation();
             })
