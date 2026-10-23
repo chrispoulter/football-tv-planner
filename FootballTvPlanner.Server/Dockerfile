@@ -21,7 +21,6 @@ RUN npm run build
 
 # This stage restores packages and copies the source for the publish stage
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
-ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["FootballTvPlanner.Server/FootballTvPlanner.Server.csproj", "FootballTvPlanner.Server/"]
 COPY ["FootballTvPlanner.Data/FootballTvPlanner.Data.csproj", "FootballTvPlanner.Data/"]
