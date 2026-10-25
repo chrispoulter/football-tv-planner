@@ -6,6 +6,12 @@ public static class ForwardedHeadersExtensions
 {
     public static IHostApplicationBuilder AddForwardedHeaders(this IHostApplicationBuilder builder)
     {
+        var settings =
+            builder
+                .Configuration.GetSection(ForwardedHeadersSettings.SectionName)
+                .Get<ForwardedHeadersSettings>()
+            ?? new ForwardedHeadersSettings();
+
         builder.Services.Configure<ForwardedHeadersOptions>(options =>
         {
             options.ForwardedHeaders =
@@ -13,8 +19,7 @@ public static class ForwardedHeadersExtensions
                 | ForwardedHeaders.XForwardedHost
                 | ForwardedHeaders.XForwardedProto;
 
-            // Cloudflare sets the original client IP here; X-Forwarded-For would yield its edge IP
-            options.ForwardedForHeaderName = "CF-Connecting-IP";
+            options.ForwardedForHeaderName = settings.ForwardedForHeaderName;
 
             options.KnownIPNetworks.Clear();
             options.KnownProxies.Clear();
