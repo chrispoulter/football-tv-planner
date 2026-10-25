@@ -37,9 +37,9 @@ public static class RateLimitingExtensions
                         _ => new SlidingWindowRateLimiterOptions
                         {
                             PermitLimit = settings.PermitLimit,
-                            QueueLimit = settings.QueueLimit,
                             Window = settings.Window,
-                            SegmentsPerWindow = settings.SegmentsPerWindow,
+                            SegmentsPerWindow = 6,
+                            QueueLimit = 0,
                         }
                     );
                 }
@@ -53,6 +53,20 @@ public static class RateLimitingExtensions
                         (int)retryAfter.TotalSeconds
                     ).ToString(NumberFormatInfo.InvariantInfo);
                 }
+
+                // Log the route template, not the path, as some paths carry secrets such as calendar feed tokens
+                var route =
+                    (context.HttpContext.GetEndpoint() as RouteEndpoint)?.RoutePattern.RawText
+                    ?? "unknown";
+
+                context
+                    .HttpContext.RequestServices.GetRequiredService<ILoggerFactory>()
+                    .CreateLogger(typeof(RateLimitingExtensions).FullName!)
+                    .LogWarning(
+                        "Rate limit exceeded for {Method} {Route}",
+                        context.HttpContext.Request.Method,
+                        route
+                    );
 
                 var problemDetailsService =
                     context.HttpContext.RequestServices.GetRequiredService<IProblemDetailsService>();
