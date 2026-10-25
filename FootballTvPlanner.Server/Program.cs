@@ -1,6 +1,7 @@
 using System.Reflection;
 using FluentValidation;
 using FootballTvPlanner.Data;
+using FootballTvPlanner.Data.Users;
 using FootballTvPlanner.Server.Common.Authentication;
 using FootballTvPlanner.Server.Common.Email;
 using FootballTvPlanner.Server.Common.Infrastructure;
@@ -20,8 +21,8 @@ builder.Services.AddProblemDetails();
 
 builder.ConfigureJsonOptions();
 builder.AddForwardedHeaders();
-builder.AddDataProtection();
-builder.AddAuthentication();
+builder.AddDataProtection<FootballTvPlannerDbContext>();
+builder.AddAuthentication<User, FootballTvPlannerDbContext>();
 builder.AddOpenApi(serviceVersion);
 
 var app = builder.Build();

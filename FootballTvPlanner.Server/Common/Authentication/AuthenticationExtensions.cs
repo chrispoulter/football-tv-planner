@@ -1,20 +1,22 @@
-using FootballTvPlanner.Data;
-using FootballTvPlanner.Data.Users;
-using FootballTvPlanner.Server.Common.Authentication;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace FootballTvPlanner.Server.Common.Authentication;
 
 public static class AuthenticationExtensions
 {
-    public static IHostApplicationBuilder AddAuthentication(this IHostApplicationBuilder builder)
+    public static IHostApplicationBuilder AddAuthentication<TUser, TContext>(
+        this IHostApplicationBuilder builder
+    )
+        where TUser : class
+        where TContext : DbContext
     {
         builder
             .Services.AddAuthentication(IdentityConstants.ApplicationScheme)
             .AddIdentityCookies();
 
         builder
-            .Services.AddIdentityCore<User>(options =>
+            .Services.AddIdentityCore<TUser>(options =>
             {
                 options.User.RequireUniqueEmail = true;
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
@@ -25,7 +27,7 @@ public static class AuthenticationExtensions
                 options.Password.RequireUppercase = false;
                 options.Password.RequireNonAlphanumeric = false;
             })
-            .AddEntityFrameworkStores<FootballTvPlannerDbContext>()
+            .AddEntityFrameworkStores<TContext>()
             .AddSignInManager()
             .AddDefaultTokenProviders();
 
