@@ -19,17 +19,10 @@ public class EmailMetrics
         );
     }
 
-    public void RecordThrottled(string template) =>
+    public void RecordSent(string template, string outcome) =>
         sent.Add(
             1,
             new KeyValuePair<string, object?>("email.template", template),
-            new KeyValuePair<string, object?>("email.outcome", "throttled")
-        );
-
-    public void RecordSent(string template, bool success) =>
-        sent.Add(
-            1,
-            new KeyValuePair<string, object?>("email.template", template),
-            new KeyValuePair<string, object?>("email.outcome", success ? "success" : "failure")
+            new KeyValuePair<string, object?>("email.outcome", outcome)
         );
 }
