@@ -9,11 +9,14 @@ import { useChangePassword } from '../profile-queries';
 
 const schema = z
     .object({
-        currentPassword: z.string().min(1, 'Current password is required'),
+        currentPassword: z
+            .string()
+            .min(1, 'Current password is required')
+            .max(128, 'Password must be no more than 128 characters'),
         newPassword: z
             .string()
             .min(8, 'Password must be at least 8 characters')
-            .max(50, 'Password must be no more than 50 characters'),
+            .max(128, 'Password must be no more than 128 characters'),
         confirmNewPassword: z.string(),
     })
     .refine((data) => data.newPassword === data.confirmNewPassword, {
@@ -60,7 +63,6 @@ export function ChangePasswordForm() {
                     label="Current password"
                     type="password"
                     placeholder="••••••••"
-                    maxLength={50}
                     autoComplete="current-password"
                     required
                 />
@@ -71,7 +73,6 @@ export function ChangePasswordForm() {
                     label="New password"
                     type="password"
                     placeholder="••••••••"
-                    maxLength={50}
                     autoComplete="new-password"
                     required
                 />
@@ -82,7 +83,6 @@ export function ChangePasswordForm() {
                     label="Confirm new password"
                     type="password"
                     placeholder="••••••••"
-                    maxLength={50}
                     autoComplete="new-password"
                     required
                 />

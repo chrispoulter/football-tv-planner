@@ -19,10 +19,10 @@ public class EmailMetrics
         );
     }
 
-    public void RecordSent(string template, bool success) =>
+    public void RecordSent(string template, string outcome) =>
         sent.Add(
             1,
             new KeyValuePair<string, object?>("email.template", template),
-            new KeyValuePair<string, object?>("email.outcome", success ? "success" : "failure")
+            new KeyValuePair<string, object?>("email.outcome", outcome)
         );
 }

@@ -6,7 +6,9 @@ import { Button } from '@/components/ui/button';
 import { FieldGroup } from '@/components/ui/field';
 
 const schema = z.object({
-    emailAddress: z.email('Invalid email address'),
+    emailAddress: z
+        .email('Invalid email address')
+        .max(254, 'Email must be no more than 254 characters'),
 });
 
 export type ForgotPasswordFormValues = z.infer<typeof schema>;

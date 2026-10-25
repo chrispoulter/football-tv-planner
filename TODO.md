@@ -5,5 +5,5 @@
 
 ## Future
 
-- rate limiting
+- caching
 - monitoring

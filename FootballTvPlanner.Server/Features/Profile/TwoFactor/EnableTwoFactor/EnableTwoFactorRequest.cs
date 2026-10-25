@@ -8,6 +8,6 @@ public class EnableTwoFactorRequestValidator : AbstractValidator<EnableTwoFactor
 {
     public EnableTwoFactorRequestValidator()
     {
-        RuleFor(x => x.Code).NotEmpty().MaximumLength(20);
+        RuleFor(x => x.Code).NotEmpty().Length(6);
     }
 }

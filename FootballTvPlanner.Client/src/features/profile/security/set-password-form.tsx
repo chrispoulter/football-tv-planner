@@ -12,7 +12,7 @@ const schema = z
         newPassword: z
             .string()
             .min(8, 'Password must be at least 8 characters')
-            .max(50, 'Password must be no more than 50 characters'),
+            .max(128, 'Password must be no more than 128 characters'),
         confirmNewPassword: z.string(),
     })
     .refine((data) => data.newPassword === data.confirmNewPassword, {
@@ -57,7 +57,6 @@ export function SetPasswordForm() {
                     label="Password"
                     type="password"
                     placeholder="••••••••"
-                    maxLength={50}
                     autoComplete="new-password"
                     required
                 />
@@ -68,7 +67,6 @@ export function SetPasswordForm() {
                     label="Confirm password"
                     type="password"
                     placeholder="••••••••"
-                    maxLength={50}
                     autoComplete="new-password"
                     required
                 />

@@ -22,6 +22,10 @@ public class EmailSettings
 
     public string SiteUrl { get; set; } = null!;
 
+    public int RecipientPermitLimit { get; set; } = 5;
+
+    public TimeSpan RecipientWindow { get; set; } = TimeSpan.FromHours(1);
+
     internal void ParseConnectionString(string connectionString)
     {
         var connectionStringBuilder = new DbConnectionStringBuilder

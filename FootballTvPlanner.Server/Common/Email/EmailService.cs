@@ -9,6 +9,7 @@ namespace FootballTvPlanner.Server.Common.Email;
 public class EmailService(
     IOptions<EmailSettings> emailSettings,
     EmailTemplateRenderer templateRenderer,
+    EmailRateLimiter emailRateLimiter,
     EmailMetrics metrics,
     ILogger<EmailService> logger
 ) : IEmailService
@@ -21,6 +22,18 @@ public class EmailService(
         CancellationToken cancellationToken = default
     )
     {
+        if (!emailRateLimiter.TryAcquire(toAddress))
+        {
+            metrics.RecordSent(template, outcome: "throttled");
+
+            logger.LogWarning(
+                "Skipped email with template {Template} as the recipient has hit the limit",
+                template
+            );
+
+            return;
+        }
+
         try
         {
             var settings = emailSettings.Value;
@@ -58,11 +71,11 @@ public class EmailService(
             await client.SendAsync(message, cancellationToken);
             await client.DisconnectAsync(quit: true, cancellationToken);
 
-            metrics.RecordSent(template, success: true);
+            metrics.RecordSent(template, outcome: "success");
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
-            metrics.RecordSent(template, success: false);
+            metrics.RecordSent(template, outcome: "failure");
             Activity.Current?.AddException(ex).SetStatus(ActivityStatusCode.Error);
             logger.LogError(ex, "Failed to send email with template {Template}", template);
         }

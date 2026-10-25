@@ -12,11 +12,13 @@ const schema = z
             .trim()
             .min(1, 'Name is required')
             .max(100, 'Name must be no more than 100 characters'),
-        emailAddress: z.email('Invalid email address'),
+        emailAddress: z
+            .email('Invalid email address')
+            .max(254, 'Email must be no more than 254 characters'),
         password: z
             .string()
             .min(8, 'Password must be at least 8 characters')
-            .max(50, 'Password must be no more than 50 characters'),
+            .max(128, 'Password must be no more than 128 characters'),
         confirmPassword: z.string(),
     })
     .refine((data) => data.password === data.confirmPassword, {
@@ -72,7 +74,6 @@ export function RegisterForm({ loading, onSubmit }: RegisterFormProps) {
                     label="Password"
                     type="password"
                     placeholder="••••••••"
-                    maxLength={50}
                     autoComplete="new-password"
                     required
                 />
@@ -83,7 +84,6 @@ export function RegisterForm({ loading, onSubmit }: RegisterFormProps) {
                     label="Confirm password"
                     type="password"
                     placeholder="••••••••"
-                    maxLength={50}
                     autoComplete="new-password"
                     required
                 />

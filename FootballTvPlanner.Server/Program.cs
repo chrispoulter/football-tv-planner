@@ -23,6 +23,7 @@ builder.ConfigureJsonOptions();
 builder.AddForwardedHeaders();
 builder.AddDataProtection<FootballTvPlannerDbContext>();
 builder.AddAuthentication<User, FootballTvPlannerDbContext>();
+builder.AddRateLimiting();
 builder.AddOpenApi(serviceVersion);
 
 var app = builder.Build();
@@ -31,10 +32,11 @@ app.UseForwardedHeaders();
 app.UseExceptionHandler();
 app.UseClientStaticFiles();
 app.UseAuthentication();
+app.UseRateLimiter();
 app.UseAuthorization();
 
 app.MapOpenApiWithUI();
-app.MapEndpoints(assembly);
+app.MapEndpoints(assembly).RequireRateLimiting(RateLimitPolicies.Default);
 app.MapClientConfig();
 app.MapDefaultEndpoints();
 app.MapClientFallback();
