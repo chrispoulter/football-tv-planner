@@ -14,7 +14,6 @@ public class ChangeEmailEndpoint : IEndpoint
     public void MapEndpoints(IEndpointRouteBuilder app)
     {
         app.MapPost("/profile/change-email", HandleAsync)
-            .RequireRateLimiting(RateLimitPolicies.Auth)
             .RequireAuthorization()
             .AddValidationFilter<ChangeEmailRequest>()
             .WithTags(Tags.Profile)

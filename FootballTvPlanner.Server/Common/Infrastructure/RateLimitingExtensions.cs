@@ -7,8 +7,6 @@ namespace FootballTvPlanner.Server.Common.Infrastructure;
 public static class RateLimitPolicies
 {
     public const string Default = "Default";
-
-    public const string Auth = "Auth";
 }
 
 public static class RateLimitingExtensions
@@ -25,8 +23,27 @@ public static class RateLimitingExtensions
         {
             options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 
-            options.AddPolicy(RateLimitPolicies.Default, CreatePolicy(settings.Default));
-            options.AddPolicy(RateLimitPolicies.Auth, CreatePolicy(settings.Auth));
+            options.AddPolicy(
+                RateLimitPolicies.Default,
+                context =>
+                {
+                    var partitionKey = context.User.FindFirstValue(ClaimTypes.NameIdentifier)
+                        is { } userId
+                        ? $"user:{userId}"
+                        : $"ip:{context.Connection.RemoteIpAddress}";
+
+                    return RateLimitPartition.GetSlidingWindowLimiter(
+                        partitionKey,
+                        _ => new SlidingWindowRateLimiterOptions
+                        {
+                            PermitLimit = settings.PermitLimit,
+                            QueueLimit = settings.QueueLimit,
+                            Window = settings.Window,
+                            SegmentsPerWindow = settings.SegmentsPerWindow,
+                        }
+                    );
+                }
+            );
 
             options.OnRejected = async (context, cancellationToken) =>
             {
@@ -34,7 +51,7 @@ public static class RateLimitingExtensions
                 {
                     context.HttpContext.Response.Headers.RetryAfter = (
                         (int)retryAfter.TotalSeconds
-                    ).ToString(CultureInfo.InvariantCulture);
+                    ).ToString(NumberFormatInfo.InvariantInfo);
                 }
 
                 var problemDetailsService =
@@ -56,24 +73,4 @@ public static class RateLimitingExtensions
 
         return builder;
     }
-
-    private static Func<HttpContext, RateLimitPartition<string>> CreatePolicy(
-        RateLimitPolicySettings settings
-    ) =>
-        httpContext =>
-            RateLimitPartition.GetSlidingWindowLimiter(
-                GetPartitionKey(httpContext),
-                _ => new SlidingWindowRateLimiterOptions
-                {
-                    PermitLimit = settings.PermitLimit,
-                    Window = settings.Window,
-                    SegmentsPerWindow = 6,
-                    QueueLimit = 0,
-                }
-            );
-
-    private static string GetPartitionKey(HttpContext httpContext) =>
-        httpContext.User.FindFirstValue(ClaimTypes.NameIdentifier) is { } userId
-            ? $"user:{userId}"
-            : $"ip:{httpContext.Connection.RemoteIpAddress}";
 }

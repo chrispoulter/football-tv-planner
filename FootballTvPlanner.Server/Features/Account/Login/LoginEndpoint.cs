@@ -10,7 +10,6 @@ public class LoginEndpoint : IEndpoint
     public void MapEndpoints(IEndpointRouteBuilder app)
     {
         app.MapPost("/account/login", HandleAsync)
-            .RequireRateLimiting(RateLimitPolicies.Auth)
             .AllowAnonymous()
             .AddValidationFilter<LoginRequest>()
             .Produces<LoginResponse>()

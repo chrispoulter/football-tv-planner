@@ -13,7 +13,6 @@ public class ForgotPasswordEndpoint : IEndpoint
     public void MapEndpoints(IEndpointRouteBuilder app)
     {
         app.MapPost("/account/forgot-password", HandleAsync)
-            .RequireRateLimiting(RateLimitPolicies.Auth)
             .AllowAnonymous()
             .AddValidationFilter<ForgotPasswordRequest>()
             .WithTags(Tags.Account)
