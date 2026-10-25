@@ -5,5 +5,4 @@
 
 ## Future
 
-- rate limiting
 - monitoring

@@ -9,6 +9,7 @@ namespace FootballTvPlanner.Server.Common.Email;
 public class EmailService(
     IOptions<EmailSettings> emailSettings,
     EmailTemplateRenderer templateRenderer,
+    EmailRateLimiter emailRateLimiter,
     EmailMetrics metrics,
     ILogger<EmailService> logger
 ) : IEmailService
@@ -21,6 +22,18 @@ public class EmailService(
         CancellationToken cancellationToken = default
     )
     {
+        if (!emailRateLimiter.TryAcquire(toAddress))
+        {
+            metrics.RecordThrottled(template);
+
+            logger.LogWarning(
+                "Skipped email with template {Template} as the recipient has hit the limit",
+                template
+            );
+
+            return;
+        }
+
         try
         {
             var settings = emailSettings.Value;

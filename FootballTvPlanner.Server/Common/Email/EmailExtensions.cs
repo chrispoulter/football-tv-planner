@@ -25,6 +25,7 @@ public static class EmailExtensions
 
         builder.Services.AddSingleton<EmailTemplateRenderer>();
         builder.Services.AddSingleton<EmailMetrics>();
+        builder.Services.AddSingleton<EmailRateLimiter>();
         builder.Services.AddScoped<IEmailService, EmailService>();
 
         MailKit.Telemetry.SmtpClient.Configure();

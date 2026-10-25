@@ -11,6 +11,7 @@ public class ConfirmEmailEndpoint : IEndpoint
     public void MapEndpoints(IEndpointRouteBuilder app)
     {
         app.MapPost("/account/confirm-email", HandleAsync)
+            .RequireRateLimiting(RateLimitPolicies.Auth)
             .AllowAnonymous()
             .AddValidationFilter<ConfirmEmailRequest>()
             .WithTags(Tags.Account)

@@ -11,7 +11,7 @@ public static class EndpointExtensions
             && typeof(IEndpoint).IsAssignableFrom(type)
         );
 
-        var api = app.MapGroup("/api");
+        var api = app.MapGroup("/api").RequireRateLimiting(RateLimitPolicies.Default);
 
         foreach (var endpoint in endpoints)
         {

@@ -10,6 +10,7 @@ public class LoginTwoFactorEndpoint : IEndpoint
     public void MapEndpoints(IEndpointRouteBuilder app)
     {
         app.MapPost("/account/login/two-factor", HandleAsync)
+            .RequireRateLimiting(RateLimitPolicies.Auth)
             .AllowAnonymous()
             .AddValidationFilter<LoginTwoFactorRequest>()
             .WithTags(Tags.Account)

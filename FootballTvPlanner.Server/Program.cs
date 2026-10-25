@@ -22,6 +22,7 @@ builder.ConfigureJsonOptions();
 builder.AddForwardedHeaders();
 builder.AddDataProtection();
 builder.AddAuthentication();
+builder.AddRateLimiting();
 builder.AddOpenApi(serviceVersion);
 
 var app = builder.Build();
@@ -31,6 +32,7 @@ app.UseExceptionHandler();
 app.UseClientStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseRateLimiter();
 
 app.MapOpenApiWithUI();
 app.MapEndpoints(assembly);

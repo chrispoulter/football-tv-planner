@@ -10,7 +10,6 @@ public static class ClientConfigExtensions
                 "/env.js",
                 (IConfiguration configuration, HttpResponse response) =>
                 {
-                    // Settings can change without a deploy, so never let a browser or CDN keep a copy
                     response.Headers.CacheControl = "no-store";
 
                     var env = configuration
