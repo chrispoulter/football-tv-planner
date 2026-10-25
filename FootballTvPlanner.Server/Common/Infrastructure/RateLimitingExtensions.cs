@@ -46,20 +46,25 @@ public static class RateLimitingExtensions
                 }
 
                 context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+
+                var route =
+                    (context.HttpContext.GetEndpoint() as RouteEndpoint)?.RoutePattern.RawText
+                    ?? "unknown";
+
                 context
                     .HttpContext.RequestServices.GetRequiredService<ILoggerFactory>()
                     .CreateLogger("Microsoft.AspNetCore.RateLimitingMiddleware")
                     .LogWarning(
-                        "Rate limit exceeded for {PartitionKey} on {Method} {Path}",
+                        "Rate limit exceeded for {PartitionKey} on {Method} {Route}",
                         GetPartitionKey(context.HttpContext),
                         context.HttpContext.Request.Method,
-                        context.HttpContext.Request.Path
+                        route
                     );
 
                 var problemDetailsService =
                     context.HttpContext.RequestServices.GetRequiredService<IProblemDetailsService>();
 
-                await problemDetailsService.WriteAsync(
+                await problemDetailsService.TryWriteAsync(
                     new ProblemDetailsContext
                     {
                         HttpContext = context.HttpContext,

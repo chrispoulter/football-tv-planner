@@ -32,8 +32,8 @@ app.UseForwardedHeaders();
 app.UseExceptionHandler();
 app.UseClientStaticFiles();
 app.UseAuthentication();
-app.UseAuthorization();
 app.UseRateLimiter();
+app.UseAuthorization();
 
 app.MapOpenApiWithUI();
 app.MapEndpoints(assembly).RequireRateLimiting(RateLimitPolicies.Default);
