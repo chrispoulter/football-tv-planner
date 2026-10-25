@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Security.Claims;
 using System.Threading.RateLimiting;
 
 namespace FootballTvPlanner.Server.Common.Infrastructure;
@@ -23,16 +24,8 @@ public static class RateLimitingExtensions
             options.AddPolicy(
                 RateLimitPolicies.Default,
                 context =>
-                {
-                    var partitionKey = $"ip:{context.Connection.RemoteIpAddress}";
-
-                    if (context.User.Identity?.IsAuthenticated is true)
-                    {
-                        partitionKey = $"user:{context.User.Identity.Name}";
-                    }
-
-                    return RateLimitPartition.GetSlidingWindowLimiter(
-                        partitionKey,
+                    RateLimitPartition.GetSlidingWindowLimiter(
+                        GetPartitionKey(context),
                         _ => new SlidingWindowRateLimiterOptions
                         {
                             PermitLimit = settings.PermitLimit,
@@ -40,8 +33,7 @@ public static class RateLimitingExtensions
                             SegmentsPerWindow = 6,
                             QueueLimit = 0,
                         }
-                    );
-                }
+                    )
             );
 
             options.OnRejected = async (context, cancellationToken) =>
@@ -58,7 +50,8 @@ public static class RateLimitingExtensions
                     .HttpContext.RequestServices.GetRequiredService<ILoggerFactory>()
                     .CreateLogger("Microsoft.AspNetCore.RateLimitingMiddleware")
                     .LogWarning(
-                        "Rate limit exceeded for {Method} {Path}",
+                        "Rate limit exceeded for {PartitionKey} on {Method} {Path}",
+                        GetPartitionKey(context.HttpContext),
                         context.HttpContext.Request.Method,
                         context.HttpContext.Request.Path
                     );
@@ -82,4 +75,9 @@ public static class RateLimitingExtensions
 
         return builder;
     }
+
+    private static string GetPartitionKey(HttpContext context) =>
+        context.User.FindFirstValue(ClaimTypes.NameIdentifier) is { } userId
+            ? $"user:{userId}"
+            : $"ip:{context.Connection.RemoteIpAddress}";
 }
