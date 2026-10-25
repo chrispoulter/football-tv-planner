@@ -4,7 +4,7 @@ namespace FootballTvPlanner.Server.Common.Infrastructure;
 
 public static class EndpointExtensions
 {
-    public static RouteGroupBuilder MapApiEndpoints(this WebApplication app, Assembly assembly)
+    public static RouteGroupBuilder MapEndpoints(this WebApplication app, Assembly assembly)
     {
         var endpoints = assembly.DefinedTypes.Where(type =>
             type is { IsAbstract: false, IsInterface: false }
