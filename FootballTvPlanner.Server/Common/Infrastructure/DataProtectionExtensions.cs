@@ -1,16 +1,20 @@
-using FootballTvPlanner.Data;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace FootballTvPlanner.Server.Common.Infrastructure;
 
 public static class DataProtectionExtensions
 {
-    public static IHostApplicationBuilder AddDataProtection(this IHostApplicationBuilder builder)
+    public static IHostApplicationBuilder AddDataProtection<TContext>(
+        this IHostApplicationBuilder builder
+    )
+        where TContext : DbContext, IDataProtectionKeyContext
     {
         builder
             .Services.AddDataProtection()
-            .SetApplicationName("FootballTvPlanner")
-            .PersistKeysToDbContext<FootballTvPlannerDbContext>();
+            .SetApplicationName(builder.Environment.ApplicationName)
+            .PersistKeysToDbContext<TContext>();
 
         return builder;
     }
