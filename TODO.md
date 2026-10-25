@@ -5,5 +5,5 @@
 
 ## Future
 
-- rate limiting (first restrict ingress to Cloudflare IPs, as CF-Connecting-IP is spoofable otherwise)
+- rate limiting
 - monitoring
