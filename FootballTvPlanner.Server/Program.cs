@@ -35,7 +35,7 @@ app.UseAuthorization();
 app.UseRateLimiter();
 
 app.MapOpenApiWithUI();
-app.MapEndpoints(assembly);
+app.MapApiEndpoints(assembly).RequireRateLimiting(RateLimitPolicies.Default);
 app.MapClientConfig();
 app.MapDefaultEndpoints();
 app.MapClientFallback();
