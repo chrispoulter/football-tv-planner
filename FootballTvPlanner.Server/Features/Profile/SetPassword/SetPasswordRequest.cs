@@ -8,6 +8,6 @@ public class SetPasswordRequestValidator : AbstractValidator<SetPasswordRequest>
 {
     public SetPasswordRequestValidator()
     {
-        RuleFor(x => x.NewPassword).NotEmpty();
+        RuleFor(x => x.NewPassword).NotEmpty().MinimumLength(8).MaximumLength(128);
     }
 }

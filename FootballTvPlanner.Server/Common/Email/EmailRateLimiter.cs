@@ -10,7 +10,7 @@ public sealed class EmailRateLimiter(IOptions<EmailSettings> emailSettings) : ID
         string
     >(toAddress =>
         RateLimitPartition.GetSlidingWindowLimiter(
-            toAddress.Trim().ToUpperInvariant(),
+            toAddress.ToUpperInvariant(),
             _ => new SlidingWindowRateLimiterOptions
             {
                 PermitLimit = emailSettings.Value.RecipientPermitLimit,

@@ -1,4 +1,5 @@
 using FluentValidation;
+using FootballTvPlanner.Server.Common.Validation;
 
 namespace FootballTvPlanner.Server.Features.Account.ResetPassword;
 
@@ -8,8 +9,8 @@ public class ResetPasswordRequestValidator : AbstractValidator<ResetPasswordRequ
 {
     public ResetPasswordRequestValidator()
     {
-        RuleFor(x => x.Email).NotEmpty();
+        RuleFor(x => x.Email).NotEmpty().PlainEmailAddress().MaximumLength(254);
         RuleFor(x => x.Code).NotEmpty();
-        RuleFor(x => x.NewPassword).NotEmpty();
+        RuleFor(x => x.NewPassword).NotEmpty().MinimumLength(8).MaximumLength(128);
     }
 }

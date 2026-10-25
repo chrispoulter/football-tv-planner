@@ -12,7 +12,7 @@ public class LoginTwoFactorRequestValidator : AbstractValidator<LoginTwoFactorRe
             .NotEmpty()
             .When(x => string.IsNullOrEmpty(x.RecoveryCode))
             .WithMessage("'Code' or 'Recovery Code' must not be empty.");
-        RuleFor(x => x.Code).MaximumLength(20);
+        RuleFor(x => x.Code).Length(6).When(x => !string.IsNullOrEmpty(x.Code));
         RuleFor(x => x.RecoveryCode).MaximumLength(20);
     }
 }

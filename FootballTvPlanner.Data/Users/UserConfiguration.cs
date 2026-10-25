@@ -5,11 +5,9 @@ namespace FootballTvPlanner.Data.Users;
 
 public class UserConfiguration : IEntityTypeConfiguration<User>
 {
-    public const int NameMaxLength = 100;
-
     public void Configure(EntityTypeBuilder<User> builder)
     {
-        builder.Property(u => u.Name).HasMaxLength(NameMaxLength);
+        builder.Property(u => u.Name).HasMaxLength(100);
 
         builder.HasIndex(u => u.CalendarFeedToken).IsUnique();
     }

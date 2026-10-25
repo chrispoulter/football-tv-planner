@@ -1,4 +1,5 @@
 using FluentValidation;
+using FootballTvPlanner.Server.Common.Validation;
 
 namespace FootballTvPlanner.Server.Features.Account.Login;
 
@@ -8,7 +9,7 @@ public class LoginRequestValidator : AbstractValidator<LoginRequest>
 {
     public LoginRequestValidator()
     {
-        RuleFor(x => x.Email).NotEmpty();
-        RuleFor(x => x.Password).NotEmpty();
+        RuleFor(x => x.Email).NotEmpty().PlainEmailAddress().MaximumLength(254);
+        RuleFor(x => x.Password).NotEmpty().MaximumLength(128);
     }
 }

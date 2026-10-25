@@ -9,6 +9,6 @@ public class UpdateProfileRequestValidator : AbstractValidator<UpdateProfileRequ
 {
     public UpdateProfileRequestValidator()
     {
-        RuleFor(x => x.Name).NotEmpty().MaximumLength(UserConfiguration.NameMaxLength);
+        RuleFor(x => x.Name).NotEmpty().MaximumLength(100);
     }
 }

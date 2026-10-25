@@ -10,7 +10,9 @@ import { FieldGroup } from '@/components/ui/field';
 import { useChangeEmail } from '../profile-queries';
 
 const schema = z.object({
-    newEmail: z.email('Invalid email address'),
+    newEmail: z
+        .email('Invalid email address')
+        .max(254, 'Email must be no more than 254 characters'),
 });
 
 type UpdateEmailFormValues = z.infer<typeof schema>;

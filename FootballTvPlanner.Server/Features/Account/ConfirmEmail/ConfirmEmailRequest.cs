@@ -1,4 +1,5 @@
 using FluentValidation;
+using FootballTvPlanner.Server.Common.Validation;
 
 namespace FootballTvPlanner.Server.Features.Account.ConfirmEmail;
 
@@ -10,6 +11,6 @@ public class ConfirmEmailRequestValidator : AbstractValidator<ConfirmEmailReques
     {
         RuleFor(x => x.UserId).NotEmpty();
         RuleFor(x => x.Code).NotEmpty();
-        RuleFor(x => x.ChangedEmail).EmailAddress().MaximumLength(256);
+        RuleFor(x => x.ChangedEmail).PlainEmailAddress().MaximumLength(254);
     }
 }

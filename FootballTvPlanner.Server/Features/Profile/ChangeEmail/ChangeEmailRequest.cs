@@ -1,4 +1,5 @@
 using FluentValidation;
+using FootballTvPlanner.Server.Common.Validation;
 
 namespace FootballTvPlanner.Server.Features.Profile.ChangeEmail;
 
@@ -8,6 +9,6 @@ public class ChangeEmailRequestValidator : AbstractValidator<ChangeEmailRequest>
 {
     public ChangeEmailRequestValidator()
     {
-        RuleFor(x => x.NewEmail).NotEmpty().EmailAddress().MaximumLength(256);
+        RuleFor(x => x.NewEmail).NotEmpty().PlainEmailAddress().MaximumLength(254);
     }
 }

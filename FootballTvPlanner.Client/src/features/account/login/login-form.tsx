@@ -8,8 +8,13 @@ import { Button } from '@/components/ui/button';
 import { FieldGroup } from '@/components/ui/field';
 
 const schema = z.object({
-    emailAddress: z.email('Invalid email address'),
-    password: z.string().min(1, 'Password is required'),
+    emailAddress: z
+        .email('Invalid email address')
+        .max(254, 'Email must be no more than 254 characters'),
+    password: z
+        .string()
+        .min(1, 'Password is required')
+        .max(128, 'Password must be no more than 128 characters'),
     rememberMe: z.boolean(),
 });
 
@@ -50,7 +55,6 @@ export function LoginForm({ loading, onSubmit }: LoginFormProps) {
                     label="Password"
                     type="password"
                     placeholder="••••••••"
-                    maxLength={50}
                     autoComplete="current-password"
                     required
                 />

@@ -1,4 +1,5 @@
 using FluentValidation;
+using FootballTvPlanner.Server.Common.Validation;
 
 namespace FootballTvPlanner.Server.Features.Account.ForgotPassword;
 
@@ -8,6 +9,6 @@ public class ForgotPasswordRequestValidator : AbstractValidator<ForgotPasswordRe
 {
     public ForgotPasswordRequestValidator()
     {
-        RuleFor(x => x.Email).NotEmpty().EmailAddress().MaximumLength(256);
+        RuleFor(x => x.Email).NotEmpty().PlainEmailAddress().MaximumLength(254);
     }
 }
