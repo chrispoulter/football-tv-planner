@@ -1,5 +1,4 @@
 using System.Globalization;
-using System.Security.Claims;
 using System.Threading.RateLimiting;
 
 namespace FootballTvPlanner.Server.Common.Infrastructure;
@@ -21,16 +20,16 @@ public static class RateLimitingExtensions
 
         builder.Services.AddRateLimiter(options =>
         {
-            options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
-
             options.AddPolicy(
                 RateLimitPolicies.Default,
                 context =>
                 {
-                    var partitionKey = context.User.FindFirstValue(ClaimTypes.NameIdentifier)
-                        is { } userId
-                        ? $"user:{userId}"
-                        : $"ip:{context.Connection.RemoteIpAddress}";
+                    var partitionKey = $"ip:{context.Connection.RemoteIpAddress}";
+
+                    if (context.User.Identity?.IsAuthenticated is true)
+                    {
+                        partitionKey = $"user:{context.User.Identity.Name}";
+                    }
 
                     return RateLimitPartition.GetSlidingWindowLimiter(
                         partitionKey,
@@ -54,18 +53,14 @@ public static class RateLimitingExtensions
                     ).ToString(NumberFormatInfo.InvariantInfo);
                 }
 
-                // Log the route template, not the path, as some paths carry secrets such as calendar feed tokens
-                var route =
-                    (context.HttpContext.GetEndpoint() as RouteEndpoint)?.RoutePattern.RawText
-                    ?? "unknown";
-
+                context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
                 context
                     .HttpContext.RequestServices.GetRequiredService<ILoggerFactory>()
-                    .CreateLogger(typeof(RateLimitingExtensions).FullName!)
+                    .CreateLogger("Microsoft.AspNetCore.RateLimitingMiddleware")
                     .LogWarning(
-                        "Rate limit exceeded for {Method} {Route}",
+                        "Rate limit exceeded for {Method} {Path}",
                         context.HttpContext.Request.Method,
-                        route
+                        context.HttpContext.Request.Path
                     );
 
                 var problemDetailsService =
