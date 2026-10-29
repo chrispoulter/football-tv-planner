@@ -10,26 +10,33 @@ public class GetCurrentUserEndpoint : IEndpoint
     public void MapEndpoints(IEndpointRouteBuilder app)
     {
         app.MapGet("/account/me", HandleAsync)
-            .RequireAuthorization()
+            .AllowAnonymous()
             .Produces<CurrentUserResponse>()
+            .Produces(StatusCodes.Status204NoContent)
             .WithTags(Tags.Account)
             .WithSummary("Get Current User")
-            .WithDescription("Get the profile and security settings of the current user.");
+            .WithDescription(
+                "Get the profile and security settings of the current user, or no content if nobody is signed in."
+            );
     }
 
     private static async Task<IResult> HandleAsync(
-        CurrentUser currentUser,
-        UserManager<User> userManager
+        CurrentUser? currentUser,
+        UserManager<User> userManager,
+        SignInManager<User> signInManager
     )
     {
+        if (currentUser is null)
+        {
+            return Results.NoContent();
+        }
+
         var user = await userManager.GetUserAsync(currentUser);
 
         if (user is null)
         {
-            return Results.Problem(
-                statusCode: StatusCodes.Status404NotFound,
-                title: "User not found."
-            );
+            await signInManager.SignOutAsync();
+            return Results.NoContent();
         }
 
         return Results.Ok(
