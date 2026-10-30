@@ -24,6 +24,7 @@ builder.AddForwardedHeaders();
 builder.AddDataProtection<FootballTvPlannerDbContext>();
 builder.AddAuthentication<User, FootballTvPlannerDbContext>();
 builder.AddRateLimiting();
+builder.AddCaching();
 builder.AddOpenApi(serviceVersion);
 
 var app = builder.Build();
