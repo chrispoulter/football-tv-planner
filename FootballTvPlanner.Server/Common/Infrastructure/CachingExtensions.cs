@@ -6,14 +6,18 @@ public static class CachingExtensions
 {
     public static IHostApplicationBuilder AddCaching(this IHostApplicationBuilder builder)
     {
-        builder.Services.AddMemoryCache(options => options.SizeLimit = 20 * 1024 * 1024);
+        var settings =
+            builder.Configuration.GetSection(CachingSettings.SectionName).Get<CachingSettings>()
+            ?? new CachingSettings();
+
+        builder.Services.AddMemoryCache(options => options.SizeLimit = settings.SizeLimitBytes);
 
         builder.Services.AddHybridCache(options =>
         {
             options.DefaultEntryOptions = new HybridCacheEntryOptions
             {
-                Expiration = TimeSpan.FromHours(1),
-                LocalCacheExpiration = TimeSpan.FromHours(1),
+                Expiration = settings.Expiration,
+                LocalCacheExpiration = settings.Expiration,
             };
         });
 
