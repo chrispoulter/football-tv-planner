@@ -9,7 +9,7 @@ EXPOSE 8081
 
 
 # This stage is used to build the web frontend served from wwwroot
-FROM node:24-alpine AS web
+FROM node:26-alpine AS web
 WORKDIR /web
 COPY ["FootballTvPlanner.Client/package.json", "FootballTvPlanner.Client/package-lock.json", "./"]
 RUN npm ci

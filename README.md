@@ -27,7 +27,7 @@ A full-stack app for browsing football on UK TV and streaming services and addin
 ### Prerequisites
 
 - .NET SDK 10 (see `global.json`)
-- Node.js 24
+- Node.js 26
 - Docker, which Aspire uses to run PostgreSQL and Mailpit
 
 ### Run the app
