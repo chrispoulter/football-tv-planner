@@ -1,6 +1,7 @@
 using FootballTvPlanner.Data;
 using FootballTvPlanner.Server.Common.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Hybrid;
 
 namespace FootballTvPlanner.Server.Features.Fixtures.GetChannels;
 
@@ -21,21 +22,31 @@ public class GetChannelsEndpoint : IEndpoint
     private static async Task<IResult> HandleAsync(
         FootballTvPlannerDbContext dbContext,
         TimeProvider timeProvider,
+        HybridCache cache,
         CancellationToken cancellationToken = default
     )
     {
-        var cutoff = timeProvider.GetUtcNow().AddDays(-1);
+        var channels = await cache.GetOrCreateAsync(
+            "channels",
+            async cancel =>
+            {
+                var cutoff = timeProvider.GetUtcNow().AddDays(-1);
 
-        var channels = await dbContext
-            .Channels.AsNoTracking()
-            .Where(c =>
-                dbContext.Fixtures.Any(f =>
-                    f.KickoffUtc >= cutoff && f.Channels.Any(fc => fc.Id == c.Id)
-                )
-            )
-            .OrderBy(c => c.Name)
-            .Select(c => new GetChannelsItem(c.Id, c.Name))
-            .ToListAsync(cancellationToken);
+                var channels = await dbContext
+                    .Channels.AsNoTracking()
+                    .Where(c =>
+                        dbContext.Fixtures.Any(f =>
+                            f.KickoffUtc >= cutoff && f.Channels.Any(fc => fc.Id == c.Id)
+                        )
+                    )
+                    .OrderBy(c => c.Name)
+                    .Select(c => new GetChannelsItem(c.Id, c.Name))
+                    .ToListAsync(cancel);
+
+                return channels;
+            },
+            cancellationToken: cancellationToken
+        );
 
         return Results.Ok(new GetChannelsResponse(channels));
     }

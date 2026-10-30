@@ -1,6 +1,7 @@
 using FootballTvPlanner.Data;
 using FootballTvPlanner.Server.Common.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Hybrid;
 
 namespace FootballTvPlanner.Server.Features.Fixtures.GetCompetitions;
 
@@ -19,19 +20,31 @@ public class GetCompetitionsEndpoint : IEndpoint
     private static async Task<IResult> HandleAsync(
         FootballTvPlannerDbContext dbContext,
         TimeProvider timeProvider,
+        HybridCache cache,
         CancellationToken cancellationToken = default
     )
     {
-        var cutoff = timeProvider.GetUtcNow().AddDays(-1);
+        var competitions = await cache.GetOrCreateAsync(
+            "competitions",
+            async cancel =>
+            {
+                var cutoff = timeProvider.GetUtcNow().AddDays(-1);
 
-        var competitions = await dbContext
-            .Competitions.AsNoTracking()
-            .Where(c =>
-                dbContext.Fixtures.Any(f => f.CompetitionId == c.Id && f.KickoffUtc >= cutoff)
-            )
-            .OrderBy(c => c.Name)
-            .Select(c => new GetCompetitionsItem(c.Id, c.Name))
-            .ToListAsync(cancellationToken);
+                var competitions = await dbContext
+                    .Competitions.AsNoTracking()
+                    .Where(c =>
+                        dbContext.Fixtures.Any(f =>
+                            f.CompetitionId == c.Id && f.KickoffUtc >= cutoff
+                        )
+                    )
+                    .OrderBy(c => c.Name)
+                    .Select(c => new GetCompetitionsItem(c.Id, c.Name))
+                    .ToListAsync(cancel);
+
+                return competitions;
+            },
+            cancellationToken: cancellationToken
+        );
 
         return Results.Ok(new GetCompetitionsResponse(competitions));
     }

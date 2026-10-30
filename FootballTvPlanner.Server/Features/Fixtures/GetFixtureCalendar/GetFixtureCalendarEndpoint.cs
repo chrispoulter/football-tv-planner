@@ -2,6 +2,7 @@ using System.Text;
 using FootballTvPlanner.Data;
 using FootballTvPlanner.Server.Common.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Hybrid;
 
 namespace FootballTvPlanner.Server.Features.Fixtures.GetFixtureCalendar;
 
@@ -23,14 +24,20 @@ public class GetFixtureCalendarEndpoint : IEndpoint
         Guid id,
         FootballTvPlannerDbContext dbContext,
         TimeProvider timeProvider,
+        HybridCache cache,
         CancellationToken cancellationToken = default
     )
     {
-        var fixture = await dbContext
-            .Fixtures.AsNoTracking()
-            .Where(f => f.Id == id)
-            .Select(FixtureProjections.ToCalendarFixture())
-            .FirstOrDefaultAsync(cancellationToken);
+        var fixture = await cache.GetOrCreateAsync(
+            $"fixture_calendar_{id}",
+            async cancel =>
+                await dbContext
+                    .Fixtures.AsNoTracking()
+                    .Where(f => f.Id == id)
+                    .Select(FixtureProjections.ToCalendarFixture())
+                    .FirstOrDefaultAsync(cancel),
+            cancellationToken: cancellationToken
+        );
 
         if (fixture is null)
         {
