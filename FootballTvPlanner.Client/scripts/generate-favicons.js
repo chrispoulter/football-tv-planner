@@ -1,10 +1,8 @@
 import { readFileSync, writeFileSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
 import sharp from 'sharp';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const root = resolve(__dirname, '..');
+const root = resolve(import.meta.dirname, '..');
 const input = resolve(root, 'public/icon.svg');
 const svgBuffer = readFileSync(input);
 
@@ -17,11 +15,13 @@ const sizes = [
     { name: 'android-chrome-512x512.png', size: 512 },
 ];
 
-for (const { name, size } of sizes) {
-    const out = resolve(root, 'public', name);
-    await sharp(svgBuffer).resize(size, size).png().toFile(out);
-    console.log(`Generated ${name}`);
-}
+await Promise.all(
+    sizes.map(async ({ name, size }) => {
+        const out = resolve(root, 'public', name);
+        await sharp(svgBuffer).resize(size, size).png().toFile(out);
+        console.log(`Generated ${name}`);
+    })
+);
 
 // Build favicon.ico from 16x16 and 32x32 PNGs
 const icoSizes = [16, 32];
