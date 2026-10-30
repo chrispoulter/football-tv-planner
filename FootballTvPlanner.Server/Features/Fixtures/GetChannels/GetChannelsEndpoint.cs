@@ -20,9 +20,9 @@ public class GetChannelsEndpoint : IEndpoint
     }
 
     private static async Task<IResult> HandleAsync(
-        FootballTvPlannerDbContext dbContext,
-        TimeProvider timeProvider,
+        IServiceScopeFactory scopeFactory,
         HybridCache cache,
+        TimeProvider timeProvider,
         CancellationToken cancellationToken = default
     )
     {
@@ -30,12 +30,17 @@ public class GetChannelsEndpoint : IEndpoint
             "channels",
             async cancel =>
             {
+                await using var scope = scopeFactory.CreateAsyncScope();
+
+                var cacheDbContext =
+                    scope.ServiceProvider.GetRequiredService<FootballTvPlannerDbContext>();
+
                 var cutoff = timeProvider.GetUtcNow().AddDays(-1);
 
-                var channels = await dbContext
+                var channels = await cacheDbContext
                     .Channels.AsNoTracking()
                     .Where(c =>
-                        dbContext.Fixtures.Any(f =>
+                        cacheDbContext.Fixtures.Any(f =>
                             f.KickoffUtc >= cutoff && f.Channels.Any(fc => fc.Id == c.Id)
                         )
                     )

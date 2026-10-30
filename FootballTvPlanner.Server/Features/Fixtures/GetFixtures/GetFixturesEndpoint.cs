@@ -26,6 +26,7 @@ public class GetFixturesEndpoint : IEndpoint
         [AsParameters] GetFixturesRequest request,
         CurrentUser? currentUser,
         FootballTvPlannerDbContext dbContext,
+        IServiceScopeFactory scopeFactory,
         HybridCache cache,
         CancellationToken cancellationToken = default
     )
@@ -45,7 +46,12 @@ public class GetFixturesEndpoint : IEndpoint
             $"fixtures_{start.UtcTicks}_{end.UtcTicks}_{request.CompetitionId}_{request.ChannelId}",
             async cancel =>
             {
-                var query = dbContext
+                await using var scope = scopeFactory.CreateAsyncScope();
+
+                var cacheDbContext =
+                    scope.ServiceProvider.GetRequiredService<FootballTvPlannerDbContext>();
+
+                var query = cacheDbContext
                     .Fixtures.AsNoTracking()
                     .Where(f => f.KickoffUtc >= start && f.KickoffUtc < end);
 

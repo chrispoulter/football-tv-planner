@@ -18,9 +18,9 @@ public class GetCompetitionsEndpoint : IEndpoint
     }
 
     private static async Task<IResult> HandleAsync(
-        FootballTvPlannerDbContext dbContext,
-        TimeProvider timeProvider,
+        IServiceScopeFactory scopeFactory,
         HybridCache cache,
+        TimeProvider timeProvider,
         CancellationToken cancellationToken = default
     )
     {
@@ -28,12 +28,17 @@ public class GetCompetitionsEndpoint : IEndpoint
             "competitions",
             async cancel =>
             {
+                await using var scope = scopeFactory.CreateAsyncScope();
+
+                var cacheDbContext =
+                    scope.ServiceProvider.GetRequiredService<FootballTvPlannerDbContext>();
+
                 var cutoff = timeProvider.GetUtcNow().AddDays(-1);
 
-                var competitions = await dbContext
+                var competitions = await cacheDbContext
                     .Competitions.AsNoTracking()
                     .Where(c =>
-                        dbContext.Fixtures.Any(f =>
+                        cacheDbContext.Fixtures.Any(f =>
                             f.CompetitionId == c.Id && f.KickoffUtc >= cutoff
                         )
                     )
