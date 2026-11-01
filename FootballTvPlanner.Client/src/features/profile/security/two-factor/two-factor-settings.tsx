@@ -1,51 +1,34 @@
 import { useState } from 'react';
-import { toast } from 'sonner';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import {
-    useDisableTwoFactor,
-    useEnableTwoFactor,
-    useGenerateRecoveryCodes,
-    useGetTwoFactor,
-    useSetupTwoFactor,
-} from '../../profile-queries';
-import { TwoFactorRecoveryCodes } from './two-factor-recovery-codes';
+import { useGetTwoFactor } from '../../profile-queries';
 import { TwoFactorConfirmDisable } from './two-factor-confirm-disable';
 import { TwoFactorConfirmRecoveryCodes } from './two-factor-confirm-recovery-codes';
-import { TwoFactorQRCode } from './two-factor-qr-code';
-import {
-    TwoFactorVerifyForm,
-    type TwoFactorVerifyFormValues,
-} from './two-factor-verify-form';
+import { TwoFactorDisabled } from './two-factor-disabled';
+import { TwoFactorEnabled } from './two-factor-enabled';
+import { TwoFactorQrCode } from './two-factor-qr-code';
+import { TwoFactorRecoveryCodes } from './two-factor-recovery-codes';
+import { TwoFactorVerify } from './two-factor-verify';
 
 type TwoFactorStep =
     | 'idle'
     | 'qr'
     | 'verify'
-    | 'recovery-codes'
     | 'confirm-disable'
-    | 'confirm-regenerate';
+    | 'recovery-codes'
+    | 'confirm-recovery-codes';
+
+interface TotpSetup {
+    sharedKey: string;
+    authenticatorUri: string;
+}
 
 export function TwoFactorSettings() {
     const [step, setStep] = useState<TwoFactorStep>('idle');
-
+    const [totpSetup, setTotpSetup] = useState<TotpSetup>();
     const [recoveryCodes, setRecoveryCodes] = useState<string[]>([]);
 
     const { data: status, isPending, isSuccess } = useGetTwoFactor();
-
-    const {
-        mutate: setup,
-        data: setupData,
-        isPending: isSettingUp,
-    } = useSetupTwoFactor();
-
-    const { mutate: enable, isPending: isEnabling } = useEnableTwoFactor();
-
-    const { mutate: disable, isPending: isDisabling } = useDisableTwoFactor();
-
-    const { mutate: generateRecoveryCodes, isPending: isGenerating } =
-        useGenerateRecoveryCodes();
 
     if (isPending) {
         return <Skeleton className="h-9 w-full sm:w-32" />;
@@ -62,132 +45,86 @@ export function TwoFactorSettings() {
         );
     }
 
-    function onSetup() {
-        setup(undefined, {
-            onSuccess: () => setStep('qr'),
-            onError: (error) => toast.error(error.message),
-        });
+    function onRecoveryCodes(codes: string[]) {
+        setRecoveryCodes(codes);
+        setStep('recovery-codes');
     }
 
-    function onVerify({ code }: TwoFactorVerifyFormValues) {
-        enable(
-            { code },
-            {
-                onSuccess: (response) => {
-                    toast.success('Two-factor authentication enabled');
-                    setRecoveryCodes(response.recoveryCodes);
-                    setStep('recovery-codes');
-                },
-                onError: (error) => toast.error(error.message),
-            }
-        );
+    function onRecoveryCodesDone() {
+        setRecoveryCodes([]);
+        setStep('idle');
     }
 
-    function onDisable() {
-        disable(undefined, {
-            onSuccess: () => {
-                toast.success('Two-factor authentication disabled');
-                setStep('idle');
-            },
-            onError: (error) => toast.error(error.message),
-        });
-    }
+    if (status.isEnabled) {
+        return (
+            <div className="space-y-4">
+                {step === 'idle' && (
+                    <TwoFactorEnabled
+                        recoveryCodesLeft={status.recoveryCodesLeft ?? 0}
+                        onDisable={() => setStep('confirm-disable')}
+                        onGenerateRecoveryCodes={() =>
+                            setStep('confirm-recovery-codes')
+                        }
+                    />
+                )}
 
-    function onRegenerate() {
-        generateRecoveryCodes(undefined, {
-            onSuccess: (response) => {
-                toast.success('Recovery codes regenerated');
-                setRecoveryCodes(response.recoveryCodes);
-                setStep('recovery-codes');
-            },
-            onError: (error) => toast.error(error.message),
-        });
-    }
-
-    switch (step) {
-        case 'qr':
-            return (
-                setupData && (
-                    <TwoFactorQRCode
-                        sharedKey={setupData.sharedKey}
-                        authenticatorUri={setupData.authenticatorUri}
-                        onDone={() => setStep('verify')}
+                {step === 'confirm-recovery-codes' && (
+                    <TwoFactorConfirmRecoveryCodes
+                        onRegenerated={onRecoveryCodes}
                         onCancel={() => setStep('idle')}
                     />
-                )
-            );
+                )}
 
-        case 'verify':
-            return (
-                <TwoFactorVerifyForm
-                    loading={isEnabling}
-                    onSubmit={onVerify}
-                    onBack={() => setStep('qr')}
-                />
-            );
+                {step === 'recovery-codes' && (
+                    <TwoFactorRecoveryCodes
+                        recoveryCodes={recoveryCodes}
+                        onDone={onRecoveryCodesDone}
+                    />
+                )}
 
-        case 'recovery-codes':
-            return (
-                <TwoFactorRecoveryCodes
-                    recoveryCodes={recoveryCodes}
-                    onDone={() => {
-                        setRecoveryCodes([]);
-                        setStep('idle');
-                    }}
-                />
-            );
-
-        case 'confirm-disable':
-            return (
-                <TwoFactorConfirmDisable
-                    loading={isDisabling}
-                    onConfirm={onDisable}
-                    onCancel={() => setStep('idle')}
-                />
-            );
-
-        case 'confirm-regenerate':
-            return (
-                <TwoFactorConfirmRecoveryCodes
-                    loading={isGenerating}
-                    onConfirm={onRegenerate}
-                    onCancel={() => setStep('idle')}
-                />
-            );
-    }
-
-    if (!status.isEnabled) {
-        return (
-            <Button
-                onClick={onSetup}
-                className="w-full sm:w-auto"
-                disabled={isSettingUp}
-            >
-                {isSettingUp ? 'Setting Up...' : 'Enable 2FA'}
-            </Button>
+                {step === 'confirm-disable' && (
+                    <TwoFactorConfirmDisable
+                        onDisabled={() => setStep('idle')}
+                        onCancel={() => setStep('idle')}
+                    />
+                )}
+            </div>
         );
     }
 
     return (
         <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">
-                Enabled. You have {status.recoveryCodesLeft ?? 0} recovery codes
-                left.
-            </p>
-            <div className="flex flex-col-reverse gap-2 sm:flex-row">
-                <Button
-                    variant="destructive"
-                    onClick={() => setStep('confirm-disable')}
-                >
-                    Disable 2FA
-                </Button>
-                <Button
-                    variant="outline"
-                    onClick={() => setStep('confirm-regenerate')}
-                >
-                    Regenerate Recovery Codes
-                </Button>
-            </div>
+            {step === 'idle' && (
+                <TwoFactorDisabled
+                    onTotpSetup={(sharedKey, authenticatorUri) => {
+                        setTotpSetup({ sharedKey, authenticatorUri });
+                        setStep('qr');
+                    }}
+                />
+            )}
+
+            {step === 'qr' && totpSetup && (
+                <TwoFactorQrCode
+                    sharedKey={totpSetup.sharedKey}
+                    authenticatorUri={totpSetup.authenticatorUri}
+                    onDone={() => setStep('verify')}
+                    onCancel={() => setStep('idle')}
+                />
+            )}
+
+            {step === 'verify' && (
+                <TwoFactorVerify
+                    onSuccess={onRecoveryCodes}
+                    onCancel={() => setStep('qr')}
+                />
+            )}
+
+            {step === 'recovery-codes' && (
+                <TwoFactorRecoveryCodes
+                    recoveryCodes={recoveryCodes}
+                    onDone={onRecoveryCodesDone}
+                />
+            )}
         </div>
     );
 }

@@ -12,7 +12,6 @@ export function DangerTab() {
     return (
         <>
             <Metadata title="Danger Zone" />
-
             <Card>
                 <CardHeader>
                     <CardTitle>
@@ -24,7 +23,7 @@ export function DangerTab() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <DeleteAccountDialog className="w-full sm:w-auto" />
+                    <DeleteAccountDialog />
                 </CardContent>
             </Card>
         </>

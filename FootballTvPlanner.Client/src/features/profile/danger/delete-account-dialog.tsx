@@ -1,38 +1,32 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { toast } from 'sonner';
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
 import { useAuth } from '@/components/auth-provider';
 import { Button } from '@/components/ui/button';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog';
 import { useDeleteAccount } from '../profile-queries';
 
-interface DeleteAccountDialogProps {
-    disabled?: boolean;
-    className?: string;
-}
+export function DeleteAccountDialog() {
+    const [isOpen, setIsOpen] = useState(false);
 
-export function DeleteAccountDialog({
-    disabled,
-    className,
-}: DeleteAccountDialogProps) {
     const navigate = useNavigate();
 
     const { refreshAuth } = useAuth();
 
-    const { mutate: deleteAccount, isPending: isDeleting } = useDeleteAccount();
+    const { mutate: deleteAccount, isPending } = useDeleteAccount();
 
     function onDelete() {
         deleteAccount(undefined, {
             onSuccess: () => {
+                setIsOpen(false);
                 toast.success('Account deleted');
                 refreshAuth();
                 navigate('/login');
@@ -42,35 +36,33 @@ export function DeleteAccountDialog({
     }
 
     return (
-        <AlertDialog>
-            <AlertDialogTrigger asChild>
-                <Button
-                    variant="destructive"
-                    disabled={disabled || isDeleting}
-                    className={className}
-                >
-                    {isDeleting ? 'Deleting...' : 'Delete Account'}
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+            <DialogTrigger asChild>
+                <Button variant="destructive" className="w-full sm:w-auto">
+                    Delete Account
                 </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-                <AlertDialogHeader>
-                    <AlertDialogTitle>Delete Account</AlertDialogTitle>
-                    <AlertDialogDescription>
-                        Are you sure you want to delete your account? All of
-                        your data will be permanently removed. This action
-                        cannot be undone.
-                    </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction
-                        disabled={disabled || isDeleting}
+            </DialogTrigger>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Delete account?</DialogTitle>
+                    <DialogDescription>
+                        This action cannot be undone. Your account and all
+                        associated data will be permanently deleted.
+                    </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                    <Button variant="outline" onClick={() => setIsOpen(false)}>
+                        Cancel
+                    </Button>
+                    <Button
+                        variant="destructive"
                         onClick={onDelete}
+                        disabled={isPending}
                     >
-                        Continue
-                    </AlertDialogAction>
-                </AlertDialogFooter>
-            </AlertDialogContent>
-        </AlertDialog>
+                        {isPending ? 'Deleting...' : 'Delete'}
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     );
 }

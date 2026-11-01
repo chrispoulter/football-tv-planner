@@ -1,7 +1,7 @@
 import { QRCodeSVG } from 'qrcode.react';
 import { Button } from '@/components/ui/button';
 
-interface TwoFactorQRCodeProps {
+interface TwoFactorQrCodeProps {
     sharedKey: string;
     authenticatorUri: string;
     onDone: () => void;
@@ -18,12 +18,12 @@ function formatKey(sharedKey: string) {
     );
 }
 
-export function TwoFactorQRCode({
+export function TwoFactorQrCode({
     sharedKey,
     authenticatorUri,
     onDone,
     onCancel,
-}: TwoFactorQRCodeProps) {
+}: TwoFactorQrCodeProps) {
     return (
         <div className="space-y-4">
             <p className="text-sm font-medium">
@@ -31,7 +31,12 @@ export function TwoFactorQRCode({
                 Authenticator, Microsoft Authenticator or 1Password:
             </p>
             <div className="inline-block rounded-lg border bg-white p-4">
-                <QRCodeSVG value={authenticatorUri} size={176} />
+                <QRCodeSVG
+                    value={authenticatorUri}
+                    size={200}
+                    role="img"
+                    aria-label="QR code for your authenticator app"
+                />
             </div>
             <p className="text-sm text-muted-foreground">
                 Or enter the key manually:{' '}

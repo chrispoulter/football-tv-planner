@@ -16,7 +16,7 @@ export function ProfileLayout() {
                 </p>
             </div>
 
-            <nav>
+            <nav aria-label="Profile sections">
                 <ul className="flex h-9 items-center gap-1">
                     {navItems.map((item) => (
                         <li key={item.to} className="h-full">

@@ -43,7 +43,7 @@ public class ResendConfirmationEmailEndpoint : IEndpoint
         {
             return Results.Problem(
                 statusCode: StatusCodes.Status400BadRequest,
-                title: "Your email address is already confirmed."
+                title: "Your email address is already verified."
             );
         }
 

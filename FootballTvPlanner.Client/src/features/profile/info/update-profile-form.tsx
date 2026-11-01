@@ -2,6 +2,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from 'sonner';
+import { useAuth } from '@/components/auth-provider';
 import { FormInputField } from '@/components/form/form-input-field';
 import { Button } from '@/components/ui/button';
 import { FieldGroup } from '@/components/ui/field';
@@ -17,17 +18,17 @@ const schema = z.object({
 
 type UpdateProfileFormValues = z.infer<typeof schema>;
 
-interface UpdateProfileFormProps {
-    name?: string;
-}
+export function UpdateProfileForm() {
+    const { user } = useAuth();
 
-export function UpdateProfileForm({ name }: UpdateProfileFormProps) {
     const { mutate: updateProfile, isPending } = useUpdateProfile();
+
+    const name = user?.name ?? '';
 
     const form = useForm<UpdateProfileFormValues>({
         resolver: zodResolver(schema),
         defaultValues: {
-            name: name ?? '',
+            name,
         },
     });
 

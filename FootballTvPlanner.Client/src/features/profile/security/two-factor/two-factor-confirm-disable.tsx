@@ -1,16 +1,28 @@
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+import { useDisableTwoFactor } from '../../profile-queries';
 
 interface TwoFactorConfirmDisableProps {
-    loading?: boolean;
-    onConfirm: () => void;
+    onDisabled: () => void;
     onCancel: () => void;
 }
 
 export function TwoFactorConfirmDisable({
-    loading,
-    onConfirm,
+    onDisabled,
     onCancel,
 }: TwoFactorConfirmDisableProps) {
+    const { mutate: disableTwoFactor, isPending } = useDisableTwoFactor();
+
+    function onDisable() {
+        disableTwoFactor(undefined, {
+            onSuccess: () => {
+                toast.success('Two-factor authentication disabled');
+                onDisabled();
+            },
+            onError: (error) => toast.error(error.message),
+        });
+    }
+
     return (
         <div className="space-y-4">
             <p className="text-sm text-muted-foreground">
@@ -19,15 +31,15 @@ export function TwoFactorConfirmDisable({
                 stop working.
             </p>
             <div className="flex flex-col-reverse gap-2 sm:flex-row">
-                <Button variant="outline" onClick={onCancel}>
+                <Button type="button" variant="outline" onClick={onCancel}>
                     Cancel
                 </Button>
                 <Button
                     variant="destructive"
-                    onClick={onConfirm}
-                    disabled={loading}
+                    onClick={onDisable}
+                    disabled={isPending}
                 >
-                    {loading ? 'Disabling...' : 'Disable 2FA'}
+                    {isPending ? 'Disabling...' : 'Disable 2FA'}
                 </Button>
             </div>
         </div>

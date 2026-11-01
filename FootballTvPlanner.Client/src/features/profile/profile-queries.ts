@@ -42,7 +42,7 @@ export const useChangeEmail = () =>
                 .then(() => undefined),
     });
 
-export const useResendConfirmationEmail = () =>
+export const useSendVerificationEmail = () =>
     useMutation({
         mutationFn: () =>
             apiClient

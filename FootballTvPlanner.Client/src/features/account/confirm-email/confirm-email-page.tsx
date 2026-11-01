@@ -30,16 +30,16 @@ export function ConfirmEmailPage() {
     }, [isSuccess, queryClient]);
 
     const [title, message] = isPending
-        ? ['Confirming Email', 'Just a moment…']
+        ? ['Verifying Email', 'Just a moment…']
         : isSuccess
           ? changedEmail
               ? ['Email Changed', `Your email address is now ${changedEmail}.`]
               : [
-                    'Email Confirmed',
-                    'Thank you for confirming your email address.',
+                    'Email Verified',
+                    'Thank you for verifying your email address.',
                 ]
           : [
-                'Unable to Confirm Email',
+                'Unable to Verify Email',
                 'This link is invalid or has expired. Please request a new one.',
             ];
 
@@ -57,7 +57,7 @@ export function ConfirmEmailPage() {
                 )
             }
         >
-            <Metadata title="Confirm Email" />
+            <Metadata title="Verify Email" />
 
             {isPending ? (
                 <PageLoading />
