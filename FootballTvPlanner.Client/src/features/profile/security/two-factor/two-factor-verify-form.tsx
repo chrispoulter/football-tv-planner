@@ -27,7 +27,7 @@ export function TwoFactorVerifyForm({
         defaultValues: {
             code: '',
         },
-        // Focusing the invalid code input on submit stops its error showing
+        // HACK: prevent RHF from auto-focusing the first invalid field on submit, which breaks error state render
         shouldFocusError: false,
     });
 

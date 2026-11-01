@@ -15,7 +15,6 @@ import { TwoFactorSettings } from './two-factor/two-factor-settings';
 export function SecurityTab() {
     const { user } = useAuth();
 
-    // RequireAuth only renders this once the user has loaded
     if (!user) {
         return null;
     }

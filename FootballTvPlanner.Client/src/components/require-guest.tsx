@@ -13,7 +13,6 @@ export function RequireGuest() {
     }
 
     if (user) {
-        // Also where the login page goes once signed in, so the two agree
         return <Navigate to={returnUrl(location.state)} replace />;
     }
 

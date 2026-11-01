@@ -20,7 +20,6 @@ export function useLogin() {
             apiClient
                 .post('account/login', { json: request })
                 .json<LoginResponse>(),
-        // Not logged in yet when a two-factor code is still needed
         onSuccess: (response) => {
             if (!response.requiresTwoFactor) {
                 return refreshAuth();
