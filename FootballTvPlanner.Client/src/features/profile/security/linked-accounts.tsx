@@ -67,12 +67,11 @@ export function LinkedAccounts({ hasPassword }: LinkedAccountsProps) {
 
     const canUnlink = hasPassword || data.providers.length > 1;
 
-    function onUnlink(providerId: string, label: string) {
+    const handleUnlink = (providerId: string, label: string) =>
         removeLinkedAccount(providerId, {
             onSuccess: () => toast.success(`${label} account disconnected`),
             onError: (error) => toast.error(error.message),
         });
-    }
 
     return (
         <div className="space-y-4">
@@ -104,7 +103,7 @@ export function LinkedAccounts({ hasPassword }: LinkedAccountsProps) {
                                 (isRemoving && removingProvider === provider.id)
                             }
                             onClick={() =>
-                                onUnlink(provider.id, provider.label)
+                                handleUnlink(provider.id, provider.label)
                             }
                         >
                             {isRemoving && removingProvider === provider.id

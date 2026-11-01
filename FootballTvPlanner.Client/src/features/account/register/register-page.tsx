@@ -12,7 +12,7 @@ export function RegisterPage() {
 
     const { mutate: register, isPending } = useRegister();
 
-    function onSubmit({ name, emailAddress, password }: RegisterFormValues) {
+    const onSubmit = ({ name, emailAddress, password }: RegisterFormValues) =>
         register(
             { name, email: emailAddress, password },
             {
@@ -23,7 +23,6 @@ export function RegisterPage() {
                 onError: (error) => toast.error(error.message),
             }
         );
-    }
 
     return (
         <AccountLayout

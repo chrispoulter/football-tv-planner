@@ -38,10 +38,10 @@ export interface GetChannelsResponse {
     items: { id: string; name: string }[];
 }
 
-export const useGetFixtures = (
+export function useGetFixtures(
     request: GetFixturesRequest,
     { enabled }: { enabled?: boolean } = {}
-) => {
+) {
     const searchParams = Object.fromEntries(
         Object.entries(request).filter(([, value]) => !!value)
     );
@@ -58,10 +58,10 @@ export const useGetFixtures = (
                 .json<GetFixturesResponse>(),
         placeholderData: keepPreviousData,
     });
-};
+}
 
-export const useGetCompetitions = () =>
-    useQuery({
+export function useGetCompetitions() {
+    return useQuery({
         queryKey: fixtureKeys.competitions,
         queryFn: ({ signal }) =>
             apiClient
@@ -69,11 +69,13 @@ export const useGetCompetitions = () =>
                 .json<GetCompetitionsResponse>(),
         staleTime: 1000 * 60 * 60,
     });
+}
 
-export const useGetChannels = () =>
-    useQuery({
+export function useGetChannels() {
+    return useQuery({
         queryKey: fixtureKeys.channels,
         queryFn: ({ signal }) =>
             apiClient.get('channels', { signal }).json<GetChannelsResponse>(),
         staleTime: 1000 * 60 * 60,
     });
+}

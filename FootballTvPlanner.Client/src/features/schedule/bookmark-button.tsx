@@ -27,7 +27,7 @@ export function BookmarkButton({
         ? 'Remove from my schedule'
         : 'Add to my schedule';
 
-    function onClick() {
+    const handleToggleBookmark = () => {
         if (!user) {
             toast.info('Sign in to build your own schedule');
             navigate('/login', { state: { from: location } });
@@ -40,13 +40,13 @@ export function BookmarkButton({
                 onError: (error) => toast.error(error.message),
             }
         );
-    }
+    };
 
     return (
         <Button
             variant="ghost"
             size="icon"
-            onClick={onClick}
+            onClick={handleToggleBookmark}
             aria-pressed={isBookmarked}
             title={label}
         >

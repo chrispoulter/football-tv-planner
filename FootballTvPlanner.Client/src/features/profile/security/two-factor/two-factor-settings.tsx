@@ -62,14 +62,13 @@ export function TwoFactorSettings() {
         );
     }
 
-    function onSetup() {
+    const handleSetup = () =>
         setup(undefined, {
             onSuccess: () => setStep('qr'),
             onError: (error) => toast.error(error.message),
         });
-    }
 
-    function onVerify({ code }: TwoFactorVerifyFormValues) {
+    const handleVerify = ({ code }: TwoFactorVerifyFormValues) =>
         enable(
             { code },
             {
@@ -81,9 +80,8 @@ export function TwoFactorSettings() {
                 onError: (error) => toast.error(error.message),
             }
         );
-    }
 
-    function onDisable() {
+    const handleDisable = () =>
         disable(undefined, {
             onSuccess: () => {
                 toast.success('Two-factor authentication disabled');
@@ -91,9 +89,8 @@ export function TwoFactorSettings() {
             },
             onError: (error) => toast.error(error.message),
         });
-    }
 
-    function onRegenerate() {
+    const handleRegenerate = () =>
         generateRecoveryCodes(undefined, {
             onSuccess: (response) => {
                 toast.success('Recovery codes regenerated');
@@ -102,7 +99,6 @@ export function TwoFactorSettings() {
             },
             onError: (error) => toast.error(error.message),
         });
-    }
 
     switch (step) {
         case 'qr':
@@ -121,7 +117,7 @@ export function TwoFactorSettings() {
             return (
                 <TwoFactorVerifyForm
                     loading={isEnabling}
-                    onSubmit={onVerify}
+                    onSubmit={handleVerify}
                     onBack={() => setStep('qr')}
                 />
             );
@@ -141,7 +137,7 @@ export function TwoFactorSettings() {
             return (
                 <TwoFactorConfirmDisable
                     loading={isDisabling}
-                    onConfirm={onDisable}
+                    onConfirm={handleDisable}
                     onCancel={() => setStep('idle')}
                 />
             );
@@ -150,7 +146,7 @@ export function TwoFactorSettings() {
             return (
                 <TwoFactorConfirmRecoveryCodes
                     loading={isGenerating}
-                    onConfirm={onRegenerate}
+                    onConfirm={handleRegenerate}
                     onCancel={() => setStep('idle')}
                 />
             );
@@ -159,7 +155,7 @@ export function TwoFactorSettings() {
     if (!status.isEnabled) {
         return (
             <Button
-                onClick={onSetup}
+                onClick={handleSetup}
                 className="w-full sm:w-auto"
                 disabled={isSettingUp}
             >

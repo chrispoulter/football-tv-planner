@@ -19,7 +19,7 @@ export function ResetPasswordPage() {
     const email = searchParams.get('email');
     const code = searchParams.get('code');
 
-    function onSubmit(values: ResetPasswordFormValues) {
+    const onSubmit = (values: ResetPasswordFormValues) => {
         if (!email || !code) {
             return;
         }
@@ -36,7 +36,7 @@ export function ResetPasswordPage() {
                 onError: (error) => toast.error(error.message),
             }
         );
-    }
+    };
 
     return (
         <AccountLayout

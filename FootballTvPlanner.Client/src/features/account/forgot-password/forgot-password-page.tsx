@@ -15,7 +15,7 @@ export function ForgotPasswordPage() {
 
     const { mutate: forgotPassword, isPending } = useForgotPassword();
 
-    function onSubmit(values: ForgotPasswordFormValues) {
+    const onSubmit = (values: ForgotPasswordFormValues) =>
         forgotPassword(
             { email: values.emailAddress },
             {
@@ -23,7 +23,6 @@ export function ForgotPasswordPage() {
                 onError: (error) => toast.error(error.message),
             }
         );
-    }
 
     return (
         <AccountLayout

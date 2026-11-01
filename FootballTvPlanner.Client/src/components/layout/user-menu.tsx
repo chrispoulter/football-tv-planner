@@ -20,12 +20,11 @@ export function UserMenu() {
 
     const { mutate: logout, isPending } = useLogout();
 
-    function onLogout() {
+    const handleLogout = () =>
         logout(undefined, {
             onSuccess: () => navigate('/'),
             onError: (error) => toast.error(error.message),
         });
-    }
 
     if (isLoading) {
         return <Skeleton className="size-9 rounded-full" />;
@@ -77,7 +76,7 @@ export function UserMenu() {
 
                 <DropdownMenuSeparator />
 
-                <DropdownMenuItem onClick={onLogout} disabled={isPending}>
+                <DropdownMenuItem onClick={handleLogout} disabled={isPending}>
                     {isPending ? 'Signing Out...' : 'Sign Out'}
                 </DropdownMenuItem>
             </DropdownMenuContent>

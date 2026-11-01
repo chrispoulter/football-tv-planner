@@ -62,7 +62,7 @@ export function FixturesPage() {
         { enabled: !(request.bookmarked && isAuthLoading) }
     );
 
-    function setParam(name: string, value?: string) {
+    const setParam = (name: string, value?: string) =>
         setSearchParams((prev) => {
             if (value) {
                 prev.set(name, value);
@@ -72,9 +72,8 @@ export function FixturesPage() {
 
             return prev;
         });
-    }
 
-    function changeDate(date: string) {
+    const changeDate = (date: string) => {
         setParam('date', date);
 
         const heading = headingRef.current;
@@ -86,7 +85,7 @@ export function FixturesPage() {
         ) {
             heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
-    }
+    };
 
     return (
         <div className="space-y-6">

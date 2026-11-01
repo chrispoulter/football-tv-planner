@@ -31,7 +31,7 @@ export function UpdateProfileForm({ name }: UpdateProfileFormProps) {
         },
     });
 
-    function onSubmit(values: UpdateProfileFormValues) {
+    const onSubmit = (values: UpdateProfileFormValues) =>
         updateProfile(values, {
             onSuccess: () => {
                 toast.success('Profile updated');
@@ -39,7 +39,6 @@ export function UpdateProfileForm({ name }: UpdateProfileFormProps) {
             },
             onError: (error) => toast.error(error.message),
         });
-    }
 
     return (
         <form noValidate onSubmit={form.handleSubmit(onSubmit)}>

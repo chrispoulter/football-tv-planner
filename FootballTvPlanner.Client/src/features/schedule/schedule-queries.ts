@@ -50,7 +50,7 @@ async function setBookmarked(
     };
 }
 
-export const useToggleSchedule = () => {
+export function useToggleSchedule() {
     const queryClient = useQueryClient();
 
     return useMutation({
@@ -73,15 +73,15 @@ export const useToggleSchedule = () => {
         onSettled: () =>
             queryClient.invalidateQueries({ queryKey: fixtureKeys.all }),
     });
-};
+}
 
 export interface CalendarFeedResponse {
     httpsUrl: string;
     webcalUrl: string;
 }
 
-export const useGetCalendarFeed = ({ enabled }: { enabled?: boolean } = {}) =>
-    useQuery({
+export function useGetCalendarFeed({ enabled }: { enabled?: boolean } = {}) {
+    return useQuery({
         enabled,
         queryKey: scheduleKeys.calendarFeed,
         queryFn: ({ signal }) =>
@@ -89,8 +89,9 @@ export const useGetCalendarFeed = ({ enabled }: { enabled?: boolean } = {}) =>
                 .get('schedule/calendar-feed', { signal })
                 .json<CalendarFeedResponse>(),
     });
+}
 
-export const useResetCalendarFeed = () => {
+export function useResetCalendarFeed() {
     const queryClient = useQueryClient();
 
     return useMutation({
@@ -101,4 +102,4 @@ export const useResetCalendarFeed = () => {
         onSuccess: (data) =>
             queryClient.setQueryData(scheduleKeys.calendarFeed, data),
     });
-};
+}

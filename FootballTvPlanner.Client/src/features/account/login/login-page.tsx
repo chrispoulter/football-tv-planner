@@ -28,7 +28,7 @@ export function LoginPage() {
 
     const externalError = externalLoginErrors[searchParams.get('error') ?? ''];
 
-    function onSubmit({ emailAddress, ...values }: LoginFormValues) {
+    const onSubmit = ({ emailAddress, ...values }: LoginFormValues) =>
         login(
             { email: emailAddress, ...values },
             {
@@ -48,7 +48,6 @@ export function LoginPage() {
                 onError: (error) => toast.error(error.message),
             }
         );
-    }
 
     return (
         <AccountLayout

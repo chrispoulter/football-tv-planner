@@ -122,12 +122,12 @@ function CalendarFeedOptions({ feed }: CalendarFeedOptionsProps) {
     const { mutate: resetFeed, isPending: isResetting } =
         useResetCalendarFeed();
 
-    async function onCopy() {
+    const handleCopy = async () => {
         await navigator.clipboard.writeText(feed.httpsUrl);
         toast.success('Calendar link copied to clipboard');
-    }
+    };
 
-    function onReset() {
+    const handleReset = () =>
         resetFeed(undefined, {
             onSuccess: () =>
                 toast.success(
@@ -135,7 +135,6 @@ function CalendarFeedOptions({ feed }: CalendarFeedOptionsProps) {
                 ),
             onError: (error) => toast.error(error.message),
         });
-    }
 
     return (
         <div className="space-y-4">
@@ -146,7 +145,7 @@ function CalendarFeedOptions({ feed }: CalendarFeedOptionsProps) {
                     aria-label="Calendar subscription link"
                     onFocus={(e) => e.currentTarget.select()}
                 />
-                <Button variant="outline" size="icon" onClick={onCopy}>
+                <Button variant="outline" size="icon" onClick={handleCopy}>
                     <Copy />
                     <span className="sr-only">Copy link</span>
                 </Button>
@@ -207,7 +206,7 @@ function CalendarFeedOptions({ feed }: CalendarFeedOptionsProps) {
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
                         <AlertDialogAction
                             disabled={isResetting}
-                            onClick={onReset}
+                            onClick={handleReset}
                         >
                             Continue
                         </AlertDialogAction>

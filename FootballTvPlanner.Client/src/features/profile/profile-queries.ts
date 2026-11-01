@@ -20,7 +20,7 @@ interface UpdateProfileRequest {
     name: string;
 }
 
-export const useUpdateProfile = () => {
+export function useUpdateProfile() {
     const invalidateSession = useInvalidateSession();
 
     return useMutation({
@@ -28,38 +28,40 @@ export const useUpdateProfile = () => {
             apiClient.put('profile', { json: request }).then(() => undefined),
         onSuccess: invalidateSession,
     });
-};
+}
 
 interface ChangeEmailRequest {
     newEmail: string;
 }
 
-export const useChangeEmail = () =>
-    useMutation({
+export function useChangeEmail() {
+    return useMutation({
         mutationFn: (request: ChangeEmailRequest) =>
             apiClient
                 .post('profile/change-email', { json: request })
                 .then(() => undefined),
     });
+}
 
 interface ChangePasswordRequest {
     currentPassword: string;
     newPassword: string;
 }
 
-export const useChangePassword = () =>
-    useMutation({
+export function useChangePassword() {
+    return useMutation({
         mutationFn: (request: ChangePasswordRequest) =>
             apiClient
                 .post('profile/change-password', { json: request })
                 .then(() => undefined),
     });
+}
 
 interface SetPasswordRequest {
     newPassword: string;
 }
 
-export const useSetPassword = () => {
+export function useSetPassword() {
     const invalidateSession = useInvalidateSession();
 
     return useMutation({
@@ -69,34 +71,36 @@ export const useSetPassword = () => {
                 .then(() => undefined),
         onSuccess: invalidateSession,
     });
-};
+}
 
 export interface TwoFactorResponse {
     isEnabled?: boolean;
     recoveryCodesLeft?: number;
 }
 
-export const useGetTwoFactor = () =>
-    useQuery({
+export function useGetTwoFactor() {
+    return useQuery({
         queryKey: profileKeys.twoFactor,
         queryFn: ({ signal }) =>
             apiClient
                 .get('profile/two-factor', { signal })
                 .json<TwoFactorResponse>(),
     });
+}
 
 interface SetupTwoFactorResponse {
     sharedKey: string;
     authenticatorUri: string;
 }
 
-export const useSetupTwoFactor = () =>
-    useMutation({
+export function useSetupTwoFactor() {
+    return useMutation({
         mutationFn: () =>
             apiClient
                 .post('profile/two-factor/setup', { json: {} })
                 .json<SetupTwoFactorResponse>(),
     });
+}
 
 interface RecoveryCodesResponse {
     recoveryCodes: string[];
@@ -116,7 +120,7 @@ interface EnableTwoFactorRequest {
     code: string;
 }
 
-export const useEnableTwoFactor = () => {
+export function useEnableTwoFactor() {
     const invalidate = useInvalidateTwoFactor();
 
     return useMutation({
@@ -126,9 +130,9 @@ export const useEnableTwoFactor = () => {
                 .json<RecoveryCodesResponse>(),
         onSuccess: invalidate,
     });
-};
+}
 
-export const useDisableTwoFactor = () => {
+export function useDisableTwoFactor() {
     const invalidate = useInvalidateTwoFactor();
 
     return useMutation({
@@ -138,9 +142,9 @@ export const useDisableTwoFactor = () => {
                 .then(() => undefined),
         onSuccess: invalidate,
     });
-};
+}
 
-export const useGenerateRecoveryCodes = () => {
+export function useGenerateRecoveryCodes() {
     const invalidate = useInvalidateTwoFactor();
 
     return useMutation({
@@ -150,22 +154,23 @@ export const useGenerateRecoveryCodes = () => {
                 .json<RecoveryCodesResponse>(),
         onSuccess: invalidate,
     });
-};
+}
 
 interface LinkedAccountsResponse {
     providers: string[];
 }
 
-export const useGetLinkedAccounts = () =>
-    useQuery({
+export function useGetLinkedAccounts() {
+    return useQuery({
         queryKey: profileKeys.linkedAccounts,
         queryFn: ({ signal }) =>
             apiClient
                 .get('profile/linked-accounts', { signal })
                 .json<LinkedAccountsResponse>(),
     });
+}
 
-export const useRemoveLinkedAccount = () => {
+export function useRemoveLinkedAccount() {
     const queryClient = useQueryClient();
 
     return useMutation({
@@ -180,7 +185,7 @@ export const useRemoveLinkedAccount = () => {
                 queryKey: profileKeys.linkedAccounts,
             }),
     });
-};
+}
 
 export function linkAccountUrl(provider: string, returnUrl: string) {
     const searchParams = new URLSearchParams({ provider, returnUrl });
@@ -191,8 +196,9 @@ interface DeleteAccountResponse {
     id: string;
 }
 
-export const useDeleteAccount = () =>
-    useMutation({
+export function useDeleteAccount() {
+    return useMutation({
         mutationFn: () =>
             apiClient.delete('account').json<DeleteAccountResponse>(),
     });
+}

@@ -30,7 +30,7 @@ export function DeleteAccountDialog({
 
     const { mutate: deleteAccount, isPending: isDeleting } = useDeleteAccount();
 
-    function onDelete() {
+    const handleDelete = () =>
         deleteAccount(undefined, {
             onSuccess: () => {
                 toast.success('Account deleted');
@@ -39,7 +39,6 @@ export function DeleteAccountDialog({
             },
             onError: (error) => toast.error(error.message),
         });
-    }
 
     return (
         <AlertDialog>
@@ -65,7 +64,7 @@ export function DeleteAccountDialog({
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction
                         disabled={disabled || isDeleting}
-                        onClick={onDelete}
+                        onClick={handleDelete}
                     >
                         Continue
                     </AlertDialogAction>

@@ -33,7 +33,7 @@ export function SetPasswordForm() {
         },
     });
 
-    function onSubmit({ newPassword }: SetPasswordFormValues) {
+    const onSubmit = ({ newPassword }: SetPasswordFormValues) =>
         setPassword(
             { newPassword },
             {
@@ -41,7 +41,6 @@ export function SetPasswordForm() {
                 onError: (error) => toast.error(error.message),
             }
         );
-    }
 
     return (
         <form noValidate onSubmit={form.handleSubmit(onSubmit)}>

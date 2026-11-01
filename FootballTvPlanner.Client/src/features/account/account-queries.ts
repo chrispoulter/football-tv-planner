@@ -12,7 +12,7 @@ interface LoginResponse {
     requiresTwoFactor?: boolean;
 }
 
-export const useLogin = () => {
+export function useLogin() {
     const { refreshAuth } = useAuth();
 
     return useMutation({
@@ -27,7 +27,7 @@ export const useLogin = () => {
             }
         },
     });
-};
+}
 
 export interface LoginTwoFactorRequest {
     code?: string;
@@ -35,7 +35,7 @@ export interface LoginTwoFactorRequest {
     rememberMe: boolean;
 }
 
-export const useLoginTwoFactor = () => {
+export function useLoginTwoFactor() {
     const { refreshAuth } = useAuth();
 
     return useMutation({
@@ -45,9 +45,9 @@ export const useLoginTwoFactor = () => {
                 .then(() => undefined),
         onSuccess: refreshAuth,
     });
-};
+}
 
-export const useLogout = () => {
+export function useLogout() {
     const { refreshAuth } = useAuth();
 
     return useMutation({
@@ -57,7 +57,7 @@ export const useLogout = () => {
                 .then(() => undefined),
         onSettled: refreshAuth,
     });
-};
+}
 
 interface RegisterRequest {
     name: string;
@@ -65,7 +65,7 @@ interface RegisterRequest {
     password: string;
 }
 
-export const useRegister = () => {
+export function useRegister() {
     const { refreshAuth } = useAuth();
 
     return useMutation({
@@ -75,7 +75,7 @@ export const useRegister = () => {
                 .then(() => undefined),
         onSuccess: refreshAuth,
     });
-};
+}
 
 interface ConfirmEmailRequest {
     userId: string;
@@ -83,8 +83,8 @@ interface ConfirmEmailRequest {
     changedEmail?: string;
 }
 
-export const useConfirmEmail = (request: ConfirmEmailRequest) =>
-    useQuery({
+export function useConfirmEmail(request: ConfirmEmailRequest) {
+    return useQuery({
         queryKey: ['confirm-email', request],
         queryFn: ({ signal }) =>
             apiClient
@@ -92,18 +92,20 @@ export const useConfirmEmail = (request: ConfirmEmailRequest) =>
                 .then(() => true),
         staleTime: Infinity,
     });
+}
 
 interface EmailRequest {
     email: string;
 }
 
-export const useForgotPassword = () =>
-    useMutation({
+export function useForgotPassword() {
+    return useMutation({
         mutationFn: (request: EmailRequest) =>
             apiClient
                 .post('account/forgot-password', { json: request })
                 .then(() => undefined),
     });
+}
 
 interface ResetPasswordRequest {
     email: string;
@@ -111,13 +113,14 @@ interface ResetPasswordRequest {
     newPassword: string;
 }
 
-export const useResetPassword = () =>
-    useMutation({
+export function useResetPassword() {
+    return useMutation({
         mutationFn: (request: ResetPasswordRequest) =>
             apiClient
                 .post('account/reset-password', { json: request })
                 .then(() => undefined),
     });
+}
 
 export function externalLoginUrl(provider: string, returnUrl = '/') {
     const searchParams = new URLSearchParams({ provider, returnUrl });

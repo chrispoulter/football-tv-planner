@@ -38,10 +38,10 @@ export function ChangePasswordForm() {
         },
     });
 
-    function onSubmit({
+    const onSubmit = ({
         currentPassword,
         newPassword,
-    }: ChangePasswordFormValues) {
+    }: ChangePasswordFormValues) =>
         changePassword(
             { currentPassword, newPassword },
             {
@@ -52,7 +52,6 @@ export function ChangePasswordForm() {
                 onError: (error) => toast.error(error.message),
             }
         );
-    }
 
     return (
         <form noValidate onSubmit={form.handleSubmit(onSubmit)}>

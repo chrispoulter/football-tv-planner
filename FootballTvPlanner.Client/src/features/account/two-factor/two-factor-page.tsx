@@ -31,7 +31,7 @@ export function TwoFactorPage() {
 
     const { rememberMe, from } = state;
 
-    function submit(request: Omit<LoginTwoFactorRequest, 'rememberMe'>) {
+    const submit = (request: Omit<LoginTwoFactorRequest, 'rememberMe'>) =>
         loginTwoFactor(
             { ...request, rememberMe },
             {
@@ -39,15 +39,12 @@ export function TwoFactorPage() {
                 onError: (error) => toast.error(error.message),
             }
         );
-    }
 
-    function onAuthenticatorSubmit(values: TwoFactorFormValues) {
+    const onAuthenticatorSubmit = (values: TwoFactorFormValues) =>
         submit(values);
-    }
 
-    function onRecoveryCodeSubmit(values: RecoveryCodeFormValues) {
+    const onRecoveryCodeSubmit = (values: RecoveryCodeFormValues) =>
         submit(values);
-    }
 
     return (
         <AccountLayout

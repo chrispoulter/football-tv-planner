@@ -29,7 +29,7 @@ export function UpdateEmailForm() {
         },
     });
 
-    function onSubmit(values: UpdateEmailFormValues) {
+    const onSubmit = (values: UpdateEmailFormValues) =>
         changeEmail(values, {
             onSuccess: () => {
                 setPendingEmail(values.newEmail);
@@ -37,7 +37,6 @@ export function UpdateEmailForm() {
             },
             onError: (error) => toast.error(error.message),
         });
-    }
 
     if (pendingEmail) {
         return (
