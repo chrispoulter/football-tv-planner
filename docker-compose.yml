@@ -6,9 +6,7 @@ services:
       dockerfile: ./FootballTvPlanner.Server/Dockerfile
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      ASPNETCORE_URLS: https://+:8081;http://+:8080
-      ASPNETCORE_Kestrel__Certificates__Default__Path: /https/aspnetapp.pfx
-      ASPNETCORE_Kestrel__Certificates__Default__Password: password
+      ASPNETCORE_URLS: http://+:8080
       ConnectionStrings__Database: Host=host.docker.internal;Port=5432;Database=football_tv_planner;Username=postgres;Password=password
       ConnectionStrings__Mail: Endpoint=smtp://host.docker.internal:1025
       Email__SiteUrl: http://localhost:5257
@@ -21,9 +19,6 @@ services:
       OTEL_RESOURCE_ATTRIBUTES: deployment.environment.name=local
     ports:
       - 5257:8080
-      - 7257:8081
-    volumes:
-      - ${USERPROFILE}/.aspnet/https:/https:ro
     depends_on:
       football-tv-planner-migrations:
         condition: service_completed_successfully

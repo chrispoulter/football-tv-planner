@@ -5,8 +5,6 @@ FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
 USER $APP_UID
 WORKDIR /app
 EXPOSE 8080
-EXPOSE 8081
-
 
 # This stage is used to build the web frontend served from wwwroot
 FROM node:26-alpine AS web
@@ -17,7 +15,6 @@ COPY FootballTvPlanner.Client/ .
 ARG GIT_COMMIT_SHA
 ENV GIT_COMMIT_SHA=$GIT_COMMIT_SHA
 RUN npm run build
-
 
 # This stage restores packages and copies the source for the publish stage
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
