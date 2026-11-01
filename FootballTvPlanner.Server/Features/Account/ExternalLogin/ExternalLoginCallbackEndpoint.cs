@@ -62,7 +62,7 @@ public class ExternalLoginCallbackEndpoint : IEndpoint
             {
                 UserName = email,
                 Email = email,
-                EmailConfirmed = true,
+                EmailConfirmed = info.IsEmailVerified(),
                 Name = info.GetName(),
             };
 
@@ -78,14 +78,18 @@ public class ExternalLoginCallbackEndpoint : IEndpoint
                 return Results.Redirect(ExternalLoginRedirects.LoginError("locked"));
             }
 
-            user.EmailConfirmed = true;
+            // Only link when both sides have proven ownership of the email. Otherwise anyone could
+            // register the address first and keep their password access once the owner links.
+            if (!info.IsEmailVerified() || !user.EmailConfirmed)
+            {
+                return Results.Redirect(ExternalLoginRedirects.LoginError("unlinked"));
+            }
 
             if (string.IsNullOrEmpty(user.Name))
             {
                 user.Name = info.GetName();
+                await userManager.UpdateAsync(user);
             }
-
-            await userManager.UpdateAsync(user);
         }
 
         if (!(await userManager.AddLoginAsync(user, info)).Succeeded)

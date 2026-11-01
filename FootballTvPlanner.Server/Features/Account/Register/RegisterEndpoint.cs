@@ -1,7 +1,10 @@
 using FootballTvPlanner.Data.Users;
+using FootballTvPlanner.Server.Common.Email;
 using FootballTvPlanner.Server.Common.Infrastructure;
 using FootballTvPlanner.Server.Common.Validation;
+using FootballTvPlanner.Server.Features.Account.ConfirmEmail;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 
 namespace FootballTvPlanner.Server.Features.Account.Register;
 
@@ -14,13 +17,18 @@ public class RegisterEndpoint : IEndpoint
             .AddValidationFilter<RegisterRequest>()
             .WithTags(Tags.Account)
             .WithSummary("Register")
-            .WithDescription("Create an account and log the new user in.");
+            .WithDescription(
+                "Create an account, send a link to confirm the email address and log the new user in."
+            );
     }
 
     private static async Task<IResult> HandleAsync(
         RegisterRequest request,
         UserManager<User> userManager,
-        SignInManager<User> signInManager
+        SignInManager<User> signInManager,
+        IEmailService emailService,
+        IOptions<EmailSettings> emailSettings,
+        CancellationToken cancellationToken
     )
     {
         var user = new User
@@ -40,6 +48,14 @@ public class RegisterEndpoint : IEndpoint
 
             return errors.ToValidationProblem();
         }
+
+        await ConfirmationEmail.SendAsync(
+            user,
+            userManager,
+            emailService,
+            emailSettings.Value,
+            cancellationToken
+        );
 
         await signInManager.SignInAsync(user, isPersistent: false);
 

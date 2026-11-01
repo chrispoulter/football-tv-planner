@@ -13,6 +13,8 @@ import { LoginForm, type LoginFormValues } from './login-form';
 const externalLoginErrors: Record<string, string> = {
     external: 'Unable to sign in, please try again.',
     locked: 'This account has been locked out, please try again later.',
+    unlinked:
+        'An account already exists with this email. Sign in with your password, then link Google from your profile.',
 };
 
 export function LoginPage() {

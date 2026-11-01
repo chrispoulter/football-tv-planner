@@ -10,6 +10,7 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { personalDataUrl } from '../profile-queries';
+import { ConfirmEmailNotice } from './confirm-email-notice';
 import { UpdateEmailForm } from './update-email-form';
 import { UpdateProfileForm } from './update-profile-form';
 
@@ -56,6 +57,8 @@ export function ProfileTab() {
                             {user.email}
                         </span>
                     </p>
+
+                    {!user.isEmailConfirmed && <ConfirmEmailNotice />}
 
                     <UpdateEmailForm />
                 </CardContent>

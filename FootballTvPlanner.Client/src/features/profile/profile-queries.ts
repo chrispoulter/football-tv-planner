@@ -42,6 +42,14 @@ export const useChangeEmail = () =>
                 .then(() => undefined),
     });
 
+export const useResendConfirmationEmail = () =>
+    useMutation({
+        mutationFn: () =>
+            apiClient
+                .post('profile/resend-confirmation-email', { json: {} })
+                .then(() => undefined),
+    });
+
 interface ChangePasswordRequest {
     currentPassword: string;
     newPassword: string;
