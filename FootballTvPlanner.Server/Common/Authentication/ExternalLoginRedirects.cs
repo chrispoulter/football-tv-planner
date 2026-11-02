@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.WebUtilities;
 
 namespace FootballTvPlanner.Server.Common.Authentication;
@@ -8,7 +9,7 @@ public static class ExternalLoginRedirects
     private const string XsrfKey = "XsrfId";
 
     public static string LocalOrRoot(string? returnUrl) =>
-        returnUrl is ['/', not '/' and not '\\', ..] or "/" ? returnUrl : "/";
+        RedirectHttpResult.IsLocalUrl(returnUrl) ? returnUrl : "/";
 
     public static string LoginError(string error) => WithError("/login", error);
 
