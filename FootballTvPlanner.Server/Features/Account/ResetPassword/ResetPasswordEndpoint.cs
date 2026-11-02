@@ -11,6 +11,7 @@ public class ResetPasswordEndpoint : IEndpoint
     {
         app.MapPost("/account/reset-password", HandleAsync)
             .AllowAnonymous()
+            .RequireRateLimiting(RateLimitPolicies.Auth)
             .AddValidationFilter<ResetPasswordRequest>()
             .WithTags(Tags.Account)
             .WithSummary("Reset Password")

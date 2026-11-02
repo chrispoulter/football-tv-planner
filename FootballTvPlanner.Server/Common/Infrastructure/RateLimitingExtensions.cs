@@ -7,6 +7,8 @@ namespace FootballTvPlanner.Server.Common.Infrastructure;
 public static class RateLimitPolicies
 {
     public const string Default = "Default";
+    public const string Auth = "Auth";
+    public const string CalendarFeed = "CalendarFeed";
 }
 
 public static class RateLimitingExtensions
@@ -23,16 +25,20 @@ public static class RateLimitingExtensions
         {
             options.AddPolicy(
                 RateLimitPolicies.Default,
+                context => GetSlidingWindowPartition(GetPartitionKey(context), settings.Default)
+            );
+
+            options.AddPolicy(
+                RateLimitPolicies.Auth,
+                context => GetSlidingWindowPartition(GetPartitionKey(context), settings.Auth)
+            );
+
+            options.AddPolicy(
+                RateLimitPolicies.CalendarFeed,
                 context =>
-                    RateLimitPartition.GetSlidingWindowLimiter(
-                        GetPartitionKey(context),
-                        _ => new SlidingWindowRateLimiterOptions
-                        {
-                            PermitLimit = settings.PermitLimit,
-                            Window = settings.Window,
-                            SegmentsPerWindow = 6,
-                            QueueLimit = 0,
-                        }
+                    GetSlidingWindowPartition(
+                        $"token:{context.GetRouteValue("token")}",
+                        settings.CalendarFeed
                     )
             );
 
@@ -80,6 +86,21 @@ public static class RateLimitingExtensions
 
         return builder;
     }
+
+    private static RateLimitPartition<string> GetSlidingWindowPartition(
+        string partitionKey,
+        RateLimitPolicySettings settings
+    ) =>
+        RateLimitPartition.GetSlidingWindowLimiter(
+            partitionKey,
+            _ => new SlidingWindowRateLimiterOptions
+            {
+                PermitLimit = settings.PermitLimit,
+                Window = settings.Window,
+                SegmentsPerWindow = 6,
+                QueueLimit = 0,
+            }
+        );
 
     private static string GetPartitionKey(HttpContext context) =>
         context.User.FindFirstValue(ClaimTypes.NameIdentifier) is { } userId

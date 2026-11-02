@@ -4,7 +4,16 @@ public class RateLimitingSettings
 {
     public static string SectionName { get; } = "RateLimiting";
 
-    public int PermitLimit { get; set; } = 100;
+    public RateLimitPolicySettings Default { get; set; } = new() { PermitLimit = 100 };
+
+    public RateLimitPolicySettings Auth { get; set; } = new() { PermitLimit = 10 };
+
+    public RateLimitPolicySettings CalendarFeed { get; set; } = new() { PermitLimit = 10 };
+}
+
+public class RateLimitPolicySettings
+{
+    public int PermitLimit { get; set; }
 
     public TimeSpan Window { get; set; } = TimeSpan.FromMinutes(1);
 }

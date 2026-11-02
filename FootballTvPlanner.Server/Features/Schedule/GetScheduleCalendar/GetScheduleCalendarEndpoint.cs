@@ -13,6 +13,7 @@ public class GetScheduleCalendarEndpoint : IEndpoint
     {
         app.MapGet("/calendar/{token}.ics", HandleAsync)
             .AllowAnonymous()
+            .RequireRateLimiting(RateLimitPolicies.CalendarFeed)
             .Produces(StatusCodes.Status200OK, contentType: "text/calendar")
             .WithTags(Tags.Schedule)
             .WithSummary("Get Schedule Calendar Feed")

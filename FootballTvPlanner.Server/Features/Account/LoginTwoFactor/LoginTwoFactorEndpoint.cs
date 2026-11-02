@@ -11,6 +11,7 @@ public class LoginTwoFactorEndpoint : IEndpoint
     {
         app.MapPost("/account/login/two-factor", HandleAsync)
             .AllowAnonymous()
+            .RequireRateLimiting(RateLimitPolicies.Auth)
             .AddValidationFilter<LoginTwoFactorRequest>()
             .WithTags(Tags.Account)
             .WithSummary("Login Two-Factor")

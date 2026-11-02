@@ -14,6 +14,7 @@ public class ForgotPasswordEndpoint : IEndpoint
     {
         app.MapPost("/account/forgot-password", HandleAsync)
             .AllowAnonymous()
+            .RequireRateLimiting(RateLimitPolicies.Auth)
             .AddValidationFilter<ForgotPasswordRequest>()
             .WithTags(Tags.Account)
             .WithSummary("Forgot Password")
