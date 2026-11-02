@@ -42,12 +42,12 @@ export function useChangeEmail() {
                 .then(() => undefined),
     });
 }
-    
+
 export function useSendConfirmationEmail() {
     return useMutation({
         mutationFn: () =>
             apiClient
-                .post('profile/send-confirmation-email')
+                .post('profile/send-confirmation-email', { json: {} })
                 .then(() => undefined),
     });
 }
