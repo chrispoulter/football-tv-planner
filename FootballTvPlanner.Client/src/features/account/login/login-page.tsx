@@ -13,6 +13,8 @@ import { LoginForm, type LoginFormValues } from './login-form';
 const externalLoginErrors: Record<string, string> = {
     external: 'Unable to sign in, please try again.',
     locked: 'This account has been locked out, please try again later.',
+    unlinked:
+        "An account with this email already exists, but its email hasn't been verified. Sign in with your password and verify your email from your profile, then try again.",
 };
 
 export function LoginPage() {

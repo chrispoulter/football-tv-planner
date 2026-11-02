@@ -12,6 +12,7 @@ import {
 import { personalDataUrl } from '../profile-queries';
 import { UpdateEmailForm } from './update-email-form';
 import { UpdateProfileForm } from './update-profile-form';
+import { VerifyEmailForm } from './verify-email-form';
 
 export function ProfileTab() {
     const { user } = useAuth();
@@ -39,10 +40,27 @@ export function ProfileTab() {
                 </CardContent>
             </Card>
 
+            {!user.isEmailConfirmed && (
+                <Card>
+                    <CardHeader>
+                        <CardTitle>
+                            <h2>Verify Email Address</h2>
+                        </CardTitle>
+                        <CardDescription>
+                            Verify your email address so you can use social
+                            sign-in with the same address
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <VerifyEmailForm email={user.email} />
+                    </CardContent>
+                </Card>
+            )}
+
             <Card>
                 <CardHeader>
                     <CardTitle>
-                        <h2>Email Address</h2>
+                        <h2>Update Email Address</h2>
                     </CardTitle>
                     <CardDescription>
                         Update your email address — a verification link will be
