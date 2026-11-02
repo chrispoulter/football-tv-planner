@@ -12,7 +12,6 @@ namespace FootballTvPlanner.FixtureSync;
 public class FixtureSyncer(
     FootballTvPlannerDbContext dbContext,
     IFixtureProvider fixtureProvider,
-    TimeProvider timeProvider,
     ILogger<FixtureSyncer> logger
 )
 {
@@ -104,33 +103,20 @@ public class FixtureSyncer(
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        var now = timeProvider.GetUtcNow();
-
-        var removedFixtures = await dbContext
-            .Fixtures.IgnoreQueryFilters()
-            .Where(f =>
-                f.Source == fixtureProvider.Source
-                && f.KickoffUtc > now
-                && !externalIds.Contains(f.ExternalId)
-            )
-            .ExecuteDeleteAsync(cancellationToken);
-
         Activity
             .Current?.SetTag("fixture_sync.source", fixtureProvider.Source)
             .SetTag("fixture_sync.fetched", items.Count)
             .SetTag("fixture_sync.added_fixtures", addedFixtures)
             .SetTag("fixture_sync.updated_fixtures", updatedFixtures)
-            .SetTag("fixture_sync.removed_fixtures", removedFixtures)
             .SetTag("fixture_sync.added_competitions", addedCompetitions)
             .SetTag("fixture_sync.added_teams", addedTeams)
             .SetTag("fixture_sync.added_channels", addedChannels);
 
         logger.LogInformation(
-            "Synced {Fetched} fixtures ({AddedFixtures} added, {UpdatedFixtures} updated) and removed {RemovedFixtures} no longer listed. Added {AddedCompetitions} competitions, {AddedTeams} teams, {AddedChannels} channels",
+            "Synced {Fetched} fixtures ({AddedFixtures} added, {UpdatedFixtures} updated). Added {AddedCompetitions} competitions, {AddedTeams} teams, {AddedChannels} channels",
             items.Count,
             addedFixtures,
             updatedFixtures,
-            removedFixtures,
             addedCompetitions,
             addedTeams,
             addedChannels

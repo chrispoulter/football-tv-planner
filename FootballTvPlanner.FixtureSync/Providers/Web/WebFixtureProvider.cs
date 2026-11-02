@@ -91,8 +91,20 @@ public partial class WebFixtureProvider(
         var channels = element
             .QuerySelectorAll(".channel-pill")
             .Select(pill => Clean(pill.TextContent))
+            .Where(channel => channel.Length > 0)
             .Distinct()
             .ToList();
+
+        if (
+            home.Length == 0
+            || away.Length == 0
+            || competitionText.Length == 0
+            || channels.Count == 0
+        )
+        {
+            logger.LogWarning("Skipping incomplete fixture '{Teams}' on {Date}", teamsText, date);
+            return null;
+        }
 
         return new ProviderFixture(
             ExternalId: $"web-{date:yyyyMMdd}-{Slug(home)}-{Slug(away)}",

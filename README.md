@@ -112,9 +112,10 @@ Each run, `FixtureSyncer`:
 
 - upserts fixtures by `(Source, ExternalId)`
 - replaces each fixture's channel list
-- deletes upcoming fixtures from the same source that the provider no longer lists, because a moved game comes back under a new ID
 
-If a provider returns nothing, the run fails instead of deleting every upcoming fixture.
+The sync never deletes fixtures, so a fixture the provider stops listing stays as it was. A game moved to another day comes back under a new ID as a separate fixture, and the old one stays on its original date.
+
+The web provider skips rows without a kick-off time, both teams, a competition and at least one channel, so an incomplete row can't overwrite good data. If a provider returns nothing, the run fails.
 
 The sync uses the shared `FootballTvPlannerDbContext` and ignores its query filters, so hidden competitions and channels, and the fixtures they hide, are still updated.
 
