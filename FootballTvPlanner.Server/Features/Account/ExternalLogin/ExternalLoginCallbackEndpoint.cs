@@ -62,7 +62,7 @@ public class ExternalLoginCallbackEndpoint : IEndpoint
             {
                 UserName = email,
                 Email = email,
-                EmailConfirmed = true,
+                EmailConfirmed = info.IsEmailVerified(),
                 Name = info.GetName(),
             };
 
@@ -73,12 +73,20 @@ public class ExternalLoginCallbackEndpoint : IEndpoint
         }
         else
         {
+            if (!info.IsEmailVerified())
+            {
+                return Results.Redirect(ExternalLoginRedirects.LoginError("external"));
+            }
+
             if (await userManager.IsLockedOutAsync(user))
             {
                 return Results.Redirect(ExternalLoginRedirects.LoginError("locked"));
             }
 
-            user.EmailConfirmed = true;
+            if (!user.EmailConfirmed)
+            {
+                return Results.Redirect(ExternalLoginRedirects.LoginError("unlinked"));
+            }
 
             if (string.IsNullOrEmpty(user.Name))
             {

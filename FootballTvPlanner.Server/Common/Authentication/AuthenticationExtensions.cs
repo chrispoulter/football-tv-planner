@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -59,6 +60,11 @@ public static class AuthenticationExtensions
                     options.ClientSecret = googleSettings.ClientSecret;
                     options.SignInScheme = IdentityConstants.ExternalScheme;
                     options.CallbackPath = "/api/signin-google";
+
+                    options.ClaimActions.MapJsonKey(
+                        ExternalLoginExtensions.EmailVerifiedClaimType,
+                        "email_verified"
+                    );
 
                     options.Events.OnRemoteFailure = context =>
                     {

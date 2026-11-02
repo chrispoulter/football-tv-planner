@@ -43,6 +43,15 @@ export function useChangeEmail() {
     });
 }
 
+export function useSendConfirmationEmail() {
+    return useMutation({
+        mutationFn: () =>
+            apiClient
+                .post('profile/send-confirmation-email', { json: {} })
+                .then(() => undefined),
+    });
+}
+
 interface ChangePasswordRequest {
     currentPassword: string;
     newPassword: string;
