@@ -21,7 +21,7 @@ public static class ExternalLoginExtensions
 
     public static bool IsEmailVerified(this ExternalLoginInfo info)
     {
-        if(! bool.TryParse(info.Principal.FindFirstValue(EmailVerifiedClaimType), out var verified))
+        if (!bool.TryParse(info.Principal.FindFirstValue(EmailVerifiedClaimType), out var verified))
         {
             return false;
         }
