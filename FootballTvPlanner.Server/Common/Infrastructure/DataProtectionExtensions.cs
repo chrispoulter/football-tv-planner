@@ -1,3 +1,4 @@
+using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -11,10 +12,18 @@ public static class DataProtectionExtensions
     )
         where TContext : DbContext, IDataProtectionKeyContext
     {
-        builder
+        var dataProtection = builder
             .Services.AddDataProtection()
             .SetApplicationName(builder.Environment.ApplicationName)
             .PersistKeysToDbContext<TContext>();
+
+        var certificate = builder.Configuration["DataProtection:Certificate"];
+        if (!string.IsNullOrEmpty(certificate))
+        {
+            dataProtection.ProtectKeysWithCertificate(
+                X509CertificateLoader.LoadPkcs12(Convert.FromBase64String(certificate), null)
+            );
+        }
 
         return builder;
     }
