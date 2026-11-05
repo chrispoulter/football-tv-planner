@@ -60,7 +60,7 @@ public class RegisterEndpoint : IEndpoint
         await emailService.SendTemplateEmailAsync(
             toAddress: user.Email,
             subject: "Verify your email address | Football TV Planner",
-            template: "FootballTvPlanner.Server.Features.Account.Emails.ConfirmEmail.html",
+            template: "FootballTvPlanner.Server.Features.Account.Register.ConfirmEmail.html",
             model: new { user.Name, Link = link },
             cancellationToken
         );
