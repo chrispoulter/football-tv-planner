@@ -1,15 +1,7 @@
 using System.Globalization;
-using System.Security.Claims;
 using System.Threading.RateLimiting;
 
 namespace FootballTvPlanner.Server.Common.Infrastructure;
-
-public static class RateLimitPolicies
-{
-    public const string Default = "Default";
-    public const string Auth = "Auth";
-    public const string CalendarFeed = "CalendarFeed";
-}
 
 public static class RateLimitingExtensions
 {
@@ -23,25 +15,6 @@ public static class RateLimitingExtensions
 
         builder.Services.AddRateLimiter(options =>
         {
-            options.AddPolicy(
-                RateLimitPolicies.Default,
-                context => GetSlidingWindowPartition(GetPartitionKey(context), settings.Default)
-            );
-
-            options.AddPolicy(
-                RateLimitPolicies.Auth,
-                context => GetSlidingWindowPartition(GetPartitionKey(context), settings.Auth)
-            );
-
-            options.AddPolicy(
-                RateLimitPolicies.CalendarFeed,
-                context =>
-                    GetSlidingWindowPartition(
-                        $"token:{context.GetRouteValue("token")}",
-                        settings.CalendarFeed
-                    )
-            );
-
             options.OnRejected = async (context, cancellationToken) =>
             {
                 if (context.Lease.TryGetMetadata(MetadataName.RetryAfter, out var retryAfter))
@@ -61,8 +34,8 @@ public static class RateLimitingExtensions
                     .HttpContext.RequestServices.GetRequiredService<ILoggerFactory>()
                     .CreateLogger("Microsoft.AspNetCore.RateLimitingMiddleware")
                     .LogWarning(
-                        "Rate limit exceeded for {PartitionKey} on {Method} {Route}",
-                        GetPartitionKey(context.HttpContext),
+                        "Rate limit exceeded for {RemoteIpAddress} on {Method} {Route}",
+                        context.HttpContext.Connection.RemoteIpAddress,
                         context.HttpContext.Request.Method,
                         route
                     );
@@ -86,24 +59,4 @@ public static class RateLimitingExtensions
 
         return builder;
     }
-
-    private static RateLimitPartition<string> GetSlidingWindowPartition(
-        string partitionKey,
-        RateLimitPolicySettings settings
-    ) =>
-        RateLimitPartition.GetSlidingWindowLimiter(
-            partitionKey,
-            _ => new SlidingWindowRateLimiterOptions
-            {
-                PermitLimit = settings.PermitLimit,
-                Window = settings.Window,
-                SegmentsPerWindow = 6,
-                QueueLimit = 0,
-            }
-        );
-
-    private static string GetPartitionKey(HttpContext context) =>
-        context.User.FindFirstValue(ClaimTypes.NameIdentifier) is { } userId
-            ? $"user:{userId}"
-            : $"ip:{context.Connection.RemoteIpAddress}";
 }

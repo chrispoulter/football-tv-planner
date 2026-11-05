@@ -5,6 +5,7 @@ using FootballTvPlanner.Data.Users;
 using FootballTvPlanner.Server.Common.Authentication;
 using FootballTvPlanner.Server.Common.Email;
 using FootballTvPlanner.Server.Common.Infrastructure;
+using FootballTvPlanner.Server.Features;
 
 var assembly = Assembly.GetExecutingAssembly();
 var serviceVersion = assembly.GetSemVerShortSha();
@@ -23,8 +24,10 @@ builder.ConfigureJsonOptions();
 builder.AddForwardedHeaders();
 builder.AddDataProtection<FootballTvPlannerDbContext>();
 builder.AddAuthentication<User, FootballTvPlannerDbContext>();
-builder.AddRateLimiting();
 builder.AddCaching();
+builder
+    .AddRateLimiting();
+
 builder.AddOpenApi(serviceVersion);
 
 var app = builder.Build();
@@ -37,7 +40,7 @@ app.UseRateLimiter();
 app.UseAuthorization();
 
 app.MapOpenApiWithUI();
-app.MapEndpoints(assembly).RequireRateLimiting(RateLimitPolicies.Default);
+app.MapEndpoints(assembly).RequireRateLimiting(DefaultRateLimit.Name);
 app.MapClientConfig();
 app.MapDefaultEndpoints();
 app.MapClientFallback();

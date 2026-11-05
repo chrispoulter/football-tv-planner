@@ -14,7 +14,7 @@ public class RegisterEndpoint : IEndpoint
     {
         app.MapPost("/account/register", HandleAsync)
             .AllowAnonymous()
-            .RequireRateLimiting(RateLimitPolicies.Auth)
+            .RequireRateLimiting(AuthRateLimit.Name)
             .AddValidationFilter<RegisterRequest>()
             .WithTags(Tags.Account)
             .WithSummary("Register")

@@ -50,6 +50,7 @@ public class GetChannelsEndpoint : IEndpoint
 
                 return channels;
             },
+            options: CachePolicies.Default,
             cancellationToken: cancellationToken
         );
 

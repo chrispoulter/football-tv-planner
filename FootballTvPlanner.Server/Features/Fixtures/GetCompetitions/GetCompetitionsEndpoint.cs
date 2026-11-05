@@ -48,6 +48,7 @@ public class GetCompetitionsEndpoint : IEndpoint
 
                 return competitions;
             },
+            options: CachePolicies.Default,
             cancellationToken: cancellationToken
         );
 

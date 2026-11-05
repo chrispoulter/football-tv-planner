@@ -43,6 +43,7 @@ public class GetFixtureCalendarEndpoint : IEndpoint
                     .Select(FixtureProjections.ToCalendarFixture())
                     .FirstOrDefaultAsync(cancel);
             },
+            options: CachePolicies.Default,
             cancellationToken: cancellationToken
         );
 

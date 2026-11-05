@@ -11,7 +11,7 @@ public class LoginEndpoint : IEndpoint
     {
         app.MapPost("/account/login", HandleAsync)
             .AllowAnonymous()
-            .RequireRateLimiting(RateLimitPolicies.Auth)
+            .RequireRateLimiting(AuthRateLimit.Name)
             .AddValidationFilter<LoginRequest>()
             .Produces<LoginResponse>()
             .WithTags(Tags.Account)

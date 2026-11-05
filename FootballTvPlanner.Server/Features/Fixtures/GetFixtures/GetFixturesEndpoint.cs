@@ -81,6 +81,7 @@ public class GetFixturesEndpoint : IEndpoint
                     ))
                     .ToListAsync(cancel);
             },
+            options: CachePolicies.Default,
             cancellationToken: cancellationToken
         );
 
