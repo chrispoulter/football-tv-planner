@@ -28,6 +28,7 @@ public static class CacheExtensions
                     options.DefaultEntryOptions = new HybridCacheEntryOptions
                     {
                         Expiration = cacheSettings.Value.Default.Expiration,
+                        LocalCacheExpiration = cacheSettings.Value.Default.Expiration,
                     }
             );
 
