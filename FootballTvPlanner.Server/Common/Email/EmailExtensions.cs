@@ -1,7 +1,4 @@
-﻿using OpenTelemetry.Metrics;
-using OpenTelemetry.Trace;
-
-namespace FootballTvPlanner.Server.Common.Email;
+﻿namespace FootballTvPlanner.Server.Common.Email;
 
 public static class EmailExtensions
 {

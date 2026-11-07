@@ -1,47 +1,17 @@
 using System.Globalization;
 using System.Security.Claims;
 using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.Extensions.Options;
 
-namespace FootballTvPlanner.Server.Common.Infrastructure;
+namespace FootballTvPlanner.Server.Common.RateLimiting;
 
-public static class RateLimitPolicies
-{
-    public const string Default = "Default";
-    public const string Auth = "Auth";
-    public const string CalendarFeed = "CalendarFeed";
-}
-
-public static class RateLimitingExtensions
+public static class RateLimitExtensions
 {
     public static IHostApplicationBuilder AddRateLimiting(this IHostApplicationBuilder builder)
     {
-        var settings =
-            builder
-                .Configuration.GetSection(RateLimitingSettings.SectionName)
-                .Get<RateLimitingSettings>()
-            ?? new RateLimitingSettings();
-
         builder.Services.AddRateLimiter(options =>
         {
-            options.AddPolicy(
-                RateLimitPolicies.Default,
-                context => GetSlidingWindowPartition(GetPartitionKey(context), settings.Default)
-            );
-
-            options.AddPolicy(
-                RateLimitPolicies.Auth,
-                context => GetSlidingWindowPartition(GetPartitionKey(context), settings.Auth)
-            );
-
-            options.AddPolicy(
-                RateLimitPolicies.CalendarFeed,
-                context =>
-                    GetSlidingWindowPartition(
-                        $"token:{context.GetRouteValue("token")}",
-                        settings.CalendarFeed
-                    )
-            );
-
             options.OnRejected = async (context, cancellationToken) =>
             {
                 if (context.Lease.TryGetMetadata(MetadataName.RetryAfter, out var retryAfter))
@@ -61,8 +31,8 @@ public static class RateLimitingExtensions
                     .HttpContext.RequestServices.GetRequiredService<ILoggerFactory>()
                     .CreateLogger("Microsoft.AspNetCore.RateLimitingMiddleware")
                     .LogWarning(
-                        "Rate limit exceeded for {PartitionKey} on {Method} {Route}",
-                        GetPartitionKey(context.HttpContext),
+                        "Rate limit exceeded for {RemoteIpAddress} on {Method} {Route}",
+                        context.HttpContext.Connection.RemoteIpAddress,
                         context.HttpContext.Request.Method,
                         route
                     );
@@ -87,23 +57,54 @@ public static class RateLimitingExtensions
         return builder;
     }
 
-    private static RateLimitPartition<string> GetSlidingWindowPartition(
-        string partitionKey,
-        RateLimitPolicySettings settings
-    ) =>
-        RateLimitPartition.GetSlidingWindowLimiter(
-            partitionKey,
-            _ => new SlidingWindowRateLimiterOptions
-            {
-                PermitLimit = settings.PermitLimit,
-                Window = settings.Window,
-                SegmentsPerWindow = 6,
-                QueueLimit = 0,
-            }
-        );
+    public static IHostApplicationBuilder AddRateLimitPolicy(
+        this IHostApplicationBuilder builder,
+        string policyName,
+        Func<HttpContext, string> partitionKey
+    )
+    {
+        builder
+            .Services.AddOptions<RateLimitPolicySettings>(policyName)
+            .Bind(
+                builder.Configuration.GetSection(
+                    ConfigurationPath.Combine(RateLimitPolicySettings.SectionName, policyName)
+                )
+            );
 
-    private static string GetPartitionKey(HttpContext context) =>
+        builder
+            .Services.AddOptions<RateLimiterOptions>()
+            .Configure<IOptionsMonitor<RateLimitPolicySettings>>(
+                (options, policies) =>
+                {
+                    var policy = policies.Get(policyName);
+
+                    var limiterOptions = new SlidingWindowRateLimiterOptions
+                    {
+                        PermitLimit = policy.PermitLimit,
+                        Window = policy.Window,
+                        SegmentsPerWindow = 6,
+                        QueueLimit = 0,
+                    };
+
+                    options.AddPolicy(
+                        policyName,
+                        context =>
+                            RateLimitPartition.GetSlidingWindowLimiter(
+                                partitionKey(context),
+                                _ => limiterOptions
+                            )
+                    );
+                }
+            );
+
+        return builder;
+    }
+
+    public static string UserOrIpAddress(this HttpContext context) =>
         context.User.FindFirstValue(ClaimTypes.NameIdentifier) is { } userId
             ? $"user:{userId}"
             : $"ip:{context.Connection.RemoteIpAddress}";
+
+    public static string RouteValue(this HttpContext context, string routeValueName) =>
+        $"{routeValueName}:{context.GetRouteValue(routeValueName)}";
 }

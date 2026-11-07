@@ -37,7 +37,9 @@ public class SetPasswordEndpoint : IEndpoint
             );
         }
 
-        if (await userManager.HasPasswordAsync(user))
+        var hasPassword = await userManager.HasPasswordAsync(user);
+
+        if (hasPassword)
         {
             return Results.Problem(
                 statusCode: StatusCodes.Status400BadRequest,

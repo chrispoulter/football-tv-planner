@@ -2,9 +2,6 @@ using FluentValidation;
 
 namespace FootballTvPlanner.Server.Features.Fixtures.GetFixtures;
 
-/// <summary>
-/// The client decides what a "day" is in the viewer's time zone and sends it as a UTC range.
-/// </summary>
 public record GetFixturesRequest(
     DateTimeOffset? From,
     DateTimeOffset? To,

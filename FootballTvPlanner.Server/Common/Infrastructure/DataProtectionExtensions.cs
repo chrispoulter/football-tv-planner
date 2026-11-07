@@ -18,6 +18,7 @@ public static class DataProtectionExtensions
             .PersistKeysToDbContext<TContext>();
 
         var certificate = builder.Configuration["DataProtection:Certificate"];
+
         if (!string.IsNullOrEmpty(certificate))
         {
             dataProtection.ProtectKeysWithCertificate(

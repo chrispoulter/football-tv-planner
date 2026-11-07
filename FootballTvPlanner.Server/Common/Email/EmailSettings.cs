@@ -22,9 +22,7 @@ public class EmailSettings
 
     public string SiteUrl { get; set; } = null!;
 
-    public int RecipientPermitLimit { get; set; } = 5;
-
-    public TimeSpan RecipientWindow { get; set; } = TimeSpan.FromHours(1);
+    public EmailRateLimitSettings RecipientRateLimit { get; set; } = new();
 
     internal void ParseConnectionString(string connectionString)
     {
@@ -54,4 +52,11 @@ public class EmailSettings
             }
         }
     }
+}
+
+public class EmailRateLimitSettings
+{
+    public int PermitLimit { get; set; } = 5;
+
+    public TimeSpan Window { get; set; } = TimeSpan.FromHours(1);
 }
