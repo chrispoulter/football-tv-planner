@@ -33,15 +33,15 @@ public class CacheService : ICacheService
 
     public ValueTask<T> GetOrCreateAsync<T>(
         string key,
-        string policyName,
         Func<CancellationToken, ValueTask<T>> factory,
+        string? policyName = null,
         IEnumerable<string>? tags = null,
         CancellationToken cancellationToken = default
     ) =>
         _cache.GetOrCreateAsync(
             key,
             factory,
-            _entryOptions.GetValueOrDefault(policyName),
+            options: policyName is null ? null : _entryOptions.GetValueOrDefault(policyName),
             tags,
             cancellationToken
         );

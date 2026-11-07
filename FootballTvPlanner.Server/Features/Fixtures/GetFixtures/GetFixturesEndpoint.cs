@@ -44,7 +44,6 @@ public class GetFixturesEndpoint : IEndpoint
 
         var fixtures = await cache.GetOrCreateAsync(
             $"fixtures_{start.UtcTicks}_{end.UtcTicks}_{request.CompetitionId}_{request.ChannelId}",
-            CachePolicies.Fixtures,
             async cancel =>
             {
                 await using var scope = scopeFactory.CreateAsyncScope();
@@ -82,6 +81,7 @@ public class GetFixturesEndpoint : IEndpoint
                     ))
                     .ToListAsync(cancel);
             },
+            policyName: CachePolicies.Fixtures,
             cancellationToken: cancellationToken
         );
 

@@ -26,7 +26,6 @@ public class GetCompetitionsEndpoint : IEndpoint
     {
         var competitions = await cache.GetOrCreateAsync(
             "competitions",
-            CachePolicies.Fixtures,
             async cancel =>
             {
                 await using var scope = scopeFactory.CreateAsyncScope();
@@ -49,6 +48,7 @@ public class GetCompetitionsEndpoint : IEndpoint
 
                 return competitions;
             },
+            policyName: CachePolicies.Fixtures,
             cancellationToken: cancellationToken
         );
 

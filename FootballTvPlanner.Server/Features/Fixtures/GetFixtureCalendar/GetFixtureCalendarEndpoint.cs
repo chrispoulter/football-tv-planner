@@ -30,7 +30,6 @@ public class GetFixtureCalendarEndpoint : IEndpoint
     {
         var fixture = await cache.GetOrCreateAsync(
             $"fixture_calendar_{id}",
-            CachePolicies.Fixtures,
             async cancel =>
             {
                 await using var scope = scopeFactory.CreateAsyncScope();
@@ -44,6 +43,7 @@ public class GetFixtureCalendarEndpoint : IEndpoint
                     .Select(FixtureProjections.ToCalendarFixture())
                     .FirstOrDefaultAsync(cancel);
             },
+            policyName: CachePolicies.Fixtures,
             cancellationToken: cancellationToken
         );
 

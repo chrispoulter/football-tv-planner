@@ -28,7 +28,6 @@ public class GetChannelsEndpoint : IEndpoint
     {
         var channels = await cache.GetOrCreateAsync(
             "channels",
-            CachePolicies.Fixtures,
             async cancel =>
             {
                 await using var scope = scopeFactory.CreateAsyncScope();
@@ -51,6 +50,7 @@ public class GetChannelsEndpoint : IEndpoint
 
                 return channels;
             },
+            policyName: CachePolicies.Fixtures,
             cancellationToken: cancellationToken
         );
 
