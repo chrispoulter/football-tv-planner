@@ -69,16 +69,7 @@ public static class RateLimitExtensions
                 builder.Configuration.GetSection(
                     ConfigurationPath.Combine(RateLimitPolicySettings.SectionName, policyName)
                 )
-            )
-            .Validate(
-                policy => policy.PermitLimit > 0,
-                $"Rate limit policy '{policyName}' must have a PermitLimit greater than zero."
-            )
-            .Validate(
-                policy => policy.Window > TimeSpan.Zero,
-                $"Rate limit policy '{policyName}' must have a Window greater than zero."
-            )
-            .ValidateOnStart();
+            );
 
         builder
             .Services.AddOptions<RateLimiterOptions>()
