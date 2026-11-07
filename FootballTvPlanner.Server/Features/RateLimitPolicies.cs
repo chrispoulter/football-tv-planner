@@ -1,35 +1,27 @@
 using System.Security.Claims;
+using FootballTvPlanner.Server.Common.RateLimiting;
 
 namespace FootballTvPlanner.Server.Features;
 
-public static class DefaultRateLimit
+public static class RateLimitPolicies
 {
-    public const string Name = "Default";
+    public const string Default = "Default";
+    public const string Auth = "Auth";
+    public const string CalendarFeed = "CalendarFeed";
 
-    public static string PartitionKey(HttpContext context) =>
-        RateLimitPartitionKeys.UserOrIpAddress(context);
-}
+    public static IHostApplicationBuilder AddRateLimitPolicies(
+        this IHostApplicationBuilder builder
+    ) =>
+        builder
+            .AddRateLimitPolicy(Default, UserOrIpAddress)
+            .AddRateLimitPolicy(Auth, UserOrIpAddress)
+            .AddRateLimitPolicy(CalendarFeed, CalendarToken);
 
-public static class AuthRateLimit
-{
-    public const string Name = "Auth";
-
-    public static string PartitionKey(HttpContext context) =>
-        RateLimitPartitionKeys.UserOrIpAddress(context);
-}
-
-public static class CalendarFeedRateLimit
-{
-    public const string Name = "CalendarFeed";
-
-    public static string PartitionKey(HttpContext context) =>
-        $"token:{context.GetRouteValue("token")}";
-}
-
-internal static class RateLimitPartitionKeys
-{
     public static string UserOrIpAddress(HttpContext context) =>
         context.User.FindFirstValue(ClaimTypes.NameIdentifier) is { } userId
             ? $"user:{userId}"
             : $"ip:{context.Connection.RemoteIpAddress}";
+
+    public static string CalendarToken(HttpContext context) =>
+        $"token:{context.GetRouteValue("token")}";
 }

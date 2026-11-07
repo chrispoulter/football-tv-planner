@@ -29,9 +29,9 @@ builder.AddAuthentication<User, FootballTvPlannerDbContext>();
 builder.AddCaching();
 builder
     .AddRateLimiting()
-    .AddRateLimitPolicy(DefaultRateLimit.Name, DefaultRateLimit.PartitionKey)
-    .AddRateLimitPolicy(AuthRateLimit.Name, AuthRateLimit.PartitionKey)
-    .AddRateLimitPolicy(CalendarFeedRateLimit.Name, CalendarFeedRateLimit.PartitionKey);
+    .AddRateLimitPolicy(RateLimitPolicies.Default, RateLimitPolicies.UserOrIpAddress)
+    .AddRateLimitPolicy(RateLimitPolicies.Auth, RateLimitPolicies.UserOrIpAddress)
+    .AddRateLimitPolicy(RateLimitPolicies.CalendarFeed, RateLimitPolicies.CalendarToken);
 
 builder.AddOpenApi(serviceVersion);
 
@@ -45,7 +45,7 @@ app.UseRateLimiter();
 app.UseAuthorization();
 
 app.MapOpenApiWithUI();
-app.MapEndpoints(assembly).RequireRateLimiting(DefaultRateLimit.Name);
+app.MapEndpoints(assembly).RequireRateLimiting(RateLimitPolicies.Default);
 app.MapClientConfig();
 app.MapDefaultEndpoints();
 app.MapClientFallback();
