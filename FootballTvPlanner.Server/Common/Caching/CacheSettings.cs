@@ -14,6 +14,4 @@ public class CacheSettings
 public class CachePolicySettings
 {
     public TimeSpan? Expiration { get; set; }
-
-    public TimeSpan? LocalCacheExpiration { get; set; }
 }

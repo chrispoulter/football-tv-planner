@@ -24,7 +24,7 @@ public class CacheService : ICacheService
                 return new HybridCacheEntryOptions
                 {
                     Expiration = expiration,
-                    LocalCacheExpiration = policy.Value.LocalCacheExpiration ?? expiration,
+                    LocalCacheExpiration = expiration,
                 };
             },
             StringComparer.OrdinalIgnoreCase
