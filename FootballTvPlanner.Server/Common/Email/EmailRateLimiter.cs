@@ -9,15 +9,13 @@ public sealed class EmailRateLimiter : IDisposable
 
     public EmailRateLimiter(IOptions<EmailSettings> emailSettings)
     {
-        var settings = emailSettings.Value; 
-        
         _limiter = PartitionedRateLimiter.Create<string, string>(toAddress =>
             RateLimitPartition.GetSlidingWindowLimiter(
                 toAddress.ToUpperInvariant(),
                 _ => new SlidingWindowRateLimiterOptions
                 {
-                    PermitLimit = settings.RecipientRateLimit.PermitLimit,
-                    Window = settings.RecipientRateLimit.Window,
+                    PermitLimit = emailSettings.Value.RecipientRateLimit.PermitLimit,
+                    Window = emailSettings.Value.RecipientRateLimit.Window,
                     SegmentsPerWindow = 6,
                     QueueLimit = 0,
                 }

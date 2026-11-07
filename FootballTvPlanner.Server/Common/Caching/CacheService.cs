@@ -13,13 +13,11 @@ public class CacheService : ICacheService
     {
         _cache = cache;
 
-        var settings = cacheSettings.Value;
-
-        _entryOptions = settings.Policies.ToDictionary(
+        _entryOptions = cacheSettings.Value.Policies.ToDictionary(
             policy => policy.Key,
             policy =>
             {
-                var expiration = policy.Value.Expiration ?? settings.Expiration;
+                var expiration = policy.Value.Expiration ?? cacheSettings.Value.Expiration;
 
                 return new HybridCacheEntryOptions
                 {
