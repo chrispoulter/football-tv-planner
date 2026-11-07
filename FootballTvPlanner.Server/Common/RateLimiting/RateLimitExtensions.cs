@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Security.Claims;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Options;
@@ -96,4 +97,12 @@ public static class RateLimitExtensions
 
         return builder;
     }
+
+    public static string UserOrIpAddress(this HttpContext context) =>
+        context.User.FindFirstValue(ClaimTypes.NameIdentifier) is { } userId
+            ? $"user:{userId}"
+            : $"ip:{context.Connection.RemoteIpAddress}";
+
+    public static string RouteValue(this HttpContext context, string routeValueName) =>
+        $"{routeValueName}:{context.GetRouteValue(routeValueName)}";
 }
