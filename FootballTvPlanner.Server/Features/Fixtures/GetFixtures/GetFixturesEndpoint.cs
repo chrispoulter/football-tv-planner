@@ -1,5 +1,6 @@
 using FootballTvPlanner.Data;
 using FootballTvPlanner.Server.Common.Authentication;
+using FootballTvPlanner.Server.Common.Caching;
 using FootballTvPlanner.Server.Common.Infrastructure;
 using FootballTvPlanner.Server.Common.Validation;
 using Microsoft.EntityFrameworkCore;
@@ -27,6 +28,7 @@ public class GetFixturesEndpoint : IEndpoint
         CurrentUser? currentUser,
         FootballTvPlannerDbContext dbContext,
         IServiceScopeFactory scopeFactory,
+        ICachePolicyProvider cachePolicyProvider,
         HybridCache cache,
         CancellationToken cancellationToken = default
     )
@@ -81,7 +83,7 @@ public class GetFixturesEndpoint : IEndpoint
                     ))
                     .ToListAsync(cancel);
             },
-            options: CachePolicies.Default,
+            options: cachePolicyProvider.Get(CachePolicies.Fixtures),
             cancellationToken: cancellationToken
         );
 

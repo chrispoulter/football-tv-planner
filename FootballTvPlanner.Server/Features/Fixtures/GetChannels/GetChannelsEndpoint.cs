@@ -1,4 +1,5 @@
 using FootballTvPlanner.Data;
+using FootballTvPlanner.Server.Common.Caching;
 using FootballTvPlanner.Server.Common.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
@@ -22,6 +23,7 @@ public class GetChannelsEndpoint : IEndpoint
     private static async Task<IResult> HandleAsync(
         IServiceScopeFactory scopeFactory,
         HybridCache cache,
+        ICachePolicyProvider cachePolicyProvider,
         TimeProvider timeProvider,
         CancellationToken cancellationToken = default
     )
@@ -50,7 +52,7 @@ public class GetChannelsEndpoint : IEndpoint
 
                 return channels;
             },
-            options: CachePolicies.Default,
+            options: cachePolicyProvider.Get(CachePolicies.Fixtures),
             cancellationToken: cancellationToken
         );
 

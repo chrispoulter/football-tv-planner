@@ -1,14 +1,16 @@
 using Microsoft.Extensions.Caching.Hybrid;
 
-namespace FootballTvPlanner.Server.Common.Infrastructure;
+namespace FootballTvPlanner.Server.Common.Caching;
 
 public static class CachingExtensions
 {
     public static IHostApplicationBuilder AddCaching(this IHostApplicationBuilder builder)
     {
-        var settings =
-            builder.Configuration.GetSection(CachingSettings.SectionName).Get<CachingSettings>()
-            ?? new CachingSettings();
+        var section = builder.Configuration.GetSection(CachingSettings.SectionName);
+        var settings = section.Get<CachingSettings>() ?? new CachingSettings();
+
+        builder.Services.Configure<CachingSettings>(section);
+        builder.Services.AddSingleton<ICachePolicyProvider, CachePolicyProvider>();
 
         builder.Services.AddMemoryCache(options => options.SizeLimit = settings.SizeLimitBytes);
 

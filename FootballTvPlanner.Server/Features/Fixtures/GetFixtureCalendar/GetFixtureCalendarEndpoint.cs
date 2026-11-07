@@ -1,5 +1,6 @@
 using System.Text;
 using FootballTvPlanner.Data;
+using FootballTvPlanner.Server.Common.Caching;
 using FootballTvPlanner.Server.Common.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
@@ -23,6 +24,7 @@ public class GetFixtureCalendarEndpoint : IEndpoint
     private static async Task<IResult> HandleAsync(
         Guid id,
         IServiceScopeFactory scopeFactory,
+        ICachePolicyProvider cachePolicyProvider,
         HybridCache cache,
         TimeProvider timeProvider,
         CancellationToken cancellationToken = default
@@ -43,7 +45,7 @@ public class GetFixtureCalendarEndpoint : IEndpoint
                     .Select(FixtureProjections.ToCalendarFixture())
                     .FirstOrDefaultAsync(cancel);
             },
-            options: CachePolicies.Default,
+            options: cachePolicyProvider.Get(CachePolicies.Fixtures),
             cancellationToken: cancellationToken
         );
 

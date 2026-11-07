@@ -3,6 +3,7 @@ using FluentValidation;
 using FootballTvPlanner.Data;
 using FootballTvPlanner.Data.Users;
 using FootballTvPlanner.Server.Common.Authentication;
+using FootballTvPlanner.Server.Common.Caching;
 using FootballTvPlanner.Server.Common.Email;
 using FootballTvPlanner.Server.Common.Infrastructure;
 using FootballTvPlanner.Server.Features;
@@ -25,8 +26,7 @@ builder.AddForwardedHeaders();
 builder.AddDataProtection<FootballTvPlannerDbContext>();
 builder.AddAuthentication<User, FootballTvPlannerDbContext>();
 builder.AddCaching();
-builder
-    .AddRateLimiting();
+builder.AddRateLimiting();
 
 builder.AddOpenApi(serviceVersion);
 
