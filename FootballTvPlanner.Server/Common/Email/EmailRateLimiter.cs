@@ -26,7 +26,6 @@ public sealed class EmailRateLimiter : IDisposable
     public bool TryAcquire(string toAddress)
     {
         using var lease = _limiter.AttemptAcquire(toAddress);
-
         return lease.IsAcquired;
     }
 
