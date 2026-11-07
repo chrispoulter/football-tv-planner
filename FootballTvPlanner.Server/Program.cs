@@ -31,7 +31,7 @@ builder
     .AddRateLimiting()
     .AddRateLimitPolicy(RateLimitPolicies.Default, context => context.UserOrIpAddress())
     .AddRateLimitPolicy(RateLimitPolicies.Auth, context => context.UserOrIpAddress())
-    .AddRateLimitPolicy(RateLimitPolicies.CalendarFeed, context => context.RouteValue("token"));
+    .AddRateLimitPolicy(RateLimitPolicies.ScheduleCalender, context => context.RouteValue("token"));
 
 builder.AddOpenApi(serviceVersion);
 
