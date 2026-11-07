@@ -6,6 +6,7 @@ using FootballTvPlanner.Server.Common.Authentication;
 using FootballTvPlanner.Server.Common.Caching;
 using FootballTvPlanner.Server.Common.Email;
 using FootballTvPlanner.Server.Common.Infrastructure;
+using FootballTvPlanner.Server.Common.RateLimiting;
 using FootballTvPlanner.Server.Features;
 
 var assembly = Assembly.GetExecutingAssembly();

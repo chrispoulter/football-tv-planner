@@ -3,7 +3,7 @@ using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Options;
 
-namespace FootballTvPlanner.Server.Common.Infrastructure;
+namespace FootballTvPlanner.Server.Common.RateLimiting;
 
 public static class RateLimitExtensions
 {

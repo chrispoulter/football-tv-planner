@@ -1,4 +1,4 @@
-namespace FootballTvPlanner.Server.Common.Infrastructure;
+namespace FootballTvPlanner.Server.Common.RateLimiting;
 
 public class RateLimitSettings
 {
