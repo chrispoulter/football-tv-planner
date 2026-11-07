@@ -17,12 +17,9 @@ public class CacheService : ICacheService
             policy => policy.Key,
             policy =>
             {
-                var expiration = policy.Value.Expiration ?? cacheSettings.Value.Expiration;
-
                 return new HybridCacheEntryOptions
                 {
-                    Expiration = expiration,
-                    LocalCacheExpiration = expiration,
+                    Expiration = policy.Value.Expiration ?? cacheSettings.Value.Default.Expiration,
                 };
             },
             StringComparer.OrdinalIgnoreCase

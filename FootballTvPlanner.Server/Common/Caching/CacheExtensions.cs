@@ -16,7 +16,8 @@ public static class CacheExtensions
         builder
             .Services.AddOptions<MemoryCacheOptions>()
             .Configure<IOptions<CacheSettings>>(
-                (options, cacheSettings) => options.SizeLimit = cacheSettings.Value.SizeLimitBytes
+                (options, cacheSettings) =>
+                    options.SizeLimit = cacheSettings.Value.MemoryCache.SizeLimitBytes
             );
 
         builder.Services.AddHybridCache();
@@ -26,8 +27,7 @@ public static class CacheExtensions
                 (options, cacheSettings) =>
                     options.DefaultEntryOptions = new HybridCacheEntryOptions
                     {
-                        Expiration = cacheSettings.Value.Expiration,
-                        LocalCacheExpiration = cacheSettings.Value.Expiration,
+                        Expiration = cacheSettings.Value.Default.Expiration,
                     }
             );
 

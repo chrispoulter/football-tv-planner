@@ -4,11 +4,16 @@ public class CacheSettings
 {
     public static string SectionName { get; } = "Caching";
 
-    public TimeSpan Expiration { get; set; } = TimeSpan.FromMinutes(5);
+    public MemoryCacheSettings MemoryCache { get; set; } = new();
 
-    public long SizeLimitBytes { get; set; } = 20 * 1024 * 1024;
+    public CachePolicySettings Default { get; set; } = new();
 
     public Dictionary<string, CachePolicySettings> Policies { get; set; } = [];
+}
+
+public class MemoryCacheSettings
+{
+    public long SizeLimitBytes { get; set; } = 20 * 1024 * 1024;
 }
 
 public class CachePolicySettings
