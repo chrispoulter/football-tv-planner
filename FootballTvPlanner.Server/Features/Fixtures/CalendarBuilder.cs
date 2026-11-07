@@ -14,10 +14,6 @@ public record CalendarFixture(
     IReadOnlyList<string> Channels
 );
 
-/// <summary>
-/// Writes RFC 5545 iCalendar documents for fixtures. All times are written in UTC so no
-/// VTIMEZONE block is needed; calendar clients convert to the viewer's local time.
-/// </summary>
 public static class CalendarBuilder
 {
     public const string ContentType = "text/calendar; charset=utf-8";

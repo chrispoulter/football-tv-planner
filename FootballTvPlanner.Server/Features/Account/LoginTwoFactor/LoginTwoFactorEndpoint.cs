@@ -25,7 +25,9 @@ public class LoginTwoFactorEndpoint : IEndpoint
         SignInManager<User> signInManager
     )
     {
-        if (await signInManager.GetTwoFactorAuthenticationUserAsync() is null)
+        var twoFactor = await signInManager.GetTwoFactorAuthenticationUserAsync();
+
+        if (twoFactor is null)
         {
             return Results.Problem(
                 statusCode: StatusCodes.Status400BadRequest,

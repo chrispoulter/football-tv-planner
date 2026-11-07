@@ -96,7 +96,9 @@ public class ExternalLoginCallbackEndpoint : IEndpoint
             await userManager.UpdateAsync(user);
         }
 
-        if (!(await userManager.AddLoginAsync(user, info)).Succeeded)
+        var added = await userManager.AddLoginAsync(user, info);
+
+        if (!added.Succeeded)
         {
             return Results.Redirect(ExternalLoginRedirects.LoginError("external"));
         }
