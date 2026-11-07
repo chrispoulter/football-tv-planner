@@ -13,8 +13,8 @@ public sealed class EmailRateLimiter(IOptions<EmailSettings> emailSettings) : ID
             toAddress.ToUpperInvariant(),
             _ => new SlidingWindowRateLimiterOptions
             {
-                PermitLimit = emailSettings.Value.RecipientPermitLimit,
-                Window = emailSettings.Value.RecipientWindow,
+                PermitLimit = emailSettings.Value.RecipientRateLimit.PermitLimit,
+                Window = emailSettings.Value.RecipientRateLimit.Window,
                 SegmentsPerWindow = 6,
                 QueueLimit = 0,
             }
