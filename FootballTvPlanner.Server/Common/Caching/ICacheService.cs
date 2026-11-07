@@ -1,6 +1,6 @@
 namespace FootballTvPlanner.Server.Common.Caching;
 
-public interface IPolicyCache
+public interface ICacheService
 {
     ValueTask<T> GetOrCreateAsync<T>(
         string key,

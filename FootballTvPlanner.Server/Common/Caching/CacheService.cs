@@ -3,13 +3,13 @@ using Microsoft.Extensions.Options;
 
 namespace FootballTvPlanner.Server.Common.Caching;
 
-public class PolicyCache : IPolicyCache
+public class CacheService : ICacheService
 {
     private readonly HybridCache _cache;
 
     private readonly Dictionary<string, HybridCacheEntryOptions> _entryOptions;
 
-    public PolicyCache(HybridCache cache, IOptions<CachingSettings> cachingSettings)
+    public CacheService(HybridCache cache, IOptions<CachingSettings> cachingSettings)
     {
         _cache = cache;
 

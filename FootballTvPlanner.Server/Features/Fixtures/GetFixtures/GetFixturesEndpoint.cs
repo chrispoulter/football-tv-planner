@@ -27,7 +27,7 @@ public class GetFixturesEndpoint : IEndpoint
         CurrentUser? currentUser,
         FootballTvPlannerDbContext dbContext,
         IServiceScopeFactory scopeFactory,
-        IPolicyCache cache,
+        ICacheService cache,
         CancellationToken cancellationToken = default
     )
     {

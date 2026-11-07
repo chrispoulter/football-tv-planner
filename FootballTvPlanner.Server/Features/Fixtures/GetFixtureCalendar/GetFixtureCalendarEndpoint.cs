@@ -23,7 +23,7 @@ public class GetFixtureCalendarEndpoint : IEndpoint
     private static async Task<IResult> HandleAsync(
         Guid id,
         IServiceScopeFactory scopeFactory,
-        IPolicyCache cache,
+        ICacheService cache,
         TimeProvider timeProvider,
         CancellationToken cancellationToken = default
     )

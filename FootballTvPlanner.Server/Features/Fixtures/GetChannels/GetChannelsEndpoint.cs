@@ -21,7 +21,7 @@ public class GetChannelsEndpoint : IEndpoint
 
     private static async Task<IResult> HandleAsync(
         IServiceScopeFactory scopeFactory,
-        IPolicyCache cache,
+        ICacheService cache,
         TimeProvider timeProvider,
         CancellationToken cancellationToken = default
     )
