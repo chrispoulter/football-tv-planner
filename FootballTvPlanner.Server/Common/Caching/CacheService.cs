@@ -9,11 +9,11 @@ public class CacheService : ICacheService
 
     private readonly Dictionary<string, HybridCacheEntryOptions> _entryOptions;
 
-    public CacheService(HybridCache cache, IOptions<CachingSettings> cachingSettings)
+    public CacheService(HybridCache cache, IOptions<CacheSettings> cacheSettings)
     {
         _cache = cache;
 
-        var settings = cachingSettings.Value;
+        var settings = cacheSettings.Value;
 
         _entryOptions = settings.Policies.ToDictionary(
             policy => policy.Key,

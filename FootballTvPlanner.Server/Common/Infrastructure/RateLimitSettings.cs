@@ -1,6 +1,6 @@
 namespace FootballTvPlanner.Server.Common.Infrastructure;
 
-public class RateLimitingSettings
+public class RateLimitSettings
 {
     public static string SectionName { get; } = "RateLimiting";
 

@@ -5,13 +5,13 @@ using Microsoft.Extensions.Options;
 
 namespace FootballTvPlanner.Server.Common.Infrastructure;
 
-public static class RateLimitingExtensions
+public static class RateLimitExtensions
 {
     public static IHostApplicationBuilder AddRateLimiting(this IHostApplicationBuilder builder)
     {
         builder
-            .Services.AddOptions<RateLimitingSettings>()
-            .Bind(builder.Configuration.GetSection(RateLimitingSettings.SectionName));
+            .Services.AddOptions<RateLimitSettings>()
+            .Bind(builder.Configuration.GetSection(RateLimitSettings.SectionName));
 
         builder.Services.AddRateLimiter(options =>
         {
@@ -68,10 +68,10 @@ public static class RateLimitingExtensions
     {
         builder
             .Services.AddOptions<RateLimiterOptions>()
-            .Configure<IOptions<RateLimitingSettings>>(
-                (options, rateLimitingSettings) =>
+            .Configure<IOptions<RateLimitSettings>>(
+                (options, rateLimitSettings) =>
                 {
-                    var settings = rateLimitingSettings.Value;
+                    var settings = rateLimitSettings.Value;
 
                     settings.Policies.TryGetValue(policyName, out var policy);
 

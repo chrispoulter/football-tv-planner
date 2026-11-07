@@ -1,6 +1,6 @@
 namespace FootballTvPlanner.Server.Common.Caching;
 
-public class CachingSettings
+public class CacheSettings
 {
     public static string SectionName { get; } = "Caching";
 

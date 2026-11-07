@@ -4,25 +4,25 @@ using Microsoft.Extensions.Options;
 
 namespace FootballTvPlanner.Server.Common.Caching;
 
-public static class CachingExtensions
+public static class CacheExtensions
 {
     public static IHostApplicationBuilder AddCaching(this IHostApplicationBuilder builder)
     {
         builder
-            .Services.AddOptions<CachingSettings>()
-            .Bind(builder.Configuration.GetSection(CachingSettings.SectionName));
+            .Services.AddOptions<CacheSettings>()
+            .Bind(builder.Configuration.GetSection(CacheSettings.SectionName));
 
         builder.Services.AddMemoryCache();
         builder
             .Services.AddOptions<MemoryCacheOptions>()
-            .Configure<IOptions<CachingSettings>>(
+            .Configure<IOptions<CacheSettings>>(
                 (options, settings) => options.SizeLimit = settings.Value.SizeLimitBytes
             );
 
         builder.Services.AddHybridCache();
         builder
             .Services.AddOptions<HybridCacheOptions>()
-            .Configure<IOptions<CachingSettings>>(
+            .Configure<IOptions<CacheSettings>>(
                 (options, settings) =>
                     options.DefaultEntryOptions = new HybridCacheEntryOptions
                     {
