@@ -3,12 +3,16 @@ using Microsoft.Extensions.Options;
 
 namespace FootballTvPlanner.Server.Common.Caching;
 
-public class CachePolicyProvider : ICachePolicyProvider
+public class PolicyCache : IPolicyCache
 {
+    private readonly HybridCache _cache;
+
     private readonly Dictionary<string, HybridCacheEntryOptions> _entryOptions;
 
-    public CachePolicyProvider(IOptions<CachingSettings> cachingSettings)
+    public PolicyCache(HybridCache cache, IOptions<CachingSettings> cachingSettings)
     {
+        _cache = cache;
+
         var settings = cachingSettings.Value;
 
         _entryOptions = settings.Policies.ToDictionary(
@@ -27,6 +31,18 @@ public class CachePolicyProvider : ICachePolicyProvider
         );
     }
 
-    public HybridCacheEntryOptions? Get(string policyName) =>
-        _entryOptions.GetValueOrDefault(policyName);
+    public ValueTask<T> GetOrCreateAsync<T>(
+        string key,
+        string policyName,
+        Func<CancellationToken, ValueTask<T>> factory,
+        IEnumerable<string>? tags = null,
+        CancellationToken cancellationToken = default
+    ) =>
+        _cache.GetOrCreateAsync(
+            key,
+            factory,
+            _entryOptions.GetValueOrDefault(policyName),
+            tags,
+            cancellationToken
+        );
 }

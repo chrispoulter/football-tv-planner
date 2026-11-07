@@ -3,7 +3,6 @@ using FootballTvPlanner.Data;
 using FootballTvPlanner.Server.Common.Caching;
 using FootballTvPlanner.Server.Common.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Hybrid;
 
 namespace FootballTvPlanner.Server.Features.Fixtures.GetFixtureCalendar;
 
@@ -24,14 +23,14 @@ public class GetFixtureCalendarEndpoint : IEndpoint
     private static async Task<IResult> HandleAsync(
         Guid id,
         IServiceScopeFactory scopeFactory,
-        ICachePolicyProvider cachePolicyProvider,
-        HybridCache cache,
+        IPolicyCache cache,
         TimeProvider timeProvider,
         CancellationToken cancellationToken = default
     )
     {
         var fixture = await cache.GetOrCreateAsync(
             $"fixture_calendar_{id}",
+            CachePolicies.Fixtures,
             async cancel =>
             {
                 await using var scope = scopeFactory.CreateAsyncScope();
@@ -45,7 +44,6 @@ public class GetFixtureCalendarEndpoint : IEndpoint
                     .Select(FixtureProjections.ToCalendarFixture())
                     .FirstOrDefaultAsync(cancel);
             },
-            options: cachePolicyProvider.Get(CachePolicies.Fixtures),
             cancellationToken: cancellationToken
         );
 

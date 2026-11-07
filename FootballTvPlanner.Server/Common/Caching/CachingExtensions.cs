@@ -10,10 +10,9 @@ public static class CachingExtensions
         var settings = section.Get<CachingSettings>() ?? new CachingSettings();
 
         builder.Services.Configure<CachingSettings>(section);
-        builder.Services.AddSingleton<ICachePolicyProvider, CachePolicyProvider>();
+        builder.Services.AddSingleton<IPolicyCache, PolicyCache>();
 
         builder.Services.AddMemoryCache(options => options.SizeLimit = settings.SizeLimitBytes);
-
         builder.Services.AddHybridCache(options =>
         {
             options.DefaultEntryOptions = new HybridCacheEntryOptions

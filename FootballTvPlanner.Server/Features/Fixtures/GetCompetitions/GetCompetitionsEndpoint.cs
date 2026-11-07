@@ -2,7 +2,6 @@ using FootballTvPlanner.Data;
 using FootballTvPlanner.Server.Common.Caching;
 using FootballTvPlanner.Server.Common.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Hybrid;
 
 namespace FootballTvPlanner.Server.Features.Fixtures.GetCompetitions;
 
@@ -20,14 +19,14 @@ public class GetCompetitionsEndpoint : IEndpoint
 
     private static async Task<IResult> HandleAsync(
         IServiceScopeFactory scopeFactory,
-        ICachePolicyProvider cachePolicyProvider,
-        HybridCache cache,
+        IPolicyCache cache,
         TimeProvider timeProvider,
         CancellationToken cancellationToken = default
     )
     {
         var competitions = await cache.GetOrCreateAsync(
             "competitions",
+            CachePolicies.Fixtures,
             async cancel =>
             {
                 await using var scope = scopeFactory.CreateAsyncScope();
@@ -50,7 +49,6 @@ public class GetCompetitionsEndpoint : IEndpoint
 
                 return competitions;
             },
-            options: cachePolicyProvider.Get(CachePolicies.Fixtures),
             cancellationToken: cancellationToken
         );
 

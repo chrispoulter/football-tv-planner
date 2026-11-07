@@ -4,7 +4,6 @@ using FootballTvPlanner.Server.Common.Caching;
 using FootballTvPlanner.Server.Common.Infrastructure;
 using FootballTvPlanner.Server.Common.Validation;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Hybrid;
 
 namespace FootballTvPlanner.Server.Features.Fixtures.GetFixtures;
 
@@ -28,8 +27,7 @@ public class GetFixturesEndpoint : IEndpoint
         CurrentUser? currentUser,
         FootballTvPlannerDbContext dbContext,
         IServiceScopeFactory scopeFactory,
-        ICachePolicyProvider cachePolicyProvider,
-        HybridCache cache,
+        IPolicyCache cache,
         CancellationToken cancellationToken = default
     )
     {
@@ -46,6 +44,7 @@ public class GetFixturesEndpoint : IEndpoint
 
         var fixtures = await cache.GetOrCreateAsync(
             $"fixtures_{start.UtcTicks}_{end.UtcTicks}_{request.CompetitionId}_{request.ChannelId}",
+            CachePolicies.Fixtures,
             async cancel =>
             {
                 await using var scope = scopeFactory.CreateAsyncScope();
@@ -83,7 +82,6 @@ public class GetFixturesEndpoint : IEndpoint
                     ))
                     .ToListAsync(cancel);
             },
-            options: cachePolicyProvider.Get(CachePolicies.Fixtures),
             cancellationToken: cancellationToken
         );
 
