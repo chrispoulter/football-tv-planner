@@ -3,30 +3,30 @@ using Microsoft.Extensions.Options;
 
 namespace FootballTvPlanner.Server.Common.Caching;
 
-public class CachePolicyProvider(IOptions<CachingSettings> cachingSettings)
-    : ICachePolicyProvider
+public class CachePolicyProvider : ICachePolicyProvider
 {
-    private readonly Dictionary<string, HybridCacheEntryOptions> _entryOptions =
-        cachingSettings.Value.Policies.ToDictionary(
+    private readonly Dictionary<string, HybridCacheEntryOptions> _entryOptions;
+
+    public CachePolicyProvider(IOptions<CachingSettings> cachingSettings)
+    {
+        var settings = cachingSettings.Value;
+
+        _entryOptions = settings.Policies.ToDictionary(
             policy => policy.Key,
-            policy => Build(policy.Value, cachingSettings.Value.Expiration),
+            policy =>
+            {
+                var expiration = policy.Value.Expiration ?? settings.Expiration;
+
+                return new HybridCacheEntryOptions
+                {
+                    Expiration = expiration,
+                    LocalCacheExpiration = policy.Value.LocalCacheExpiration ?? expiration,
+                };
+            },
             StringComparer.OrdinalIgnoreCase
         );
+    }
 
     public HybridCacheEntryOptions? Get(string policyName) =>
         _entryOptions.GetValueOrDefault(policyName);
-
-    private static HybridCacheEntryOptions Build(
-        CachePolicySettings policy,
-        TimeSpan defaultExpiration
-    )
-    {
-        var expiration = policy.Expiration ?? defaultExpiration;
-
-        return new HybridCacheEntryOptions
-        {
-            Expiration = expiration,
-            LocalCacheExpiration = policy.LocalCacheExpiration ?? expiration,
-        };
-    }
 }
