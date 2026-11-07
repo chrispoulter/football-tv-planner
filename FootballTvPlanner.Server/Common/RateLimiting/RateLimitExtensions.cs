@@ -10,10 +10,6 @@ public static class RateLimitExtensions
 {
     public static IHostApplicationBuilder AddRateLimiting(this IHostApplicationBuilder builder)
     {
-        builder
-            .Services.AddOptions<RateLimitSettings>()
-            .Bind(builder.Configuration.GetSection(RateLimitSettings.SectionName));
-
         builder.Services.AddRateLimiter(options =>
         {
             options.OnRejected = async (context, cancellationToken) =>
@@ -68,18 +64,33 @@ public static class RateLimitExtensions
     )
     {
         builder
-            .Services.AddOptions<RateLimiterOptions>()
-            .Configure<IOptions<RateLimitSettings>>(
-                (options, rateLimitSettings) =>
-                {
-                    var settings = rateLimitSettings.Value;
+            .Services.AddOptions<RateLimitPolicySettings>(policyName)
+            .Bind(
+                builder.Configuration.GetSection(
+                    ConfigurationPath.Combine(RateLimitPolicySettings.SectionName, policyName)
+                )
+            )
+            .Validate(
+                policy => policy.PermitLimit > 0,
+                $"Rate limit policy '{policyName}' must have a PermitLimit greater than zero."
+            )
+            .Validate(
+                policy => policy.Window > TimeSpan.Zero,
+                $"Rate limit policy '{policyName}' must have a Window greater than zero."
+            )
+            .ValidateOnStart();
 
-                    settings.Policies.TryGetValue(policyName, out var policy);
+        builder
+            .Services.AddOptions<RateLimiterOptions>()
+            .Configure<IOptionsMonitor<RateLimitPolicySettings>>(
+                (options, policies) =>
+                {
+                    var policy = policies.Get(policyName);
 
                     var limiterOptions = new SlidingWindowRateLimiterOptions
                     {
-                        PermitLimit = policy?.PermitLimit ?? settings.PermitLimit,
-                        Window = policy?.Window ?? settings.Window,
+                        PermitLimit = policy.PermitLimit,
+                        Window = policy.Window,
                         SegmentsPerWindow = 6,
                         QueueLimit = 0,
                     };
