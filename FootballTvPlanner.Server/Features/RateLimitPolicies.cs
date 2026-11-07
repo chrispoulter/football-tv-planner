@@ -1,59 +1,35 @@
 using System.Security.Claims;
-using System.Threading.RateLimiting;
 
 namespace FootballTvPlanner.Server.Features;
 
 public static class DefaultRateLimit
 {
-    public static string Name = "Default";
+    public const string Name = "Default";
 
-    public static Func<HttpContext, RateLimitPartition<string>> Partition = context =>
-        RateLimitPartition.GetSlidingWindowLimiter(
-            partitionKey: context.User.FindFirstValue(ClaimTypes.NameIdentifier) is { } userId
-                ? $"user:{userId}"
-                : $"ip:{context.Connection.RemoteIpAddress}",
-            factory: partition => new SlidingWindowRateLimiterOptions
-            {
-                PermitLimit = 100,
-                Window = TimeSpan.FromMinutes(1),
-                SegmentsPerWindow = 6,
-                QueueLimit = 0,
-            }
-        );
+    public static string PartitionKey(HttpContext context) =>
+        RateLimitPartitionKeys.UserOrIpAddress(context);
 }
 
 public static class AuthRateLimit
 {
-    public static string Name = "Auth";
+    public const string Name = "Auth";
 
-    public static Func<HttpContext, RateLimitPartition<string>> Partition = context =>
-        RateLimitPartition.GetSlidingWindowLimiter(
-            partitionKey: context.User.FindFirstValue(ClaimTypes.NameIdentifier) is { } userId
-                ? $"user:{userId}"
-                : $"ip:{context.Connection.RemoteIpAddress}",
-            factory: partition => new SlidingWindowRateLimiterOptions
-            {
-                PermitLimit = 100,
-                Window = TimeSpan.FromMinutes(1),
-                SegmentsPerWindow = 6,
-                QueueLimit = 0,
-            }
-        );
+    public static string PartitionKey(HttpContext context) =>
+        RateLimitPartitionKeys.UserOrIpAddress(context);
 }
 
 public static class CalendarFeedRateLimit
 {
-    public static string Name = "CalendarFeed";
+    public const string Name = "CalendarFeed";
 
-    public static Func<HttpContext, RateLimitPartition<string>> Partition = context =>
-        RateLimitPartition.GetSlidingWindowLimiter(
-            partitionKey: $"token:{context.GetRouteValue("token")}",
-            factory: partition => new SlidingWindowRateLimiterOptions
-            {
-                PermitLimit = 100,
-                Window = TimeSpan.FromMinutes(1),
-                SegmentsPerWindow = 6,
-                QueueLimit = 0,
-            }
-        );
+    public static string PartitionKey(HttpContext context) =>
+        $"token:{context.GetRouteValue("token")}";
+}
+
+internal static class RateLimitPartitionKeys
+{
+    public static string UserOrIpAddress(HttpContext context) =>
+        context.User.FindFirstValue(ClaimTypes.NameIdentifier) is { } userId
+            ? $"user:{userId}"
+            : $"ip:{context.Connection.RemoteIpAddress}";
 }

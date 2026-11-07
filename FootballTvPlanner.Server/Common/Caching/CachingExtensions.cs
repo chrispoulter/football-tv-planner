@@ -1,4 +1,6 @@
 using Microsoft.Extensions.Caching.Hybrid;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
 
 namespace FootballTvPlanner.Server.Common.Caching;
 
@@ -6,21 +8,30 @@ public static class CachingExtensions
 {
     public static IHostApplicationBuilder AddCaching(this IHostApplicationBuilder builder)
     {
-        var section = builder.Configuration.GetSection(CachingSettings.SectionName);
-        var settings = section.Get<CachingSettings>() ?? new CachingSettings();
+        builder
+            .Services.AddOptions<CachingSettings>()
+            .Bind(builder.Configuration.GetSection(CachingSettings.SectionName));
 
-        builder.Services.Configure<CachingSettings>(section);
+        builder.Services.AddMemoryCache();
+        builder
+            .Services.AddOptions<MemoryCacheOptions>()
+            .Configure<IOptions<CachingSettings>>(
+                (options, settings) => options.SizeLimit = settings.Value.SizeLimitBytes
+            );
+
+        builder.Services.AddHybridCache();
+        builder
+            .Services.AddOptions<HybridCacheOptions>()
+            .Configure<IOptions<CachingSettings>>(
+                (options, settings) =>
+                    options.DefaultEntryOptions = new HybridCacheEntryOptions
+                    {
+                        Expiration = settings.Value.Expiration,
+                        LocalCacheExpiration = settings.Value.Expiration,
+                    }
+            );
+
         builder.Services.AddSingleton<ICacheService, CacheService>();
-
-        builder.Services.AddMemoryCache(options => options.SizeLimit = settings.SizeLimitBytes);
-        builder.Services.AddHybridCache(options =>
-        {
-            options.DefaultEntryOptions = new HybridCacheEntryOptions
-            {
-                Expiration = settings.Expiration,
-                LocalCacheExpiration = settings.Expiration,
-            };
-        });
 
         return builder;
     }

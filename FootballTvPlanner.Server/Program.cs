@@ -26,7 +26,11 @@ builder.AddForwardedHeaders();
 builder.AddDataProtection<FootballTvPlannerDbContext>();
 builder.AddAuthentication<User, FootballTvPlannerDbContext>();
 builder.AddCaching();
-builder.AddRateLimiting();
+builder
+    .AddRateLimiting()
+    .AddRateLimitPolicy(DefaultRateLimit.Name, DefaultRateLimit.PartitionKey)
+    .AddRateLimitPolicy(AuthRateLimit.Name, AuthRateLimit.PartitionKey)
+    .AddRateLimitPolicy(CalendarFeedRateLimit.Name, CalendarFeedRateLimit.PartitionKey);
 
 builder.AddOpenApi(serviceVersion);
 

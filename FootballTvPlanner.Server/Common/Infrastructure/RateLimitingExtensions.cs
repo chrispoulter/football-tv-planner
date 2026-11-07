@@ -1,5 +1,7 @@
 using System.Globalization;
 using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.Extensions.Options;
 
 namespace FootballTvPlanner.Server.Common.Infrastructure;
 
@@ -7,11 +9,9 @@ public static class RateLimitingExtensions
 {
     public static IHostApplicationBuilder AddRateLimiting(this IHostApplicationBuilder builder)
     {
-        var settings =
-            builder
-                .Configuration.GetSection(RateLimitingSettings.SectionName)
-                .Get<RateLimitingSettings>()
-            ?? new RateLimitingSettings();
+        builder
+            .Services.AddOptions<RateLimitingSettings>()
+            .Bind(builder.Configuration.GetSection(RateLimitingSettings.SectionName));
 
         builder.Services.AddRateLimiter(options =>
         {
@@ -56,6 +56,43 @@ public static class RateLimitingExtensions
                 );
             };
         });
+
+        return builder;
+    }
+
+    public static IHostApplicationBuilder AddRateLimitPolicy(
+        this IHostApplicationBuilder builder,
+        string policyName,
+        Func<HttpContext, string> partitionKey
+    )
+    {
+        builder
+            .Services.AddOptions<RateLimiterOptions>()
+            .Configure<IOptions<RateLimitingSettings>>(
+                (options, rateLimitingSettings) =>
+                {
+                    var settings = rateLimitingSettings.Value;
+
+                    settings.Policies.TryGetValue(policyName, out var policy);
+
+                    var limiterOptions = new SlidingWindowRateLimiterOptions
+                    {
+                        PermitLimit = policy?.PermitLimit ?? settings.PermitLimit,
+                        Window = policy?.Window ?? settings.Window,
+                        SegmentsPerWindow = 6,
+                        QueueLimit = 0,
+                    };
+
+                    options.AddPolicy(
+                        policyName,
+                        context =>
+                            RateLimitPartition.GetSlidingWindowLimiter(
+                                partitionKey(context),
+                                _ => limiterOptions
+                            )
+                    );
+                }
+            );
 
         return builder;
     }
