@@ -50,7 +50,10 @@ public static class AuthenticationExtensions
             .Configuration.GetSection(GoogleSettings.SectionName)
             .Get<GoogleSettings>();
 
-        if (!string.IsNullOrEmpty(googleSettings?.ClientId))
+        if (
+            !string.IsNullOrEmpty(googleSettings?.ClientId)
+            && !string.IsNullOrEmpty(googleSettings?.ClientSecret)
+        )
         {
             builder
                 .Services.AddAuthentication()
