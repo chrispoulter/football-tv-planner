@@ -1,9 +1,9 @@
+type ReturnUrlState = {
+    from?: string | { pathname?: string; search?: string };
+};
+
 export function returnUrl(state: unknown) {
-    const from = (
-        state as {
-            from?: string | { pathname?: string; search?: string };
-        } | null
-    )?.from;
+    const from = (state as ReturnUrlState | null)?.from;
 
     const path =
         typeof from === 'string'
