@@ -2,10 +2,7 @@ import { useState } from 'react';
 import { Navigate, useLocation, useNavigate, Link } from 'react-router';
 import { toast } from 'sonner';
 import { Metadata } from '@/components/metadata';
-import {
-    type LoginTwoFactorRequest,
-    useLoginTwoFactor,
-} from '../account-queries';
+import { useLoginTwoFactor } from '../account-queries';
 import { AccountLayout } from '../account-layout';
 import { TwoFactorForm, type TwoFactorFormValues } from './two-factor-form';
 import {
@@ -18,7 +15,6 @@ export function TwoFactorPage() {
     const navigate = useNavigate();
 
     const location = useLocation();
-
     const state = location.state as TwoFactorState | null;
 
     const [useRecoveryCode, setUseRecoveryCode] = useState(false);
@@ -31,7 +27,7 @@ export function TwoFactorPage() {
 
     const { rememberMe, from } = state;
 
-    const submit = (request: Omit<LoginTwoFactorRequest, 'rememberMe'>) =>
+    const onSubmit = (request: TwoFactorFormValues | RecoveryCodeFormValues) =>
         loginTwoFactor(
             { ...request, rememberMe },
             {
@@ -39,12 +35,6 @@ export function TwoFactorPage() {
                 onError: (error) => toast.error(error.message),
             }
         );
-
-    const onAuthenticatorSubmit = (values: TwoFactorFormValues) =>
-        submit(values);
-
-    const onRecoveryCodeSubmit = (values: RecoveryCodeFormValues) =>
-        submit(values);
 
     return (
         <AccountLayout
@@ -68,13 +58,13 @@ export function TwoFactorPage() {
             {useRecoveryCode ? (
                 <RecoveryCodeForm
                     loading={isPending}
-                    onSubmit={onRecoveryCodeSubmit}
+                    onSubmit={onSubmit}
                     onUseAuthenticator={() => setUseRecoveryCode(false)}
                 />
             ) : (
                 <TwoFactorForm
                     loading={isPending}
-                    onSubmit={onAuthenticatorSubmit}
+                    onSubmit={onSubmit}
                     onUseRecoveryCode={() => setUseRecoveryCode(true)}
                 />
             )}

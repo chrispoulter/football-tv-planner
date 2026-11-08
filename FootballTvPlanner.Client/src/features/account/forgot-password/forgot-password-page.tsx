@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Link } from 'react-router';
 import { toast } from 'sonner';
 import { Metadata } from '@/components/metadata';
@@ -11,17 +10,16 @@ import {
 } from './forgot-password-form';
 
 export function ForgotPasswordPage() {
-    const [isSent, setIsSent] = useState(false);
-
-    const { mutate: forgotPassword, isPending } = useForgotPassword();
+    const {
+        mutate: forgotPassword,
+        isPending,
+        isSuccess,
+    } = useForgotPassword();
 
     const onSubmit = (values: ForgotPasswordFormValues) =>
         forgotPassword(
             { email: values.emailAddress },
-            {
-                onSuccess: () => setIsSent(true),
-                onError: (error) => toast.error(error.message),
-            }
+            { onError: (error) => toast.error(error.message) }
         );
 
     return (
@@ -39,7 +37,7 @@ export function ForgotPasswordPage() {
         >
             <Metadata title="Forgot Password" />
 
-            {isSent ? (
+            {isSuccess ? (
                 <Alert>
                     <AlertDescription>
                         <p>

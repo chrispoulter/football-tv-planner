@@ -21,14 +21,12 @@ export function LoginPage() {
     const navigate = useNavigate();
 
     const location = useLocation();
-
-    const [searchParams] = useSearchParams();
-
-    const { mutate: login, isPending } = useLogin();
-
     const from = returnUrl(location.state);
 
+    const [searchParams] = useSearchParams();
     const externalError = externalLoginErrors[searchParams.get('error') ?? ''];
+
+    const { mutate: login, isPending } = useLogin();
 
     const onSubmit = ({ emailAddress, ...values }: LoginFormValues) =>
         login(

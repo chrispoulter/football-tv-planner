@@ -10,14 +10,13 @@ import {
 } from './reset-password-form';
 
 export function ResetPasswordPage() {
-    const [searchParams] = useSearchParams();
-
     const navigate = useNavigate();
 
-    const { mutate: resetPassword, isPending } = useResetPassword();
-
+    const [searchParams] = useSearchParams();
     const email = searchParams.get('email');
     const code = searchParams.get('code');
+
+    const { mutate: resetPassword, isPending } = useResetPassword();
 
     const onSubmit = (values: ResetPasswordFormValues) => {
         if (!email || !code) {

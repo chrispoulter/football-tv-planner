@@ -17,7 +17,6 @@ export const accountRoutes = (
             <Route path="reset-password" element={<ResetPasswordPage />} />
         </Route>
 
-        {/* Also used while signed in to confirm a change of email */}
         <Route path="confirm-email" element={<ConfirmEmailPage />} />
     </>
 );
