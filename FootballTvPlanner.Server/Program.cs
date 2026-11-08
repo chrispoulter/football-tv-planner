@@ -3,8 +3,11 @@ using FluentValidation;
 using FootballTvPlanner.Data;
 using FootballTvPlanner.Data.Users;
 using FootballTvPlanner.Server.Common.Authentication;
+using FootballTvPlanner.Server.Common.Caching;
 using FootballTvPlanner.Server.Common.Email;
 using FootballTvPlanner.Server.Common.Infrastructure;
+using FootballTvPlanner.Server.Common.RateLimiting;
+using FootballTvPlanner.Server.Features;
 
 var assembly = Assembly.GetExecutingAssembly();
 var serviceVersion = assembly.GetSemVerShortSha();
@@ -23,8 +26,13 @@ builder.ConfigureJsonOptions();
 builder.AddForwardedHeaders();
 builder.AddDataProtection<FootballTvPlannerDbContext>();
 builder.AddAuthentication<User, FootballTvPlannerDbContext>();
-builder.AddRateLimiting();
 builder.AddCaching();
+builder
+    .AddRateLimiting()
+    .AddRateLimitPolicy(RateLimitPolicies.Default, context => context.UserOrIpAddress())
+    .AddRateLimitPolicy(RateLimitPolicies.Auth, context => context.UserOrIpAddress())
+    .AddRateLimitPolicy(RateLimitPolicies.ScheduleCalendar, context => context.RouteValue("token"));
+
 builder.AddOpenApi(serviceVersion);
 
 var app = builder.Build();

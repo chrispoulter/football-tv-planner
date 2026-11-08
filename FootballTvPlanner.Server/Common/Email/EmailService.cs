@@ -36,10 +36,10 @@ public class EmailService(
 
         try
         {
-            var settings = emailSettings.Value;
-
             var message = new MimeMessage();
-            message.From.Add(new MailboxAddress(settings.FromName, settings.FromAddress));
+            message.From.Add(
+                new MailboxAddress(emailSettings.Value.FromName, emailSettings.Value.FromAddress)
+            );
             message.To.Add(MailboxAddress.Parse(toAddress));
             message.Subject = subject;
             message.Body = new BodyBuilder
@@ -50,20 +50,22 @@ public class EmailService(
             using var client = new SmtpClient();
 
             await client.ConnectAsync(
-                settings.SmtpServer,
-                settings.SmtpPort,
-                settings.SmtpSsl ? SecureSocketOptions.StartTls : SecureSocketOptions.None,
+                emailSettings.Value.SmtpServer,
+                emailSettings.Value.SmtpPort,
+                emailSettings.Value.SmtpSsl
+                    ? SecureSocketOptions.StartTls
+                    : SecureSocketOptions.None,
                 cancellationToken
             );
 
             if (
-                !string.IsNullOrEmpty(settings.SmtpUserName)
-                && !string.IsNullOrEmpty(settings.SmtpPassword)
+                !string.IsNullOrEmpty(emailSettings.Value.SmtpUserName)
+                && !string.IsNullOrEmpty(emailSettings.Value.SmtpPassword)
             )
             {
                 await client.AuthenticateAsync(
-                    settings.SmtpUserName,
-                    settings.SmtpPassword,
+                    emailSettings.Value.SmtpUserName,
+                    emailSettings.Value.SmtpPassword,
                     cancellationToken
                 );
             }
