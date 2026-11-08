@@ -10,7 +10,7 @@ export function TwoFactorRecoveryCodes({
     recoveryCodes,
     onDone,
 }: TwoFactorRecoveryCodesProps) {
-    const handleCopyAllCodes = () => {
+    const handleCopyRecoveryCodes = () => {
         navigator.clipboard.writeText(recoveryCodes.join('\n'));
         toast.success('Recovery codes copied to clipboard');
     };
@@ -31,7 +31,7 @@ export function TwoFactorRecoveryCodes({
                 <Button
                     type="button"
                     variant="outline"
-                    onClick={handleCopyAllCodes}
+                    onClick={handleCopyRecoveryCodes}
                 >
                     Copy all
                 </Button>

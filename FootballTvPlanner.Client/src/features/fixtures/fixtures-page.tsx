@@ -43,13 +43,12 @@ export function FixturesPage() {
 
     const { user, isLoading: isAuthLoading } = useAuth();
 
-    const request = searchParamsSchema.parse(Object.fromEntries(searchParams));
-
     const [competitionId, setCompetitionId] = useState<string>();
     const [channelId, setChannelId] = useState<string>();
 
     const headingRef = useRef<HTMLHeadingElement>(null);
 
+    const request = searchParamsSchema.parse(Object.fromEntries(searchParams));
     const bookmarked = request.bookmarked && !!user;
 
     const { data, isPending, isPlaceholderData, isSuccess } = useGetFixtures(

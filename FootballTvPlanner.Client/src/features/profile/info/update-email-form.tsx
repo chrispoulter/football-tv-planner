@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -18,9 +17,13 @@ const schema = z.object({
 type UpdateEmailFormValues = z.infer<typeof schema>;
 
 export function UpdateEmailForm() {
-    const [pendingEmail, setPendingEmail] = useState<string>();
-
-    const { mutate: changeEmail, isPending } = useChangeEmail();
+    const {
+        mutate: changeEmail,
+        isPending,
+        isSuccess,
+        variables,
+        reset,
+    } = useChangeEmail();
 
     const form = useForm<UpdateEmailFormValues>({
         resolver: zodResolver(schema),
@@ -31,14 +34,11 @@ export function UpdateEmailForm() {
 
     const onSubmit = (values: UpdateEmailFormValues) =>
         changeEmail(values, {
-            onSuccess: () => {
-                setPendingEmail(values.newEmail);
-                form.reset();
-            },
+            onSuccess: () => form.reset(),
             onError: (error) => toast.error(error.message),
         });
 
-    if (pendingEmail) {
+    if (isSuccess) {
         return (
             <div className="space-y-4">
                 <Alert>
@@ -46,7 +46,7 @@ export function UpdateEmailForm() {
                         <p>
                             A confirmation link has been sent to{' '}
                             <strong className="break-all">
-                                {pendingEmail}
+                                {variables.newEmail}
                             </strong>
                             .
                         </p>
@@ -58,7 +58,7 @@ export function UpdateEmailForm() {
                 </Alert>
                 <Button
                     variant="outline"
-                    onClick={() => setPendingEmail(undefined)}
+                    onClick={reset}
                     className="w-full sm:w-auto"
                 >
                     Use a Different Email

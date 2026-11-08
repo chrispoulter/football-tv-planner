@@ -37,15 +37,9 @@ export function useAuth() {
         [queryClient]
     );
 
-    const clearAuth = useCallback(
-        () => queryClient.setQueryData(sessionKeys.all, null),
-        [queryClient]
-    );
-
     return {
         user: user ?? undefined,
         isLoading: isPending,
         refreshAuth,
-        clearAuth,
     };
 }
