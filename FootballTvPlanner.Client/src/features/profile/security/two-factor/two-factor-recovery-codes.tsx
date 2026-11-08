@@ -10,7 +10,7 @@ export function TwoFactorRecoveryCodes({
     recoveryCodes,
     onDone,
 }: TwoFactorRecoveryCodesProps) {
-    const handleCopyRecoveryCodes = () => {
+    const handleCopy = () => {
         navigator.clipboard.writeText(recoveryCodes.join('\n'));
         toast.success('Recovery codes copied to clipboard');
     };
@@ -28,11 +28,7 @@ export function TwoFactorRecoveryCodes({
                 ))}
             </div>
             <div className="flex flex-col-reverse gap-2 sm:flex-row">
-                <Button
-                    type="button"
-                    variant="outline"
-                    onClick={handleCopyRecoveryCodes}
-                >
+                <Button type="button" variant="outline" onClick={handleCopy}>
                     Copy all
                 </Button>
                 <Button type="button" onClick={onDone}>
