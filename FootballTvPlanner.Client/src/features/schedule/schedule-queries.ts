@@ -15,10 +15,6 @@ export const scheduleKeys = {
     calendarFeed: ['schedule', 'calendar-feed'] as const,
 };
 
-interface ScheduleItemResponse {
-    fixtureId: string;
-}
-
 async function setBookmarked(
     queryClient: QueryClient,
     fixtureId: string,
@@ -50,6 +46,10 @@ async function setBookmarked(
     };
 }
 
+interface AddToScheduleResponse {
+    fixtureId: string;
+}
+
 export function useAddToSchedule() {
     const queryClient = useQueryClient();
 
@@ -57,12 +57,16 @@ export function useAddToSchedule() {
         mutationFn: (fixtureId: string) =>
             apiClient
                 .put(`schedule/${fixtureId}`)
-                .json<ScheduleItemResponse>(),
+                .json<AddToScheduleResponse>(),
         onMutate: (fixtureId) => setBookmarked(queryClient, fixtureId, true),
         onError: (_error, _fixtureId, rollback) => rollback?.(),
         onSettled: () =>
             queryClient.invalidateQueries({ queryKey: fixtureKeys.all }),
     });
+}
+
+interface RemoveFromScheduleResponse {
+    fixtureId: string;
 }
 
 export function useRemoveFromSchedule() {
@@ -72,7 +76,7 @@ export function useRemoveFromSchedule() {
         mutationFn: (fixtureId: string) =>
             apiClient
                 .delete(`schedule/${fixtureId}`)
-                .json<ScheduleItemResponse>(),
+                .json<RemoveFromScheduleResponse>(),
         onMutate: (fixtureId) => setBookmarked(queryClient, fixtureId, false),
         onError: (_error, _fixtureId, rollback) => rollback?.(),
         onSettled: () =>

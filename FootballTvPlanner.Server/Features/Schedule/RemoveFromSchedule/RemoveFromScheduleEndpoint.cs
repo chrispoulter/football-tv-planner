@@ -11,7 +11,7 @@ public class RemoveFromScheduleEndpoint : IEndpoint
     {
         app.MapDelete("/schedule/{fixtureId:guid}", HandleAsync)
             .RequireAuthorization()
-            .Produces<ScheduleItemResponse>()
+            .Produces<RemoveFromScheduleResponse>()
             .WithTags(Tags.Schedule)
             .WithSummary("Remove From Schedule")
             .WithDescription("Remove a fixture from the current user's schedule.");
@@ -29,6 +29,6 @@ public class RemoveFromScheduleEndpoint : IEndpoint
             .Where(uf => uf.UserId == currentUser.Id && uf.FixtureId == fixtureId)
             .ExecuteDeleteAsync(cancellationToken);
 
-        return Results.Ok(new ScheduleItemResponse(fixtureId));
+        return Results.Ok(new RemoveFromScheduleResponse(fixtureId));
     }
 }

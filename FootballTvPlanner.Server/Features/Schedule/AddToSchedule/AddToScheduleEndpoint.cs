@@ -12,7 +12,7 @@ public class AddToScheduleEndpoint : IEndpoint
     {
         app.MapPut("/schedule/{fixtureId:guid}", HandleAsync)
             .RequireAuthorization()
-            .Produces<ScheduleItemResponse>()
+            .Produces<AddToScheduleResponse>()
             .WithTags(Tags.Schedule)
             .WithSummary("Add To Schedule")
             .WithDescription("Bookmark a fixture in the current user's schedule.");
@@ -58,6 +58,6 @@ public class AddToScheduleEndpoint : IEndpoint
             await dbContext.SaveChangesAsync(cancellationToken);
         }
 
-        return Results.Ok(new ScheduleItemResponse(fixtureId));
+        return Results.Ok(new AddToScheduleResponse(fixtureId));
     }
 }
