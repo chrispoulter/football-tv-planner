@@ -80,7 +80,7 @@ export function FixturesPage() {
         if (
             heading &&
             heading.getBoundingClientRect().top <
-                parseFloat(getComputedStyle(heading).scrollMarginTop)
+                parseFloat(window.getComputedStyle(heading).scrollMarginTop)
         ) {
             heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
