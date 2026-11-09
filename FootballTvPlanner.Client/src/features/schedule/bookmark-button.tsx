@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 import { useAuth } from '@/components/auth-provider';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { useToggleSchedule } from './schedule-queries';
+import { useAddToSchedule, useRemoveFromSchedule } from './schedule-queries';
 
 interface BookmarkButtonProps {
     fixtureId: string;
@@ -21,7 +21,10 @@ export function BookmarkButton({
 
     const { user } = useAuth();
 
-    const { mutate: toggleSchedule } = useToggleSchedule();
+    const { mutate: addToSchedule, isPending: isAdding } = useAddToSchedule();
+
+    const { mutate: removeFromSchedule, isPending: isRemoving } =
+        useRemoveFromSchedule();
 
     const label = isBookmarked
         ? 'Remove from my schedule'
@@ -34,12 +37,11 @@ export function BookmarkButton({
             return;
         }
 
-        toggleSchedule(
-            { fixtureId, isBookmarked: !isBookmarked },
-            {
-                onError: (error) => toast.error(error.message),
-            }
-        );
+        const mutate = isBookmarked ? removeFromSchedule : addToSchedule;
+
+        mutate(fixtureId, {
+            onError: (error) => toast.error(error.message),
+        });
     };
 
     return (
@@ -47,6 +49,7 @@ export function BookmarkButton({
             variant="ghost"
             size="icon"
             onClick={handleToggleBookmark}
+            disabled={isAdding || isRemoving}
             aria-pressed={isBookmarked}
             title={label}
         >

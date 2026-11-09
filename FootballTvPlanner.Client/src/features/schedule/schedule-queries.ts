@@ -50,26 +50,31 @@ async function setBookmarked(
     };
 }
 
-export function useToggleSchedule() {
+export function useAddToSchedule() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: ({
-            fixtureId,
-            isBookmarked,
-        }: {
-            fixtureId: string;
-            isBookmarked: boolean;
-        }) => {
-            const request = isBookmarked
-                ? apiClient.put(`schedule/${fixtureId}`)
-                : apiClient.delete(`schedule/${fixtureId}`);
+        mutationFn: (fixtureId: string) =>
+            apiClient
+                .put(`schedule/${fixtureId}`)
+                .json<ScheduleItemResponse>(),
+        onMutate: (fixtureId) => setBookmarked(queryClient, fixtureId, true),
+        onError: (_error, _fixtureId, rollback) => rollback?.(),
+        onSettled: () =>
+            queryClient.invalidateQueries({ queryKey: fixtureKeys.all }),
+    });
+}
 
-            return request.json<ScheduleItemResponse>();
-        },
-        onMutate: ({ fixtureId, isBookmarked }) =>
-            setBookmarked(queryClient, fixtureId, isBookmarked),
-        onError: (_error, _variables, rollback) => rollback?.(),
+export function useRemoveFromSchedule() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (fixtureId: string) =>
+            apiClient
+                .delete(`schedule/${fixtureId}`)
+                .json<ScheduleItemResponse>(),
+        onMutate: (fixtureId) => setBookmarked(queryClient, fixtureId, false),
+        onError: (_error, _fixtureId, rollback) => rollback?.(),
         onSettled: () =>
             queryClient.invalidateQueries({ queryKey: fixtureKeys.all }),
     });
