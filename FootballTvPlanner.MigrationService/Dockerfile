@@ -1,10 +1,10 @@
 # The runtime needs the ASP.NET Core shared framework because ServiceDefaults references it.
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:11.0 AS base
 USER $APP_UID
 WORKDIR /app
 
 # This stage restores packages and copies the source for the publish stage
-FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:11.0 AS build
 WORKDIR /src
 COPY ["FootballTvPlanner.MigrationService/FootballTvPlanner.MigrationService.csproj", "FootballTvPlanner.MigrationService/"]
 COPY ["FootballTvPlanner.Data/FootballTvPlanner.Data.csproj", "FootballTvPlanner.Data/"]

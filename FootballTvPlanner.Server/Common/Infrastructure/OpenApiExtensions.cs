@@ -12,49 +12,46 @@ public static class OpenApiExtensions
         string? serviceVersion
     )
     {
-        builder.Services.AddOpenApi(
-            "v1",
-            options =>
-            {
-                options.AddDocumentTransformer(
-                    (document, context, cancellationToken) =>
+        builder.Services.AddOpenApi("v1", options =>
+        {
+            options.AddDocumentTransformer(
+                (document, context, cancellationToken) =>
+                {
+                    document.Info ??= new OpenApiInfo();
+                    document.Info.Version = serviceVersion ?? document.Info.Version;
+                    document.Servers = [];
+
+                    return Task.CompletedTask;
+                }
+            );
+
+            options.AddOperationTransformer(
+                (operation, context, cancellationToken) =>
+                {
+                    var hasEmptyBody = context.Description.ParameterDescriptions.Any(p =>
+                        p.Source == BindingSource.Body && p.Type == typeof(object)
+                    );
+
+                    if (
+                        hasEmptyBody
+                        && operation.RequestBody?.Content is { } content
+                        && content.ContainsKey("application/json")
+                    )
                     {
-                        document.Info ??= new OpenApiInfo();
-                        document.Info.Version = serviceVersion ?? document.Info.Version;
-                        document.Servers = [];
-
-                        return Task.CompletedTask;
-                    }
-                );
-
-                options.AddOperationTransformer(
-                    (operation, context, cancellationToken) =>
-                    {
-                        var hasEmptyBody = context.Description.ParameterDescriptions.Any(p =>
-                            p.Source == BindingSource.Body && p.Type == typeof(object)
-                        );
-
-                        if (
-                            hasEmptyBody
-                            && operation.RequestBody?.Content?.TryGetValue(
-                                "application/json",
-                                out var mediaType
-                            ) == true
-                        )
+                        content["application/json"] = new OpenApiMediaType
                         {
-                            mediaType.Schema = new OpenApiSchema { Type = JsonSchemaType.Object };
-
-                            mediaType.Examples = new Dictionary<string, IOpenApiExample>
+                            Schema = new OpenApiSchema { Type = JsonSchemaType.Object },
+                            Examples = new Dictionary<string, IOpenApiExample>
                             {
                                 ["empty"] = new OpenApiExample { Value = new JsonObject() },
-                            };
-                        }
-
-                        return Task.CompletedTask;
+                            },
+                        };
                     }
-                );
-            }
-        );
+
+                    return Task.CompletedTask;
+                }
+            );
+        });
 
         return builder;
     }
@@ -63,13 +60,10 @@ public static class OpenApiExtensions
     {
         app.MapOpenApi();
 
-        app.MapScalarApiReference(
-            "/scalar",
-            options =>
-            {
-                options.Title = app.Environment.ApplicationName;
-            }
-        );
+        app.MapScalarApiReference("/scalar", options =>
+        {
+            options.Title = app.Environment.ApplicationName;
+        });
 
         return app;
     }

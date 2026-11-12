@@ -23,8 +23,9 @@ public static class RateLimitExtensions
 
                 context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
 
-                var route =
-                    (context.HttpContext.GetEndpoint() as RouteEndpoint)?.RoutePattern.RawText
+                var route = (context.HttpContext.GetEndpoint() as RouteEndpoint)
+                    ?.RoutePattern
+                    .RawText
                     ?? "unknown";
 
                 context
@@ -86,13 +87,10 @@ public static class RateLimitExtensions
                         QueueLimit = 0,
                     };
 
-                    options.AddPolicy(
-                        policyName,
-                        context =>
-                            RateLimitPartition.GetSlidingWindowLimiter(
-                                partitionKey(context),
-                                _ => limiterOptions
-                            )
+                    options.AddPolicy(policyName, context =>
+                        RateLimitPartition.GetSlidingWindowLimiter(partitionKey(context), _ =>
+                            limiterOptions
+                        )
                     );
                 }
             );

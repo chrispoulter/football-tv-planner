@@ -231,10 +231,11 @@ namespace FootballTvPlanner.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey(
-                        "PK_AspNetUserLogins",
-                        x => new { x.LoginProvider, x.ProviderKey }
-                    );
+                    table.PrimaryKey("PK_AspNetUserLogins", x => new
+                    {
+                        x.LoginProvider,
+                        x.ProviderKey,
+                    });
                     table.ForeignKey(
                         name: "FK_AspNetUserLogins_AspNetUsers_UserId",
                         column: x => x.UserId,
@@ -283,15 +284,12 @@ namespace FootballTvPlanner.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey(
-                        "PK_AspNetUserTokens",
-                        x => new
-                        {
-                            x.UserId,
-                            x.LoginProvider,
-                            x.Name,
-                        }
-                    );
+                    table.PrimaryKey("PK_AspNetUserTokens", x => new
+                    {
+                        x.UserId,
+                        x.LoginProvider,
+                        x.Name,
+                    });
                     table.ForeignKey(
                         name: "FK_AspNetUserTokens_AspNetUsers_UserId",
                         column: x => x.UserId,
