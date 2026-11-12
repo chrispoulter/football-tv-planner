@@ -25,8 +25,7 @@ public class EmailTemplateRenderer
 
     private static IFluidTemplate ParseTemplate(string template)
     {
-        using var stream =
-            Assembly.GetEntryAssembly()?.GetManifestResourceStream(template)
+        using var stream = Assembly.GetEntryAssembly()?.GetManifestResourceStream(template)
             ?? throw new InvalidOperationException($"Email template {template} was not found.");
 
         using var reader = new StreamReader(stream);

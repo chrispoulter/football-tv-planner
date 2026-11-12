@@ -59,11 +59,10 @@ public class FixtureSyncer(
                 fixtures.Add(item.ExternalId, fixture);
             }
 
-            fixture.Competition = GetOrAdd(
-                competitions,
-                item.Competition,
-                name => new Competition { Name = name }
-            );
+            fixture.Competition = GetOrAdd(competitions, item.Competition, name => new Competition
+            {
+                Name = name,
+            });
 
             fixture.HomeTeam = GetOrAdd(teams, item.HomeTeam, name => new Team { Name = name });
             fixture.AwayTeam = GetOrAdd(teams, item.AwayTeam, name => new Team { Name = name });

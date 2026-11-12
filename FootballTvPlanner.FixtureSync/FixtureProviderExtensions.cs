@@ -8,10 +8,9 @@ public static class FixtureProviderExtensions
 {
     public static IHostApplicationBuilder AddFixtureProvider(this IHostApplicationBuilder builder)
     {
-        var fixtureSyncSettings =
-            builder
-                .Configuration.GetSection(FixtureSyncSettings.SectionName)
-                .Get<FixtureSyncSettings>()
+        var fixtureSyncSettings = builder
+            .Configuration.GetSection(FixtureSyncSettings.SectionName)
+            .Get<FixtureSyncSettings>()
             ?? new FixtureSyncSettings();
 
         switch (fixtureSyncSettings.Provider)

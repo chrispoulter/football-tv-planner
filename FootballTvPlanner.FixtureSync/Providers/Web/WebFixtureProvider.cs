@@ -133,10 +133,8 @@ public partial class WebFixtureProvider(
 
     private static string RemoveAnnotations(string text) =>
         Annotations
-            .Aggregate(
-                text,
-                (current, annotation) =>
-                    current.Replace(annotation, "", StringComparison.OrdinalIgnoreCase)
+            .Aggregate(text, (current, annotation) =>
+                current.Replace(annotation, "", StringComparison.OrdinalIgnoreCase)
             )
             .Trim();
 
