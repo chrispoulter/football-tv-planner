@@ -10,16 +10,17 @@ import { AccountLayout } from '../account-layout';
 
 export function ConfirmEmailPage() {
     const [searchParams] = useSearchParams();
-
     const changedEmail = searchParams.get('changedEmail') ?? undefined;
+    const userId = searchParams.get('userId') ?? '';
+    const code = searchParams.get('code') ?? '';
 
     const queryClient = useQueryClient();
 
     const { user } = useAuth();
 
     const { isPending, isSuccess } = useConfirmEmail({
-        userId: searchParams.get('userId') ?? '',
-        code: searchParams.get('code') ?? '',
+        userId,
+        code,
         changedEmail,
     });
 
@@ -29,19 +30,24 @@ export function ConfirmEmailPage() {
         }
     }, [isSuccess, queryClient]);
 
-    const [title, message] = isPending
-        ? ['Confirming Email', 'Just a moment…']
-        : isSuccess
-          ? changedEmail
-              ? ['Email Changed', `Your email address is now ${changedEmail}.`]
-              : [
-                    'Email Confirmed',
-                    'Thank you for confirming your email address.',
-                ]
-          : [
-                'Unable to Confirm Email',
-                'This link is invalid or has expired. Please request a new one.',
-            ];
+    let title: string, message: string;
+
+    if (isPending) {
+        title = 'Confirming Email';
+        message = 'Just a moment…';
+    } else if (isSuccess) {
+        if (changedEmail) {
+            title = 'Email Changed';
+            message = `Your email address is now ${changedEmail}.`;
+        } else {
+            title = 'Email Confirmed';
+            message = 'Thank you for confirming your email address.';
+        }
+    } else {
+        title = 'Unable to Confirm Email';
+        message =
+            'This link is invalid or has expired. Please request a new one.';
+    }
 
     return (
         <AccountLayout

@@ -33,10 +33,10 @@ export function LinkedAccounts({ hasPassword }: LinkedAccountsProps) {
     } = useRemoveLinkedAccount();
 
     useEffect(() => {
-        const linkError = searchParams.get('error');
+        const error = searchParams.get('error');
 
-        if (linkError) {
-            toast.error(linkErrors[linkError] ?? linkErrors.link);
+        if (error) {
+            toast.error(linkErrors[error] ?? linkErrors.link);
             setSearchParams(
                 (params) => {
                     params.delete('error');

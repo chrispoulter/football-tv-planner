@@ -24,7 +24,9 @@ export function LoginPage() {
     const from = returnUrl(location.state);
 
     const [searchParams] = useSearchParams();
-    const externalError = externalLoginErrors[searchParams.get('error') ?? ''];
+    const error = searchParams.get('error') ?? '';
+
+    const externalError = externalLoginErrors[error];
 
     const { mutate: login, isPending } = useLogin();
 
