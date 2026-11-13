@@ -66,8 +66,9 @@ public class GetFixturesEndpoint : IEndpoint
                 }
 
                 return await query
-                    .OrderBy(f => f.Competition.Name)
-                    .ThenBy(f => f.KickoffUtc)
+                    .OrderBy(f => f.KickoffUtc)
+                    .ThenBy(f => f.Competition.Name)
+                    .ThenBy(f => f.Id)
                     .Select(f => new GetFixturesItem(
                         f.Id,
                         f.KickoffUtc,
