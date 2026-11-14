@@ -12,7 +12,7 @@ import {
 import { personalDataUrl } from '../profile-queries';
 import { UpdateEmailForm } from './update-email-form';
 import { UpdateProfileForm } from './update-profile-form';
-import { VerifyEmailForm } from './verify-email-form';
+import { VerifyEmail } from './verify-email';
 
 export function ProfileTab() {
     const { user } = useAuth();
@@ -52,7 +52,7 @@ export function ProfileTab() {
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <VerifyEmailForm email={user.email} />
+                        <VerifyEmail email={user.email} />
                     </CardContent>
                 </Card>
             )}

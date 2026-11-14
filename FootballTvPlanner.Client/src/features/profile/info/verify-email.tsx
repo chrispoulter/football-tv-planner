@@ -3,11 +3,11 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { useSendConfirmationEmail } from '../profile-queries';
 
-interface VerifyEmailFormProps {
+interface VerifyEmailProps {
     email: string;
 }
 
-export function VerifyEmailForm({ email }: VerifyEmailFormProps) {
+export function VerifyEmail({ email }: VerifyEmailProps) {
     const {
         mutate: sendConfirmationEmail,
         isPending,
