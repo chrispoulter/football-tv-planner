@@ -128,11 +128,11 @@ To add a provider:
 
 ### Database migrations
 
-Migrations are in `FootballTvPlanner.Data/Migrations`, next to the DbContext. To add one:
+Migrations are in `FootballTvPlanner.Data/Migrations`, next to the DbContext. `.config/dotnet-ef.json` sets the default project and startup project for `dotnet ef`. To add one:
 
 ```
 dotnet tool restore
-dotnet ef migrations add <Name> --project FootballTvPlanner.Data --startup-project FootballTvPlanner.Server
+dotnet ef migrations add <Name>
 ```
 
 The server doesn't apply migrations itself. `FootballTvPlanner.MigrationService` applies them: through Aspire locally, as a `docker compose` service that the server waits for, and as an Azure Container Apps job that the deploy pipeline starts in production.
