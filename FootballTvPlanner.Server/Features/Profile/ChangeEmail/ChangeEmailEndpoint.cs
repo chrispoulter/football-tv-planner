@@ -1,11 +1,9 @@
 using FootballTvPlanner.Data.Users;
 using FootballTvPlanner.Server.Common.Authentication;
-using FootballTvPlanner.Server.Common.Email;
 using FootballTvPlanner.Server.Common.Infrastructure;
 using FootballTvPlanner.Server.Common.Validation;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Options;
+using Rebus.Bus;
 
 namespace FootballTvPlanner.Server.Features.Profile.ChangeEmail;
 
@@ -28,9 +26,7 @@ public class ChangeEmailEndpoint : IEndpoint
         ChangeEmailRequest request,
         CurrentUser currentUser,
         UserManager<User> userManager,
-        IEmailService emailService,
-        IOptions<EmailSettings> emailSettings,
-        CancellationToken cancellationToken
+        IBus bus
     )
     {
         var user = await userManager.GetUserAsync(currentUser);
@@ -59,25 +55,7 @@ public class ChangeEmailEndpoint : IEndpoint
             return Results.Ok();
         }
 
-        var code = await userManager.GenerateChangeEmailTokenAsync(user, request.NewEmail);
-
-        var link = QueryHelpers.AddQueryString(
-            $"{emailSettings.Value.SiteUrl}/confirm-email",
-            new Dictionary<string, string?>
-            {
-                ["userId"] = user.Id.ToString(),
-                ["code"] = code,
-                ["changedEmail"] = request.NewEmail,
-            }
-        );
-
-        await emailService.SendTemplateEmailAsync(
-            toAddress: request.NewEmail,
-            subject: "Verify your email address | Football TV Planner",
-            template: "FootballTvPlanner.Server.Features.Account.Register.ConfirmEmail.html",
-            model: new { user.Name, Link = link },
-            cancellationToken
-        );
+        await bus.SendLocal(new ChangeEmailRequested(user.Id, request.NewEmail));
 
         return Results.Ok();
     }

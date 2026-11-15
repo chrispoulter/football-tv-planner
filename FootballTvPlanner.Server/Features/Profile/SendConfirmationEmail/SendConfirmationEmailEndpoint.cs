@@ -1,11 +1,10 @@
 using FootballTvPlanner.Data.Users;
 using FootballTvPlanner.Server.Common.Authentication;
-using FootballTvPlanner.Server.Common.Email;
 using FootballTvPlanner.Server.Common.Infrastructure;
+using FootballTvPlanner.Server.Features.Account.Register;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Options;
+using Rebus.Bus;
 
 namespace FootballTvPlanner.Server.Features.Profile.SendConfirmationEmail;
 
@@ -24,9 +23,7 @@ public class SendConfirmationEmailEndpoint : IEndpoint
         [FromBody] object empty,
         CurrentUser currentUser,
         UserManager<User> userManager,
-        IEmailService emailService,
-        IOptions<EmailSettings> emailSettings,
-        CancellationToken cancellationToken
+        IBus bus
     )
     {
         var user = await userManager.GetUserAsync(currentUser);
@@ -47,20 +44,7 @@ public class SendConfirmationEmailEndpoint : IEndpoint
             );
         }
 
-        var code = await userManager.GenerateEmailConfirmationTokenAsync(user);
-
-        var link = QueryHelpers.AddQueryString(
-            $"{emailSettings.Value.SiteUrl}/confirm-email",
-            new Dictionary<string, string?> { ["userId"] = user.Id.ToString(), ["code"] = code }
-        );
-
-        await emailService.SendTemplateEmailAsync(
-            toAddress: user.Email!,
-            subject: "Verify your email address | Football TV Planner",
-            template: "FootballTvPlanner.Server.Features.Account.Register.ConfirmEmail.html",
-            model: new { user.Name, Link = link },
-            cancellationToken
-        );
+        await bus.SendLocal(new ConfirmationEmailRequested(user.Id));
 
         return Results.Ok();
     }

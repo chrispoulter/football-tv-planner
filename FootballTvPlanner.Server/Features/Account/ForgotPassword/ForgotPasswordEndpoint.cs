@@ -1,10 +1,6 @@
-using FootballTvPlanner.Data.Users;
-using FootballTvPlanner.Server.Common.Email;
 using FootballTvPlanner.Server.Common.Infrastructure;
 using FootballTvPlanner.Server.Common.Validation;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Options;
+using Rebus.Bus;
 
 namespace FootballTvPlanner.Server.Features.Account.ForgotPassword;
 
@@ -21,33 +17,9 @@ public class ForgotPasswordEndpoint : IEndpoint
             .WithDescription("Send a password reset link, if the email belongs to an account.");
     }
 
-    private static async Task<IResult> HandleAsync(
-        ForgotPasswordRequest request,
-        UserManager<User> userManager,
-        IEmailService emailService,
-        IOptions<EmailSettings> emailSettings,
-        CancellationToken cancellationToken
-    )
+    private static async Task<IResult> HandleAsync(ForgotPasswordRequest request, IBus bus)
     {
-        var user = await userManager.FindByEmailAsync(request.Email);
-
-        if (user is not null)
-        {
-            var code = await userManager.GeneratePasswordResetTokenAsync(user);
-
-            var link = QueryHelpers.AddQueryString(
-                $"{emailSettings.Value.SiteUrl}/reset-password",
-                new Dictionary<string, string?> { ["email"] = user.Email, ["code"] = code }
-            );
-
-            await emailService.SendTemplateEmailAsync(
-                toAddress: user.Email!,
-                subject: "Reset your password | Football TV Planner",
-                template: "FootballTvPlanner.Server.Features.Account.ForgotPassword.ResetPassword.html",
-                model: new { user.Name, Link = link },
-                cancellationToken
-            );
-        }
+        await bus.SendLocal(new ForgotPasswordRequested(request.Email));
 
         return Results.Ok();
     }

@@ -6,6 +6,7 @@ using FootballTvPlanner.Server.Common.Authentication;
 using FootballTvPlanner.Server.Common.Caching;
 using FootballTvPlanner.Server.Common.Email;
 using FootballTvPlanner.Server.Common.Infrastructure;
+using FootballTvPlanner.Server.Common.Messaging;
 using FootballTvPlanner.Server.Common.RateLimiting;
 using FootballTvPlanner.Server.Features;
 
@@ -18,6 +19,7 @@ builder.AddServiceDefaults(serviceVersion);
 
 builder.AddNpgsqlDbContext<FootballTvPlannerDbContext>(connectionName: "Database");
 builder.AddEmailServices(connectionName: "Mail");
+builder.AddMessaging(assembly);
 
 builder.Services.AddValidatorsFromAssembly(assembly);
 builder.Services.AddProblemDetails();

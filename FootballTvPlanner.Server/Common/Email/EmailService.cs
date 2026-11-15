@@ -80,7 +80,7 @@ public class EmailService(
         {
             metrics.RecordSent(template, outcome: "failure");
             Activity.Current?.AddException(ex).SetStatus(ActivityStatusCode.Error);
-            logger.LogError(ex, "Failed to send email with template {Template}", template);
+            throw;
         }
     }
 }
