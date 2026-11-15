@@ -13,6 +13,9 @@ public class ConfirmationEmailRequestedHandler(
     IOptions<EmailSettings> emailSettings
 ) : IHandleMessages<ConfirmationEmailRequested>
 {
+    public const string Template =
+        "FootballTvPlanner.Server.Features.Account.Register.ConfirmEmail.html";
+
     public async Task Handle(ConfirmationEmailRequested message)
     {
         var user = await userManager.FindByIdAsync(message.UserId.ToString());
@@ -32,7 +35,7 @@ public class ConfirmationEmailRequestedHandler(
         await emailService.SendTemplateEmailAsync(
             toAddress: user.Email!,
             subject: "Verify your email address | Football TV Planner",
-            template: "FootballTvPlanner.Server.Features.Account.Register.ConfirmEmail.html",
+            template: Template,
             model: new { user.Name, Link = link }
         );
     }

@@ -13,6 +13,9 @@ public class ForgotPasswordRequestedHandler(
     IOptions<EmailSettings> emailSettings
 ) : IHandleMessages<ForgotPasswordRequested>
 {
+    public const string Template =
+        "FootballTvPlanner.Server.Features.Account.ForgotPassword.ResetPassword.html";
+
     public async Task Handle(ForgotPasswordRequested message)
     {
         var user = await userManager.FindByEmailAsync(message.Email);
@@ -32,7 +35,7 @@ public class ForgotPasswordRequestedHandler(
         await emailService.SendTemplateEmailAsync(
             toAddress: user.Email!,
             subject: "Reset your password | Football TV Planner",
-            template: "FootballTvPlanner.Server.Features.Account.ForgotPassword.ResetPassword.html",
+            template: Template,
             model: new { user.Name, Link = link }
         );
     }
