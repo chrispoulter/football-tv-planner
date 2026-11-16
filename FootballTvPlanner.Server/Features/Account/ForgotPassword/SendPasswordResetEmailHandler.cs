@@ -7,16 +7,16 @@ using Rebus.Handlers;
 
 namespace FootballTvPlanner.Server.Features.Account.ForgotPassword;
 
-public class ForgotPasswordRequestedHandler(
+public class SendPasswordResetEmailHandler(
     UserManager<User> userManager,
     IEmailService emailService,
     IOptions<EmailSettings> emailSettings
-) : IHandleMessages<ForgotPasswordRequested>
+) : IHandleMessages<SendPasswordResetEmail>
 {
     public const string Template =
         "FootballTvPlanner.Server.Features.Account.ForgotPassword.ResetPassword.html";
 
-    public async Task Handle(ForgotPasswordRequested message)
+    public async Task Handle(SendPasswordResetEmail message)
     {
         var user = await userManager.FindByEmailAsync(message.Email);
 

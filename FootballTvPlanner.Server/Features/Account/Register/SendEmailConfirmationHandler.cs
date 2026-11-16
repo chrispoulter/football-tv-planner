@@ -5,40 +5,35 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 using Rebus.Handlers;
 
-namespace FootballTvPlanner.Server.Features.Profile.ChangeEmail;
+namespace FootballTvPlanner.Server.Features.Account.Register;
 
-public class ChangeEmailRequestedHandler(
+public class SendEmailConfirmationHandler(
     UserManager<User> userManager,
     IEmailService emailService,
     IOptions<EmailSettings> emailSettings
-) : IHandleMessages<ChangeEmailRequested>
+) : IHandleMessages<SendEmailConfirmation>
 {
     public const string Template =
         "FootballTvPlanner.Server.Features.Account.Register.ConfirmEmail.html";
 
-    public async Task Handle(ChangeEmailRequested message)
+    public async Task Handle(SendEmailConfirmation message)
     {
         var user = await userManager.FindByIdAsync(message.UserId.ToString());
 
-        if (user is null)
+        if (user is null || user.EmailConfirmed)
         {
             return;
         }
 
-        var code = await userManager.GenerateChangeEmailTokenAsync(user, message.NewEmail);
+        var code = await userManager.GenerateEmailConfirmationTokenAsync(user);
 
         var link = QueryHelpers.AddQueryString(
             $"{emailSettings.Value.SiteUrl}/confirm-email",
-            new Dictionary<string, string?>
-            {
-                ["userId"] = user.Id.ToString(),
-                ["code"] = code,
-                ["changedEmail"] = message.NewEmail,
-            }
+            new Dictionary<string, string?> { ["userId"] = user.Id.ToString(), ["code"] = code }
         );
 
         await emailService.SendTemplateEmailAsync(
-            toAddress: message.NewEmail,
+            toAddress: user.Email!,
             subject: "Verify your email address | Football TV Planner",
             template: Template,
             model: new { user.Name, Link = link }

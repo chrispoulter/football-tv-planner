@@ -55,7 +55,7 @@ public class ChangeEmailEndpoint : IEndpoint
             return Results.Ok();
         }
 
-        await bus.SendLocal(new ChangeEmailRequested(user.Id, request.NewEmail));
+        await bus.SendLocal(new SendChangeEmailConfirmation(user.Id, request.NewEmail));
 
         return Results.Ok();
     }

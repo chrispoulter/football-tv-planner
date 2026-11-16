@@ -46,7 +46,7 @@ public class RegisterEndpoint : IEndpoint
             return errors.ToValidationProblem();
         }
 
-        await bus.SendLocal(new ConfirmationEmailRequested(user.Id));
+        await bus.SendLocal(new SendEmailConfirmation(user.Id));
 
         await signInManager.SignInAsync(user, isPersistent: false);
 

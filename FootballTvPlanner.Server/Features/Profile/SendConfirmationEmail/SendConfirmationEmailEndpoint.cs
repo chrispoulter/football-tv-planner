@@ -44,7 +44,7 @@ public class SendConfirmationEmailEndpoint : IEndpoint
             );
         }
 
-        await bus.SendLocal(new ConfirmationEmailRequested(user.Id));
+        await bus.SendLocal(new SendEmailConfirmation(user.Id));
 
         return Results.Ok();
     }

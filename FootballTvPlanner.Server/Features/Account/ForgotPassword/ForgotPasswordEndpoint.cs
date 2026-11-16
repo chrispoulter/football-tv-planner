@@ -19,7 +19,7 @@ public class ForgotPasswordEndpoint : IEndpoint
 
     private static async Task<IResult> HandleAsync(ForgotPasswordRequest request, IBus bus)
     {
-        await bus.SendLocal(new ForgotPasswordRequested(request.Email));
+        await bus.SendLocal(new SendPasswordResetEmail(request.Email));
 
         return Results.Ok();
     }
