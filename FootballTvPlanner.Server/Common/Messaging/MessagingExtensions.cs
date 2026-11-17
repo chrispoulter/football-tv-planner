@@ -1,6 +1,7 @@
 using System.Reflection;
 using Rebus.Config;
 using Rebus.OpenTelemetry.Configuration;
+using Rebus.Persistence.InMem;
 using Rebus.Retry.Simple;
 using Rebus.Transport.InMem;
 
@@ -18,9 +19,10 @@ public static class MessagingExtensions
         builder.Services.AddRebus(configure =>
             configure
                 .Transport(t => t.UseInMemoryTransport(new InMemNetwork(), InputQueueName))
+                .Timeouts(t => t.StoreInMemory())
                 .Options(o =>
                 {
-                    o.RetryStrategy(maxDeliveryAttempts: 3);
+                    o.RetryStrategy(maxDeliveryAttempts: 1, secondLevelRetriesEnabled: true);
                     o.SetWorkerShutdownTimeout(TimeSpan.FromSeconds(20));
                     o.EnableDiagnosticSources();
                 })
