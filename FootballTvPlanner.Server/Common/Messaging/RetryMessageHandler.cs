@@ -6,7 +6,7 @@ using Rebus.Retry.Simple;
 
 namespace FootballTvPlanner.Server.Common.Messaging;
 
-public class RetryWithBackoffHandler(IBus bus, ILogger<RetryWithBackoffHandler> logger)
+public class RetryMessageHandler(IBus bus, ILogger<RetryMessageHandler> logger)
     : IHandleMessages<IFailed<object>>
 {
     public const string RetryAttemptHeader = "x-retry-attempt";
