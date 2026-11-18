@@ -9,17 +9,12 @@ public class EmailTemplateRenderer
 {
     private static readonly FluidParser Parser = new();
 
-    private static readonly TemplateOptions TemplateOptions = new()
-    {
-        MemberAccessStrategy = new UnsafeMemberAccessStrategy(),
-    };
-
     private readonly ConcurrentDictionary<string, IFluidTemplate> templates = new();
 
     public async Task<string> RenderAsync(string template, object model)
     {
         var fluidTemplate = templates.GetOrAdd(template, ParseTemplate);
-        var context = new TemplateContext(model, TemplateOptions);
+        var context = new TemplateContext(model, TemplateOptions.Default);
         return await fluidTemplate.RenderAsync(context, HtmlEncoder.Default);
     }
 

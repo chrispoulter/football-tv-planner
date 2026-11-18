@@ -8,11 +8,8 @@
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="AngleSharp" Version="1.10.2" />
-    <PackageReference
-      Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL"
-      Version="17.0.0-preview.1.26567.5"
-    />
+    <PackageReference Include="AngleSharp" Version="1.10.4" />
+    <PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="17.0.0-preview.1.26567.5" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FootballTvPlanner.Data\FootballTvPlanner.Data.csproj" />
