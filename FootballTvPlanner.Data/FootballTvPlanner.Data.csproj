@@ -5,19 +5,19 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <!--
-    EF Core stays on 10.x until Npgsql.EntityFrameworkCore.PostgreSQL 11 and an Aspire Npgsql
-    component targeting it ship as stable. The 11.0 Identity/DataProtection EF packages require
-    EF Core 11, so they are held back with it. EF Core 10 runs fine on .NET 11.
+    EF Core 11 RC: Npgsql.EntityFrameworkCore.PostgreSQL 11.0.0-rc.3 pins EF Core to exactly
+    11.0.0-rc.3.26522.148, so the Identity/DataProtection/Design packages match it. Uses the
+    Aspire 17 preview Npgsql component in the app projects. Move both to stable once released.
   -->
   <ItemGroup>
     <PackageReference
       Include="Microsoft.AspNetCore.DataProtection.EntityFrameworkCore"
-      Version="10.0.13"
+      Version="11.0.0-rc.3.26522.148"
     />
     <PackageReference
       Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore"
-      Version="10.0.13"
+      Version="11.0.0-rc.3.26522.148"
     />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="11.0.0-rc.3" />
   </ItemGroup>
 </Project>

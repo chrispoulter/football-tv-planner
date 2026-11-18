@@ -1,4 +1,4 @@
-<Project Sdk="Aspire.AppHost.Sdk/13.6.5">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net11.0</TargetFramework>
@@ -8,13 +8,10 @@
     <UserSecretsId>b064012d-b4e1-4387-b0e6-5246adc287ff</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FootballTvPlanner.Server\FootballTvPlanner.Server.csproj" />
-    <ProjectReference Include="..\FootballTvPlanner.FixtureSync\FootballTvPlanner.FixtureSync.csproj" />
-    <ProjectReference Include="..\FootballTvPlanner.MigrationService\FootballTvPlanner.MigrationService.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Aspire.Hosting.JavaScript" Version="13.6.5" />
-    <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="13.6.5" />
+    <PackageReference Include="Aspire.Hosting.AppHost" Version="17.0.0" />
+    <PackageReference Include="Aspire.Hosting.Dotnet" Version="17.0.0" />
+    <PackageReference Include="Aspire.Hosting.JavaScript" Version="17.0.0" />
+    <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="17.0.0" />
     <PackageReference Include="CommunityToolkit.Aspire.Hosting.MailPit" Version="13.6.1" />
   </ItemGroup>
 </Project>
