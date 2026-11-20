@@ -58,12 +58,15 @@ public static class OpenApiExtensions
 
     public static WebApplication MapOpenApiWithUI(this WebApplication app)
     {
-        app.MapOpenApi();
-
-        app.MapScalarApiReference("/scalar", options =>
+        if (app.Environment.IsDevelopment())
         {
-            options.Title = app.Environment.ApplicationName;
-        });
+            app.MapOpenApi();
+
+            app.MapScalarApiReference("/scalar", options =>
+            {
+                options.Title = app.Environment.ApplicationName;
+            });
+        }
 
         return app;
     }
