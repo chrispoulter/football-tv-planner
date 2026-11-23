@@ -85,7 +85,7 @@ services:
     restart: always
 
   aspire-dashboard:
-    image: mcr.microsoft.com/dotnet/aspire-dashboard:13.6
+    image: mcr.microsoft.com/aspire/dashboard:17.0
     environment:
       ASPIRE_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS: "true"
     ports:
