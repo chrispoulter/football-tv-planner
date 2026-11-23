@@ -12,6 +12,6 @@
     <PackageReference Include="Aspire.Hosting.Dotnet" Version="17.0.0" />
     <PackageReference Include="Aspire.Hosting.JavaScript" Version="17.0.0" />
     <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="17.0.0" />
-    <PackageReference Include="CommunityToolkit.Aspire.Hosting.MailPit" Version="13.6.1" />
+    <PackageReference Include="CommunityToolkit.Aspire.Hosting.MailPit" Version="17.0.0" />
   </ItemGroup>
 </Project>
