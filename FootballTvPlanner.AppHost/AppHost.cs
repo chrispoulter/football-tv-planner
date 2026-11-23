@@ -14,18 +14,24 @@ var mailpit = builder
     .WithLifetime(ContainerLifetime.Persistent);
 
 var migrations = builder
-    .AddProject<Projects.FootballTvPlanner_MigrationService>("migrations")
+    .AddDotnetProject(
+        "migrations",
+        "../FootballTvPlanner.MigrationService/FootballTvPlanner.MigrationService.csproj"
+    )
     .WithReference(database)
     .WaitFor(database);
 
 builder
-    .AddProject<Projects.FootballTvPlanner_FixtureSync>("fixture-sync")
+    .AddDotnetProject(
+        "fixture-sync",
+        "../FootballTvPlanner.FixtureSync/FootballTvPlanner.FixtureSync.csproj"
+    )
     .WithReference(database)
     .WaitForCompletion(migrations)
     .WithExplicitStart();
 
 var server = builder
-    .AddProject<Projects.FootballTvPlanner_Server>("server")
+    .AddDotnetProject("server", "../FootballTvPlanner.Server/FootballTvPlanner.Server.csproj")
     .WithExternalHttpEndpoints()
     .WithHttpHealthCheck("/health")
     .WithUrlForEndpoint("http", u => u.Url = "/scalar")
